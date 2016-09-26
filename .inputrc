@@ -1,0 +1,2 @@
+# tabで補完する時に大文字と小文字が無視される
+set completion-ignore-case on
