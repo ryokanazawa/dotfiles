@@ -5,8 +5,6 @@
 [user]
 	name = Ryo Kanazawa
 	email = ryoau9@gmail.com
-[core]
-	editor = atom --wait
 [color]
 	ui = auto
 [alias]
