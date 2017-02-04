@@ -11,8 +11,11 @@ export PATH="$HOME/.anyenv/bin:$PATH"
 eval "$(anyenv init -)"
 
 ## npm modules
-export PATH="$HOME/.anyenv/envs/ndenv/shims/npm:$PATH"
+export PATH="$HOME/.anyenv/envs/ndenv/shims:$PATH"
 export PATH="./node_modules/.bin:$PATH"
+
+## ruby
+export PATH="$HOME/.anyenv/envs/rbenv/shims:$PATH"
 
 ## git 補完
 source /usr/local/etc/bash_completion.d/git-prompt.sh
