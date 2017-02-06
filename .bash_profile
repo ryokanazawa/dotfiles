@@ -17,6 +17,6 @@ export PATH="./node_modules/.bin:$PATH"
 ## ruby
 export PATH="$HOME/.anyenv/envs/rbenv/shims:$PATH"
 
-## git 補完
+## git
 source /usr/local/etc/bash_completion.d/git-prompt.sh
 source /usr/local/etc/bash_completion.d/git-completion.bash
