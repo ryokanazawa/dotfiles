@@ -9,3 +9,7 @@
 	ui = auto
 [alias]
 	logg = log --graph --pretty='format:%C(yellow)%h%Cblue%d%Creset %s %C(white dim)%an, %ar%Creset'
+	s = status --short --branch
+  co = checkout
+  difff = diff --word-diff
+  fo = fetch origin
