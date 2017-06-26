@@ -13,3 +13,5 @@
   co = checkout
   difff = diff --word-diff
   fo = fetch origin
+[core]
+	precomposeunicode = true
