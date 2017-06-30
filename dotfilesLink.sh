@@ -4,3 +4,4 @@ ln -s ~/dotfiles/.gitconfig ~/.gitconfig
 ln -s ~/dotfiles/.inputrc ~/.inputrc
 ln -s ~/dotfiles/.vimrc ~/.vimrc
 ln -s ~/dotfiles/.irbrc ~/.irbrc
+ln -s ~/dotfiles/.pryrc ~/.pryrc
