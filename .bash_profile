@@ -20,3 +20,5 @@ export PATH="$HOME/.anyenv/envs/rbenv/shims:$PATH"
 ## git
 source /usr/local/etc/bash_completion.d/git-prompt.sh
 source /usr/local/etc/bash_completion.d/git-completion.bash
+
+export EDITOR=atom
