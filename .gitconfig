@@ -16,3 +16,4 @@
 	fo = fetch origin
 [core]
 	precomposeunicode = true
+	editor = subl -w
