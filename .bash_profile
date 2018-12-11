@@ -3,7 +3,8 @@ alias ls='ls -F'
 alias ll='ls -Fla'
 
 ## color
-export PS1="\[\033[32m\]\t \u: \W\[\033[0m\] $ "
+# export PS1="\[\033[32m\]\t \u: \W\[\033[0m\] $ "
+export PS1='\[\033[32m\][\h \u: \w]\n\$\[\033[0m\] '
 export CLICOLOR=1
 
 ## anyenv
