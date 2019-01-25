@@ -23,3 +23,6 @@ export PATH="$HOME/.anyenv/envs/rbenv/shims:$PATH"
 # source /usr/local/etc/bash_completion.d/git-completion.bash
 
 export EDITOR=atom
+
+# image magick 6
+export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
