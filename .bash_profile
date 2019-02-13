@@ -26,3 +26,7 @@ export EDITOR=atom
 
 # image magick 6
 export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
+
+# Keyboard
+export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
