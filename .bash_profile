@@ -9,7 +9,6 @@ export CLICOLOR=1
 
 ## anyenv
 export PATH="$HOME/.anyenv/bin:$PATH"
-eval "$(anyenv init -)"
 
 ## npm modules
 export PATH="$HOME/.anyenv/envs/ndenv/shims:$PATH"
@@ -30,3 +29,7 @@ export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
 
 # Keyboard
 export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
+
+# bash-completion
+# how to install - $ brew install bash-completion
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
