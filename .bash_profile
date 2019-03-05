@@ -16,6 +16,9 @@ export PATH="./node_modules/.bin:$PATH"
 
 ## ruby
 export PATH="$HOME/.anyenv/envs/rbenv/shims:$PATH"
+export RBENV_ROOT="$HOME/.anyenv/envs/rbenv"
+export PATH="$RBENV_ROOT/bin:$PATH"
+eval "$(rbenv init -)"
 
 ## git
 # source /usr/local/etc/bash_completion.d/git-prompt.sh
