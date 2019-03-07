@@ -24,7 +24,7 @@ eval "$(rbenv init -)"
 # source /usr/local/etc/bash_completion.d/git-prompt.sh
 # source /usr/local/etc/bash_completion.d/git-completion.bash
 
-export EDITOR=atom
+export EDITOR=vim
 
 # image magick 6
 export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
