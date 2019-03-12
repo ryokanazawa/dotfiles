@@ -20,17 +20,24 @@ export RBENV_ROOT="$HOME/.anyenv/envs/rbenv"
 export PATH="$RBENV_ROOT/bin:$PATH"
 eval "$(rbenv init -)"
 
+## go
+export GOENV_ROOT="$HOME/.anyenv/envs/goenv" 
+export PATH="$GOENV_ROOT/bin:$PATH"
+eval "$(goenv init -)"
+export PATH="$GOROOT/bin:$PATH"
+export PATH="$GOPATH/bin:$PATH"
+
 ## git
 # source /usr/local/etc/bash_completion.d/git-prompt.sh
 # source /usr/local/etc/bash_completion.d/git-completion.bash
 
 export EDITOR=vim
 
-# image magick 6
+## image magick 6
 export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
 
-# Keyboard
+## Keyboard
 export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
 
 # bash-completion
