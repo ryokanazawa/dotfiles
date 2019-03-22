@@ -21,7 +21,7 @@ export PATH="$RBENV_ROOT/bin:$PATH"
 eval "$(rbenv init -)"
 
 ## go
-export GOENV_ROOT="$HOME/.anyenv/envs/goenv" 
+export GOENV_ROOT="$HOME/.anyenv/envs/goenv"
 export PATH="$GOENV_ROOT/bin:$PATH"
 eval "$(goenv init -)"
 export PATH="$GOROOT/bin:$PATH"
