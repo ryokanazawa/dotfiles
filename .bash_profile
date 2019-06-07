@@ -43,3 +43,5 @@ export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
 # bash-completion
 # how to install - $ brew install bash-completion
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+
+stty stop undef
