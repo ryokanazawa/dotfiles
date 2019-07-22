@@ -9,10 +9,7 @@ export CLICOLOR=1
 
 ## anyenv
 export PATH="$HOME/.anyenv/bin:$PATH"
-
-## npm modules
-export PATH="$HOME/.anyenv/envs/ndenv/shims:$PATH"
-export PATH="./node_modules/.bin:$PATH"
+eval "$(anyenv init -)"
 
 ## ruby
 export PATH="$HOME/.anyenv/envs/rbenv/shims:$PATH"
