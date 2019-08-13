@@ -6,3 +6,4 @@ ln -s ~/dotfiles/.vimrc ~/.vimrc
 ln -s ~/dotfiles/.irbrc ~/.irbrc
 ln -s ~/dotfiles/.pryrc ~/.pryrc
 ln -s ~/dotfiles/.rubocop.yml ~/.rubocop.yml
+ln -s ~/dotfiles/.zshrc ~/.zshrc
