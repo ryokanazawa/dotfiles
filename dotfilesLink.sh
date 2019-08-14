@@ -7,3 +7,4 @@ ln -s ~/dotfiles/.irbrc ~/.irbrc
 ln -s ~/dotfiles/.pryrc ~/.pryrc
 ln -s ~/dotfiles/.rubocop.yml ~/.rubocop.yml
 ln -s ~/dotfiles/.zshrc ~/.zshrc
+ln -s ~/dotfiles/settings.json ~/Library/Application\ Support/Code/User/settings.json
