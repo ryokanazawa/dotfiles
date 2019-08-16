@@ -13,9 +13,24 @@
     "editor.fontSize": 14,
     "editor.cursorBlinking": "smooth",
     "editor.cursorStyle": "line",
+    "editor.rulers": [80],
     "terminal.integrated.shell.osx": "/bin/zsh",
     "explorer.confirmDelete": false,
     "ruby.rubocop.executePath": "/Users/ryo/.anyenv/envs/rbenv/shims/",
     "files.insertFinalNewline": true,
-    "files.trimFinalNewlines": true
+    "files.trimFinalNewlines": true,
+    "[ruby]": {
+        "editor.formatOnSave": true
+    },
+    "ruby.intellisense": "rubyLocate",
+    "ruby.format": "rubocop",
+    "ruby.lint": {
+        "rubocop": true
+    },
+    "ruby.useLanguageServer": true,
+    "ruby.codeCompletion": "rcodetools",
+    "solargraph.autoformat": true,
+    "solargraph.definitions": true,
+    "solargraph.diagnostics": true,
+    "workbench.iconTheme": "file-icons"
 }

@@ -1,3 +1,5 @@
+bindkey -e
+
 ## list
 alias ls='ls -F'
 alias ll='ls -Fla'
