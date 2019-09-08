@@ -4,6 +4,11 @@ bindkey -e
 alias ls='ls -F'
 alias ll='ls -Fla'
 
+# Atom One Dark theme for Terminal
+# https://github.com/nathanbuchar/atom-one-dark-terminal
+export CLICOLOR=1
+export LSCOLORS=ExFxBxDxCxegedabagacad
+
 ## anyenv
 if [ -d $HOME/.anyenv ] ; then
     export PATH="$HOME/.anyenv/bin:$PATH"
