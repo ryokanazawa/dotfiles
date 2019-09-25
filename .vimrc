@@ -9,4 +9,4 @@ set smartindent
 set clipboard=unnamed,unnamedplus
 set ruler
 set hidden
-
+syntax on
