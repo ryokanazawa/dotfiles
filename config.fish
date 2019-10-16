@@ -1,6 +1,3 @@
-alias python='python3'
-alias pip='pip3'
-
 set -x PATH $HOME/.anyenv/bin $PATH
 set -x GOENV_ROOT $HOME/.anyenv/envs/goenv
 set -x PATH $HOME/.anyenv/envs/goenv/bin $PATH
