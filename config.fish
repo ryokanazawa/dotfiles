@@ -6,3 +6,4 @@ set -x RBENV_ROOT $HOME/.anyenv/envs/rbenv
 set -x PATH $HOME/.anyenv/envs/rbenv/bin $PATH
 set -x PATH $HOME/.anyenv/envs/rbenv/shims $PATH
 set -x PATH /usr/local/opt/imagemagick@6/bin/ $PATH
+set -x PATH $HOME/.anyenv/envs/pyenv/bin $PATH
