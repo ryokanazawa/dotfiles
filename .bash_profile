@@ -1,7 +1,3 @@
-## list
-alias ls='ls -F'
-alias ll='ls -Fla'
-
 ## color
 # export PS1="\[\033[32m\]\t \u: \W\[\033[0m\] $ "
 export PS1='\[\033[32m\][\h \u: \w]\n\$\[\033[0m\] '
@@ -42,3 +38,4 @@ export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
 stty stop undef
+set completion-ignore-case on
