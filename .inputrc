@@ -1,5 +1,1 @@
-## list
-alias ls='ls -F'
-alias ll='ls -Fla'
-
 set completion-ignore-case On
