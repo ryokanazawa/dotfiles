@@ -2,6 +2,11 @@
 alias ls='ls -F'
 alias ll='ls -Fla'
 
+function rename() {
+  exiftool '-FileName < CreateDate' -d %Y%m%d_%H%M%S%%-c.%%e *
+  exiftool '-Directory < CreateDate' -d %Y%m%d *
+}
+
 ## color
 # export PS1="\[\033[32m\]\t \u: \W\[\033[0m\] $ "
 export PS1='\[\033[32m\][\h \u: \w]\n\$\[\033[0m\] '
