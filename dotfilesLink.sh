@@ -4,3 +4,4 @@ ln -s ~/dotfiles/.gitconfig ~/.gitconfig
 ln -s ~/dotfiles/.rubocop.yml ~/.rubocop.yml
 ln -s ~/dotfiles/.git-prompt.sh ~/.git-prompt.sh
 ln -s ~/dotfiles/.inputrc ~/.inputrc
+ln -s ~/dotfiles/.vimrc ~/.vimrc
