@@ -2,5 +2,14 @@
     "window.zoomLevel": 0,
     "terminal.integrated.fontSize": 13,
     "terminal.integrated.fontFamily": "Inconsolata-dz for Powerline",
-    "editor.fontSize": 13
+    "editor.fontSize": 13,
+    "workbench.colorTheme": "Default Light+",
+    "ruby.lint": {
+        "rubocop": true
+    },
+    "[ruby]": {
+        "editor.formatOnSave": true
+    },
+    "ruby.format": "rubocop",
+    "editor.formatOnSaveTimeout": 5000
 }
