@@ -3,13 +3,17 @@
     "terminal.integrated.fontSize": 13,
     "terminal.integrated.fontFamily": "Inconsolata-dz for Powerline",
     "editor.fontSize": 13,
-    "ruby.lint": {
-        "rubocop": true
-    },
-    "[ruby]": {
-        "editor.formatOnSave": true
-    },
-    "ruby.format": "rubocop",
-    "editor.formatOnSaveTimeout": 5000,
     "files.insertFinalNewline": true,
+    "editor.formatOnSaveTimeout": 5000,
+    // ruby
+    "ruby.lint": { "rubocop": true },
+    "ruby.format": "rubocop",
+    "[ruby]": { "editor.formatOnSave": true },
+    // python
+    "python.pythonPath": "/usr/local/bin/python3",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+    "python.formatting.autopep8Path": "autopep8",
+    "[python]": { "editor.formatOnSave": true },
 }
