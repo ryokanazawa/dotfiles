@@ -10,12 +10,15 @@
         "command": "workbench.action.terminal.focusNext"
     },
     {
-    "key": "ctrl+cmd+right",
-    "command": "workbench.action.navigateBack"
+        "key": "ctrl+cmd+right",
+        "command": "workbench.action.navigateBack"
     },
     {
-    "key": "ctrl+cmd+left",
-    "command": "workbench.action.navigateForward"
+        "key": "ctrl+cmd+left",
+        "command": "workbench.action.navigateForward"
+    },
+    {
+        "key": "cmd+j",
+        "command": "workbench.action.focusNextGroup"
     },
 ]
-
