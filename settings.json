@@ -16,4 +16,5 @@
     "python.linting.lintOnSave": true,
     "python.formatting.autopep8Path": "autopep8",
     "[python]": { "editor.formatOnSave": true },
+    "workbench.colorTheme": "One Dark Pro",
 }
