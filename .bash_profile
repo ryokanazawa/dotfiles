@@ -47,3 +47,5 @@ export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
 stty stop undef
+
+HISTFILESIZE=10000

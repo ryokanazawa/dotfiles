@@ -1,15 +1,6 @@
 // Place your key bindings in this file to override the defaultsauto[]
 [
     {
-        "key": "shift+cmd+c",
-        "command": "-workbench.action.terminal.openNativeConsole",
-        "when": "!terminalFocus"
-    },
-    {
-        "key": "shift+cmd+c",
-        "command": "workbench.action.terminal.focusNext"
-    },
-    {
         "key": "ctrl+cmd+right",
         "command": "workbench.action.navigateBack"
     },
@@ -20,5 +11,13 @@
     {
         "key": "cmd+j",
         "command": "workbench.action.focusNextGroup"
+    },
+    {
+        "key": "ctrl+6",
+        "command": "outline.focus"
+    },
+    {
+        "key": "shift+cmd+c",
+        "command": "workbench.panel.terminal.focus"
     },
 ]
