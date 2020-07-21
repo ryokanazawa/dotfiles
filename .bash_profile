@@ -1,6 +1,7 @@
 ## list
 alias ls='ls -F'
 alias ll='ls -Fla'
+alias everyday='cd /Users/ryo/Git/everyday-launchd/ && source env/bin/activate && python main.py && deactivate'
 
 function rename() {
   exiftool '-FileName < CreateDate' -d %Y%m%d_%H%M%S%%-c.%%e *
@@ -49,3 +50,7 @@ export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
 stty stop undef
 
 HISTFILESIZE=10000
+HISTCONTROL=ignoreboth
+
+source ~/.iterm2_shell_integration.bash
+

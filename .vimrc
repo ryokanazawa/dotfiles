@@ -14,6 +14,17 @@ set undodir=~/.vim/undodir
 set undofile
 set incsearch
 
-set colorcolumn=80
+"set colorcolumn=80
 highlight ColorColumn ctermbg=0 guibg=lightgrey
+
+call plug#begin('~/.vim/plugged')
+
+Plug 'https://github.com/ycm-core/YouCompleteMe.git'
+
+call plug#end()
+
+let mapleader = " "
+
+nnoremap <Leader>gd :YcmCompleter GoTo<CR>
+nnoremap <Leader>gf :YcmCompleter FixIt<CR>
 
