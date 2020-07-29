@@ -1,7 +1,6 @@
 ## list
 alias ls='ls -F'
 alias ll='ls -Fla'
-alias everyday='cd /Users/ryo/Git/everyday-launchd/ && source env/bin/activate && python main.py && deactivate'
 
 function rename() {
   exiftool '-FileName < CreateDate' -d %Y%m%d_%H%M%S%%-c.%%e *
