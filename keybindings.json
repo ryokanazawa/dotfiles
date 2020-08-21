@@ -13,11 +13,58 @@
         "command": "workbench.action.focusNextGroup"
     },
     {
+        "key": "cmd+shift+j",
+        "command": "workbench.action.focusPreviousGroup"
+    },
+    {
+        "key": "cmd+k h",
+        "command": "workbench.action.navigateLeft"
+    },
+    {
+        "key": "cmd+k l",
+        "command": "workbench.action.navigateRight"
+    },
+    {
+        "key": "cmd+k k",
+        "command": "workbench.action.navigateUp"
+    },
+    {
+        "key": "cmd+k j",
+        "command": "workbench.action.navigateDown"
+    },
+    {
         "key": "ctrl+6",
         "command": "outline.focus"
     },
     {
-        "key": "shift+cmd+c",
-        "command": "workbench.panel.terminal.focus"
+        "key": "ctrl+cmd+c",
+        "command": "workbench.action.terminal.focus",
+
+    },
+    {
+        "key": "cmd+6"
+        "command": "workbench.actions.view.problems"
+    },
+    {
+        "key": "cmd+7",
+        "command": "workbench.action.output.toggleOutput"
+    },
+    {
+        "key": "cmd+8",
+        "command": "workbench.action.terminal.toggleTerminal"
+    },
+    {
+        "key": "cmd+8",
+        "command": "workbench.action.terminal.focusNext",
+        "when": "terminalFocus",
+    },
+    {
+        "key": "shift+cmd+8",
+        "command": "workbench.action.terminal.focusPrevious",
+        "when": "terminalFocus",
+    },
+    {
+        "key": "cmd+9",
+        "command": "workbench.debug.action.toggleRepl"
     },
 ]
