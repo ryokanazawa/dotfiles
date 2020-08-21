@@ -17,22 +17,6 @@
         "command": "workbench.action.focusPreviousGroup"
     },
     {
-        "key": "cmd+k h",
-        "command": "workbench.action.navigateLeft"
-    },
-    {
-        "key": "cmd+k l",
-        "command": "workbench.action.navigateRight"
-    },
-    {
-        "key": "cmd+k k",
-        "command": "workbench.action.navigateUp"
-    },
-    {
-        "key": "cmd+k j",
-        "command": "workbench.action.navigateDown"
-    },
-    {
         "key": "ctrl+6",
         "command": "outline.focus"
     },
@@ -42,7 +26,7 @@
 
     },
     {
-        "key": "cmd+6"
+        "key": "cmd+6",
         "command": "workbench.actions.view.problems"
     },
     {
