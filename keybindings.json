@@ -51,4 +51,9 @@
         "key": "cmd+9",
         "command": "workbench.debug.action.toggleRepl"
     },
+    {
+        "key": "cmd+j",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "terminalFocus",
+    },
 ]
