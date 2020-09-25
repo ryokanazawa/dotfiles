@@ -15,7 +15,10 @@
     "python.linting.enabled": true,
     "python.linting.lintOnSave": true,
     "python.formatting.autopep8Path": "autopep8",
-    "[python]": { "editor.formatOnSave": true },
-    "workbench.colorTheme": "One Dark Pro",
+    "[python]": {
+        "editor.formatOnSave": true
+    },
     "timeline.excludeSources": [],
+    "diffEditor.renderSideBySide": false,
+    "workbench.colorTheme": "One Dark Pro",
 }
