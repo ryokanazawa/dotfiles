@@ -51,5 +51,14 @@ stty stop undef
 HISTFILESIZE=10000
 HISTCONTROL=ignoreboth
 
-source ~/.iterm2_shell_integration.bash
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
+export RUBY_CFLAGS="-w"
+export RUBY_CFLAGS="-Wno-error=implicit-function-declaration"
+export RUBY_CFLAGS="-DUSE_FFI_CLOSURE_ALLOC"
+
+export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/opt/homebrew/opt/openssl@1.1"

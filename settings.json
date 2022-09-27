@@ -18,7 +18,6 @@
     "[python]": {
         "editor.formatOnSave": true
     },
-    "timeline.excludeSources": [],
     "diffEditor.renderSideBySide": false,
     "workbench.colorTheme": "One Dark Pro",
 }
