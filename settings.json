@@ -20,4 +20,5 @@
     },
     "diffEditor.renderSideBySide": false,
     "workbench.colorTheme": "One Dark Pro",
+    "liquid.format.enable": false,
 }
