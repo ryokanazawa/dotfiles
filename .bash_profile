@@ -2,6 +2,7 @@
 alias ls='ls -F'
 alias ll='ls -Fla'
 
+## 写真を日付のフォルダに整理する
 function rename() {
   exiftool '-FileName < CreateDate' -d %Y%m%d_%H%M%S%%-c.%%e *
   exiftool '-Directory < CreateDate' -d %Y%m%d *
