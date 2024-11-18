@@ -27,7 +27,5 @@
             "after": ["<Esc>"]
         }
     ],
-  
     "vim.hlsearch": true,
-    "gitlens.home.preview.enabled": false
 }
