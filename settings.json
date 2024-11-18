@@ -19,6 +19,15 @@
         "editor.formatOnSave": true
     },
     "diffEditor.renderSideBySide": false,
-    "workbench.colorTheme": "One Dark Pro",
+    "workbench.colorTheme": "Xcode Classic (Light)",
     "liquid.format.enable": false,
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["j", "j"],
+            "after": ["<Esc>"]
+        }
+    ],
+  
+    "vim.hlsearch": true,
+    "gitlens.home.preview.enabled": false
 }
