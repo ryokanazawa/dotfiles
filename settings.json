@@ -21,12 +21,4 @@
     "diffEditor.renderSideBySide": false,
     "workbench.colorTheme": "Xcode Classic (Light)",
     "liquid.format.enable": false,
-    "vim.insertModeKeyBindings": [
-        {
-            "before": ["j", "j"],
-            "after": ["<Esc>"]
-        }
-    ],
-    "vim.hlsearch": true,
-    "vim.useSystemClipboard": true
 }
