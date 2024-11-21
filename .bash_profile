@@ -40,9 +40,6 @@ export EDITOR=vim
 export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
 
-## Keyboard
-export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
-
 # bash-completion
 # how to install - $ brew install bash-completion
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
@@ -54,9 +51,7 @@ HISTCONTROL=ignoreboth
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-export RUBY_CFLAGS="-w"
-export RUBY_CFLAGS="-Wno-error=implicit-function-declaration"
-export RUBY_CFLAGS="-DUSE_FFI_CLOSURE_ALLOC"
+export RUBY_CFLAGS="-w -Wno-error=implicit-function-declaration -DUSE_FFI_CLOSURE_ALLOC"
 
 export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
 export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
