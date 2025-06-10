@@ -21,4 +21,5 @@
     "diffEditor.renderSideBySide": false,
     "workbench.colorTheme": "Xcode Classic (Light)",
     "liquid.format.enable": false,
+    "chat.commandCenter.enabled": false,
 }
