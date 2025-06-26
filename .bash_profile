@@ -44,7 +44,12 @@ export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
 # how to install - $ brew install bash-completion
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
-stty stop undef
+# 端末かどうかをテストしてから実行
+if [ -t 0 ]
+then
+  stty stop undef
+fi
+
 
 HISTFILESIZE=10000
 HISTCONTROL=ignoreboth
@@ -58,3 +63,6 @@ export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
 export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
 export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/opt/homebrew/opt/openssl@1.1"
+
+# Added by Windsurf
+export PATH="/Users/ryo/.codeium/windsurf/bin:$PATH"
