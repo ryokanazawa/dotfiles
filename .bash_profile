@@ -15,20 +15,31 @@ export CLICOLOR=1
 
 ## anyenv
 export PATH="$HOME/.anyenv/bin:$PATH"
-eval "$(anyenv init -)"
+if command -v anyenv >/dev/null 2>&1; then
+  eval "$(anyenv init -)"
+fi
 
 ## ruby
 export PATH="$HOME/.anyenv/envs/rbenv/shims:$PATH"
 export RBENV_ROOT="$HOME/.anyenv/envs/rbenv"
 export PATH="$RBENV_ROOT/bin:$PATH"
-eval "$(rbenv init -)"
+if command -v rbenv >/dev/null 2>&1; then
+  eval "$(rbenv init -)"
+fi
 
 ## go
 export GOENV_ROOT="$HOME/.anyenv/envs/goenv"
 export PATH="$GOENV_ROOT/bin:$PATH"
-eval "$(goenv init -)"
-export PATH="$GOROOT/bin:$PATH"
-export PATH="$GOPATH/bin:$PATH"
+if command -v goenv >/dev/null 2>&1; then
+  eval "$(goenv init -)"
+fi
+# GOROOTとGOPATHはgoenv init後に設定
+if [ -n "$GOROOT" ]; then
+  export PATH="$GOROOT/bin:$PATH"
+fi
+if [ -n "$GOPATH" ]; then
+  export PATH="$GOPATH/bin:$PATH"
+fi
 
 ## git
 # source /usr/local/etc/bash_completion.d/git-prompt.sh
@@ -66,3 +77,4 @@ export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/opt/homebrew/opt/openssl@1.1"
 
 # Added by Windsurf
 export PATH="/Users/ryo/.codeium/windsurf/bin:$PATH"
+export SHELL_SESSION_HISTORY=0
