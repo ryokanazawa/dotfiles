@@ -77,4 +77,3 @@ export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/opt/homebrew/opt/openssl@1.1"
 
 # Added by Windsurf
 export PATH="/Users/ryo/.codeium/windsurf/bin:$PATH"
-export SHELL_SESSION_HISTORY=0
