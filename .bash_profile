@@ -1,6 +1,12 @@
+## language
+export LANG=ja_JP.UTF-8
+export LC_ALL=ja_JP.UTF-8
+
 ## list
 alias ls='ls -F'
 alias ll='ls -Fla'
+alias yolo="claude --dangerously-skip-permissions"
+alias cu="cursor"
 
 ## 写真を日付のフォルダに整理する
 function rename() {
