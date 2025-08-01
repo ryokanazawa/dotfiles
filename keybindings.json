@@ -22,7 +22,7 @@
         "when": "terminalFocus",
     },
     {
-        "key": "alt+up",
+        "key": "ctrl+cmd+up",
         "command": "cursorMove",
         "args": {
             "to": "up",
@@ -32,7 +32,7 @@
         "when": "editorTextFocus"
     },
     {
-        "key": "alt+down",
+        "key": "ctrl+cmd+down",
         "command": "cursorMove",
         "args": {
             "to": "down",
