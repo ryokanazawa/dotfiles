@@ -1,15 +1,17 @@
 {
-    "window.zoomLevel": 0,
+    "window.zoomLevel": 1,
+    "editor.mouseWheelZoom": true,
     "terminal.integrated.fontSize": 12,
     "terminal.integrated.fontFamily": "Inconsolata-dz for Powerline",
-    "editor.fontSize": 12,
     "files.insertFinalNewline": true,
     "editor.formatOnSaveTimeout": 5000,
-    // ruby
-    "ruby.lint": { "rubocop": true },
+    "ruby.lint": {
+        "rubocop": true
+    },
     "ruby.format": "rubocop",
-    "[ruby]": { "editor.formatOnSave": true },
-    // python
+    "[ruby]": {
+        "editor.formatOnSave": true
+    },
     "python.pythonPath": "/usr/local/bin/python3",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
@@ -19,7 +21,27 @@
         "editor.formatOnSave": true
     },
     "diffEditor.renderSideBySide": false,
-    "workbench.colorTheme": "Xcode Classic (Light)",
-    "liquid.format.enable": false,
-    "chat.commandCenter.enabled": false,
+    "lldb.library": "/Library/Developer/CommandLineTools/Library/PrivateFrameworks/LLDB.framework/Versions/A/LLDB",
+    "lldb.launch.expressions": "native",
+    "workbench.colorTheme": "Visual Studio Light - C++",
+    "git.autofetch": true,
+    "debug.disassemblyView.showSourceCode": false,
+    "cursor.windowSwitcher.sidebarHoverCollapsed": true,
+    "workbench.editor.editorActionsLocation": "hidden",
+    "explorer.confirmDelete": false,
+    "[markdown]": {
+        "editor.fontFamily": "'SF Pro Display', serif",
+        "editor.fontSize": 13,
+        "editor.lineHeight": 26,
+        "editor.renderLineHighlight": "none",
+        "editor.lineNumbers": "off",
+        "files.autoSave": "afterDelay",
+        "editor.occurrencesHighlight": "off"
+    },
+    "window.commandCenter": false,
+    "workbench.editor.enablePreview": false,
+    "workbench.activityBar.location": "top",
+    "workbench.navigationControl.enabled": false,
+    "editor.minimap.enabled": false,
+    "editor.scrollBeyondLastLine": false
 }
