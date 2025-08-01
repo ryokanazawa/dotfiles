@@ -170,4 +170,82 @@
         "key": "alt+cmd+b",
         "command": "-workbench.action.toggleAuxiliaryBar"
     },
+    {
+        "key": "shift+cmd+e",
+        "command": "composer.showBackgroundAgentHistory",
+        "when": "backgroundComposerEnabled || showBackgroundAgentHistoryAction"
+    },
+    {
+        "key": "cmd+e",
+        "command": "-composer.showBackgroundAgentHistory",
+        "when": "backgroundComposerEnabled || showBackgroundAgentHistoryAction"
+    },
+    {
+        "key": "shift+cmd+k",
+        "command": "-aipopup.action.modal.generate",
+        "when": "editorFocus && !composerBarIsVisible"
+    },
+    {
+        "key": "cmd+i",
+        "command": "aipopup.action.modal.generate",
+        "when": "editorFocus && !composerBarIsVisible"
+    },
+    {
+        "key": "cmd+k",
+        "command": "-aipopup.action.modal.generate",
+        "when": "editorFocus && !composerBarIsVisible"
+    },
+    {
+        "key": "cmd+e",
+        "command": "composer.startComposerPrompt"
+    },
+    {
+        "key": "cmd+i",
+        "command": "-composer.startComposerPrompt"
+    },
+    {
+        "key": "shift+cmd+i",
+        "command": "-composer.newAgentChat"
+    },
+    {
+        "key": "cmd+r cmd+g",
+        "command": "-aiFeedback.action.open"
+    },
+    {
+        "key": "shift+cmd+n",
+        "command": "explorer.newFolder",
+        "when": "explorerResourceMoveableToTrash && filesExplorerFocus && foldersViewVisible && !inputFocus"
+    },
+    {
+        "key": "alt+cmd+9",
+        "command": "workbench.action.toggleMaximizedPanel"
+    },
+    {
+        "key": "shift+cmd+0",
+        "command": "fontshortcuts.resetEditorFontSize",
+        "when": "editorFocus"
+    },
+    {
+        "key": "cmd+0",
+        "command": "-fontshortcuts.resetEditorFontSize",
+        "when": "editorFocus"
+    },
+    {
+        "key": "shift+cmd+0",
+        "command": "fontshortcuts.resetTerminalFontSize",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+0",
+        "command": "-fontshortcuts.resetTerminalFontSize",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "alt+w",
+        "command": "editor.action.toggleWordWrap"
+    },
+    {
+        "key": "alt+z",
+        "command": "-editor.action.toggleWordWrap"
+    }
 ]
