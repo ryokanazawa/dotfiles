@@ -17,3 +17,4 @@
 [core]
 	precomposeunicode = true
 	editor = subl -w
+	quotepath = false

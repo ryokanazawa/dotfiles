@@ -14,6 +14,9 @@ function rename() {
   exiftool '-Directory < CreateDate' -d %Y%m%d *
 }
 
+# ターミナルにコピペした時に00　01が入らないようにする
+PS1='\e[?2004l\h:\W \u\$ '
+
 ## color
 # export PS1="\[\033[32m\]\t \u: \W\[\033[0m\] $ "
 export PS1='\[\033[32m\][\h \u: \w]\n\$\[\033[0m\] '
@@ -83,3 +86,4 @@ export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/opt/homebrew/opt/openssl@1.1"
 
 # Added by Windsurf
 export PATH="/Users/ryo/.codeium/windsurf/bin:$PATH"
+
