@@ -23,7 +23,7 @@
     "diffEditor.renderSideBySide": false,
     "lldb.library": "/Library/Developer/CommandLineTools/Library/PrivateFrameworks/LLDB.framework/Versions/A/LLDB",
     "lldb.launch.expressions": "native",
-    "workbench.colorTheme": "Ayu Light",
+    "workbench.colorTheme": "GitHub Light Default",
     "git.autofetch": true,
     "debug.disassemblyView.showSourceCode": false,
     "cursor.windowSwitcher.sidebarHoverCollapsed": true,
@@ -32,7 +32,7 @@
     "[markdown]": {
         "editor.fontFamily": "'SF Pro Display', serif",
         "editor.fontSize": 13,
-        "editor.lineHeight": 26,
+        "editor.lineHeight": 24,
         "editor.renderLineHighlight": "none",
         "editor.lineNumbers": "off",
         "files.autoSave": "afterDelay",
@@ -43,5 +43,8 @@
     "workbench.activityBar.location": "top",
     "workbench.navigationControl.enabled": false,
     "editor.minimap.enabled": false,
-    "editor.scrollBeyondLastLine": false
+    "editor.scrollBeyondLastLine": false,
+    "chatgpt.apiBase": "",
+    "chatgpt.cliExecutable": "",
+    "chatgpt.config": {}
 }
