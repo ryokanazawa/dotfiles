@@ -23,7 +23,7 @@
     "diffEditor.renderSideBySide": false,
     "lldb.library": "/Library/Developer/CommandLineTools/Library/PrivateFrameworks/LLDB.framework/Versions/A/LLDB",
     "lldb.launch.expressions": "native",
-    "workbench.colorTheme": "GitHub Light Default",
+    "workbench.colorTheme": "Ayu Light Bordered",
     "git.autofetch": true,
     "debug.disassemblyView.showSourceCode": false,
     "cursor.windowSwitcher.sidebarHoverCollapsed": true,
@@ -46,5 +46,6 @@
     "editor.scrollBeyondLastLine": false,
     "chatgpt.apiBase": "",
     "chatgpt.cliExecutable": "",
-    "chatgpt.config": {}
+    "chatgpt.config": {},
+    "editor.stickyScroll.enabled": false
 }
