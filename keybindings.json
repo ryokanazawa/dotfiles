@@ -1,16 +1,6 @@
 // Place your key bindings in this file to override the defaultsauto[]
 [
     {
-        "key": "alt+j",
-        "command": "-type",  // OS入力をキャンセルする
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "alt+k",
-        "command": "-type",  // OS入力をキャンセルする
-        "when": "editorTextFocus"
-    },
-    {
         "key": "cmd+j",
         "command": "workbench.action.focusNextGroup"
     },
@@ -122,40 +112,8 @@
         "when": "editorFocus && !composerBarIsVisible"
     },
     {
-        "key": "cmd+i",
-        "command": "aipopup.action.modal.generate",
-        "when": "editorFocus && !composerBarIsVisible"
-    },
-    {
-        "key": "cmd+k",
-        "command": "-aipopup.action.modal.generate",
-        "when": "editorFocus && !composerBarIsVisible"
-    },
-    {
-        "key": "cmd+e",
-        "command": "composer.startComposerPrompt"
-    },
-    {
-        "key": "cmd+i",
-        "command": "-composer.startComposerPrompt"
-    },
-    {
-        "key": "shift+cmd+i",
-        "command": "-composer.newAgentChat"
-    },
-    {
-        "key": "shift+cmd+n",
-        "command": "explorer.newFolder",
-        "when": "explorerResourceMoveableToTrash && filesExplorerFocus && foldersViewVisible && !inputFocus"
-    },
-    {
         "key": "alt+cmd+9",
         "command": "workbench.action.toggleMaximizedPanel"
-    },
-    {
-        "key": "shift+cmd+0",
-        "command": "fontshortcuts.resetEditorFontSize",
-        "when": "editorFocus"
     },
     {
         "key": "cmd+0",
@@ -168,29 +126,9 @@
         "when": "terminalFocus"
     },
     {
-        "key": "cmd+0",
-        "command": "-fontshortcuts.resetTerminalFontSize",
-        "when": "terminalFocus"
-    },
-    {
         "key": "cmd+enter",
         "command": "markdown.extension.checkTaskList",
         "when": "editorLangId =~ /^markdown$|^rmd$|^quarto$/"
-    },
-    {
-        "key": "cmd+5",
-        "command": "workbench.action.openAgentsView",
-        "when": "!isInBackgroundComposerWindow"
-    },
-    {
-        "key": "ctrl+cmd+down",
-        "command": "-quickInput.nextSeparator",
-        "when": "inQuickInput && quickInputType == 'quickPick' || inQuickInput && quickInputType == 'quickTree'"
-    },
-    {
-        "key": "ctrl+cmd+up",
-        "command": "-quickInput.previousSeparator",
-        "when": "inQuickInput && quickInputType == 'quickPick' || inQuickInput && quickInputType == 'quickTree'"
     },
     {
         "key": "ctrl+cmd+down",
@@ -267,11 +205,6 @@
         "when": "editorTextFocus && !textCompareEditorActive && quickDiffDecorationCount != '0'"
     },
     {
-        "key": "alt+f5",
-        "command": "-workbench.action.editor.nextChange",
-        "when": "editorTextFocus && !textCompareEditorActive && quickDiffDecorationCount != '0'"
-    },
-    {
         "key": "ctrl+/",
         "command": "editor.action.inlineDiffs.nextChange",
         "when": "editorTextFocus && inlineDiffs.activeEditorWithDiffs"
@@ -307,15 +240,23 @@
         "when": "editorTextFocus && inlineDiffs.activeEditorWithDiffs"
     },
     {
-        "key": "cmd+5",
-        "command": "workbench.explorer.agentsView.focus"
+        "key": "cmd+2",
+        "command": "workbench.action.findInFiles"
     },
     {
-        "key": "cmd+4",
+        "key": "cmd+l",
+        "command": "-aichat.newchataction"
+    },
+    {
+        "key": "cmd+5",
+        "command": "-workbench.action.focusFifthEditorGroup"
+    },
+    {
+        "key": "cmd+5",
         "command": "chatgpt.sidebarView.focus"
     },
     {
-        "key": "cmd+2",
-        "command": "workbench.action.findInFiles"
+        "key": "cmd+4",
+        "command": "aichat.newfollowupaction"
     }
 ]
