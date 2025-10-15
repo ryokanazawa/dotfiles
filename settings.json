@@ -1,9 +1,13 @@
 {
     "window.zoomLevel": 1,
     "editor.mouseWheelZoom": true,
+    "editor.insertSpaces": false,
+    "editor.tabSize": 4,
+    "editor.useTabStops": true,
+    "editor.detectIndentation": false,
+    "files.insertFinalNewline": true,
     "terminal.integrated.fontSize": 12,
     "terminal.integrated.fontFamily": "Inconsolata-dz for Powerline",
-    "files.insertFinalNewline": true,
     "editor.formatOnSaveTimeout": 5000,
     "ruby.lint": {
         "rubocop": true
@@ -34,18 +38,20 @@
         "editor.fontSize": 13,
         "editor.lineHeight": 24,
         "editor.renderLineHighlight": "none",
-        "editor.lineNumbers": "off",
+        "editor.lineNumbers": "on",
         "files.autoSave": "afterDelay",
         "editor.occurrencesHighlight": "off"
     },
     "window.commandCenter": false,
-    "workbench.editor.enablePreview": false,
     "workbench.activityBar.location": "top",
     "workbench.navigationControl.enabled": false,
     "editor.minimap.enabled": false,
     "editor.scrollBeyondLastLine": false,
+    "explorer.confirmDragAndDrop": false,
+    "lldb.suppressUpdateNotifications": true,
     "chatgpt.apiBase": "",
     "chatgpt.cliExecutable": "",
-    "chatgpt.config": {},
-    "editor.stickyScroll.enabled": false
+	"chatgpt.config": {},
+	"explorer.sortOrder": "modified",
+	"workbench.editor.enablePreviewFromQuickOpen": true
 }
