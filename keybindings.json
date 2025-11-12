@@ -252,11 +252,11 @@
         "command": "-workbench.action.focusFifthEditorGroup"
     },
     {
-        "key": "cmd+5",
+        "key": "cmd+4",
         "command": "chatgpt.sidebarView.focus"
     },
     {
-        "key": "cmd+4",
-        "command": "aichat.newfollowupaction"
+        "key": "cmd+5",
+        "command": "claude-vscode.sidebar.open"
     }
 ]
