@@ -7,3 +7,4 @@ ln -s ~/dotfiles/.inputrc ~/.inputrc
 ln -s ~/dotfiles/.vimrc ~/.vimrc
 ln -s ~/dotfiles/settings.json ~/Library/Application\ Support/Code/User/settings.json
 ln -s ~/dotfiles/keybindings.json ~/Library/Application\ Support/Code/User/keybindings.json
+ln -s ~/dotfiles/karabiner.json ~/.config/karabiner/karabiner.json

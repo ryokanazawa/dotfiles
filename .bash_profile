@@ -89,6 +89,3 @@ export PATH="/Users/ryo/.codeium/windsurf/bin:$PATH"
 
 # Added by Cursor Agent
 export PATH="$HOME/.local/bin:$PATH"
-
-# Codex
-export CODEX_CONFIRM_COMMIT=false
