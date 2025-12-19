@@ -89,3 +89,6 @@ export PATH="/Users/ryo/.codeium/windsurf/bin:$PATH"
 
 # Added by Cursor Agent
 export PATH="$HOME/.local/bin:$PATH"
+
+# Added by Antigravity
+export PATH="/Users/ryo/.antigravity/antigravity/bin:$PATH"

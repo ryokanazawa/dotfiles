@@ -27,7 +27,7 @@
     "diffEditor.renderSideBySide": false,
     "lldb.library": "/Library/Developer/CommandLineTools/Library/PrivateFrameworks/LLDB.framework/Versions/A/LLDB",
     "lldb.launch.expressions": "native",
-    "workbench.colorTheme": "Ayu Light Bordered",
+    "workbench.colorTheme": "Ayu Light",
     "git.autofetch": true,
     "debug.disassemblyView.showSourceCode": false,
     "cursor.windowSwitcher.sidebarHoverCollapsed": true,
