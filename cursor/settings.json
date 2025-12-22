@@ -1,0 +1,20 @@
+{
+    "explorer.confirmDragAndDrop": false,
+    "workbench.colorTheme": "Gruvbox Dark Medium",
+    "[markdown]": {
+        "editor.fontFamily": "Inconsolata-dz, 'SF Pro Display', serif",
+        "editor.fontSize": 13,
+        "editor.lineHeight": 24,
+        "editor.renderLineHighlight": "none",
+        "editor.lineNumbers": "on",
+        "files.autoSave": "afterDelay",
+        "editor.occurrencesHighlight": "off"
+    },
+    "files.defaultLanguage": "markdown",
+    "claudeCode.preferredLocation": "sidebar",
+    "editor.minimap.enabled": true,
+    "explorer.confirmDelete": false,
+    "explorer.autoReveal": false,
+    "workbench.editor.tabSizing": "fixed",
+    "accessibility.dimUnfocused.enabled": true
+}
