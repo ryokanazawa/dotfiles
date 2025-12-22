@@ -11,10 +11,10 @@
         "editor.occurrencesHighlight": "off"
     },
     "files.defaultLanguage": "markdown",
-    "claudeCode.preferredLocation": "sidebar",
     "editor.minimap.enabled": true,
     "explorer.confirmDelete": false,
     "explorer.autoReveal": false,
     "workbench.editor.tabSizing": "fixed",
-    "accessibility.dimUnfocused.enabled": true
+    "accessibility.dimUnfocused.enabled": true,
+    "workbench.editor.enablePreview": false
 }
