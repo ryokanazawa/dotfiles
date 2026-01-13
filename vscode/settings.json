@@ -53,5 +53,6 @@
     "chatgpt.cliExecutable": "",
 	"chatgpt.config": {},
 	"explorer.sortOrder": "modified",
-	"workbench.editor.enablePreviewFromQuickOpen": true
+	"workbench.editor.enablePreviewFromQuickOpen": true,
+	"claudeCode.preferredLocation": "sidebar"
 }
