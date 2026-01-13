@@ -1,0 +1,116 @@
+## language
+export LANG=ja_JP.UTF-8
+export LC_ALL=ja_JP.UTF-8
+
+## list
+alias ls='ls -F'
+alias ll='ls -Fla'
+alias cu="cursor"
+alias codexauto='codex --full-auto'
+
+## 写真を日付のフォルダに整理する
+function rename() {
+  if ! command -v exiftool >/dev/null 2>&1; then
+    echo "exiftool が見つかりません (brew install exiftool)" >&2
+    return 1
+  fi
+  exiftool '-FileName < CreateDate' -d %Y%m%d_%H%M%S%%-c.%%e *
+  exiftool '-Directory < CreateDate' -d %Y%m%d *
+}
+
+## color
+export CLICOLOR=1
+
+## anyenv
+export PATH="$HOME/.anyenv/bin:$PATH"
+if command -v anyenv >/dev/null 2>&1; then
+  # シェルに応じて適切な初期化を行う
+  if [ -n "$ZSH_VERSION" ]; then
+    eval "$(anyenv init - zsh)"
+  elif [ -n "$BASH_VERSION" ]; then
+    eval "$(anyenv init - bash)"
+  else
+    eval "$(anyenv init -)"
+  fi
+fi
+
+## ruby
+export PATH="$HOME/.anyenv/envs/rbenv/shims:$PATH"
+export RBENV_ROOT="$HOME/.anyenv/envs/rbenv"
+export PATH="$RBENV_ROOT/bin:$PATH"
+if command -v rbenv >/dev/null 2>&1; then
+  # シェルに応じて適切な初期化を行う
+  if [ -n "$ZSH_VERSION" ]; then
+    eval "$(rbenv init - zsh)"
+  elif [ -n "$BASH_VERSION" ]; then
+    eval "$(rbenv init - bash)"
+  else
+    eval "$(rbenv init -)"
+  fi
+fi
+
+## go
+export GOENV_ROOT="$HOME/.anyenv/envs/goenv"
+export PATH="$GOENV_ROOT/bin:$PATH"
+if command -v goenv >/dev/null 2>&1; then
+  # シェルに応じて適切な初期化を行う
+  if [ -n "$ZSH_VERSION" ]; then
+    eval "$(goenv init - zsh)"
+  elif [ -n "$BASH_VERSION" ]; then
+    eval "$(goenv init - bash)"
+  else
+    eval "$(goenv init -)"
+  fi
+fi
+# GOROOTとGOPATHはgoenv init後に設定
+if [ -n "$GOROOT" ]; then
+  export PATH="$GOROOT/bin:$PATH"
+fi
+if [ -n "$GOPATH" ]; then
+  export PATH="$GOPATH/bin:$PATH"
+fi
+
+export EDITOR=vim
+
+## image magick 6
+if [ -d "/usr/local/opt/imagemagick@6/bin" ]; then
+  export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+fi
+if [ -d "/usr/local/opt/avr-gcc@7/bin" ]; then
+  export PATH="/usr/local/opt/avr-gcc@7/bin:$PATH"
+fi
+
+# 端末かどうかをテストしてから実行
+if [ -t 0 ]
+then
+  stty stop undef
+fi
+
+if [ -x "/opt/homebrew/bin/brew" ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif command -v brew >/dev/null 2>&1; then
+  eval "$(brew shellenv)"
+fi
+
+export RUBY_CFLAGS="-w -Wno-error=implicit-function-declaration -DUSE_FFI_CLOSURE_ALLOC"
+
+if [ -d "/opt/homebrew/opt/openssl@1.1" ]; then
+  export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
+  export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
+  export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
+  export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/opt/homebrew/opt/openssl@1.1"
+fi
+
+# Added by Windsurf
+if [ -d "$HOME/.codeium/windsurf/bin" ]; then
+  export PATH="$HOME/.codeium/windsurf/bin:$PATH"
+fi
+
+# Added by Cursor Agent
+export PATH="$HOME/.local/bin:$PATH"
+
+# Added by Antigravity
+if [ -d "$HOME/.antigravity/antigravity/bin" ]; then
+  export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+fi
