@@ -5,6 +5,10 @@ fi
 
 # Zsh固有の設定
 
+# 補完設定
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
 # History設定
 HISTSIZE=10000
 SAVEHIST=10000
