@@ -1,6 +1,6 @@
 {
     "window.zoomLevel": 1,
-    "editor.mouseWheelZoom": true,
+    "editor.mouseWheelZoom": false,
     "editor.insertSpaces": false,
     "editor.tabSize": 4,
     "editor.useTabStops": true,
@@ -27,7 +27,7 @@
     "diffEditor.renderSideBySide": false,
     "lldb.library": "/Library/Developer/CommandLineTools/Library/PrivateFrameworks/LLDB.framework/Versions/A/LLDB",
     "lldb.launch.expressions": "native",
-    "workbench.colorTheme": "Ayu Light",
+    "workbench.colorTheme": "Ayu Light Bordered",
     "git.autofetch": true,
     "debug.disassemblyView.showSourceCode": false,
     "cursor.windowSwitcher.sidebarHoverCollapsed": true,
@@ -42,8 +42,7 @@
         "files.autoSave": "afterDelay",
         "editor.occurrencesHighlight": "off"
     },
-    "window.commandCenter": false,
-    "workbench.activityBar.location": "top",
+	"window.commandCenter": false,
     "workbench.navigationControl.enabled": false,
     "editor.minimap.enabled": false,
     "editor.scrollBeyondLastLine": false,
@@ -54,5 +53,10 @@
 	"chatgpt.config": {},
 	"explorer.sortOrder": "modified",
 	"workbench.editor.enablePreviewFromQuickOpen": true,
-	"claudeCode.preferredLocation": "sidebar"
+	"editor.fontFamily": "'Google Sans Code'",
+	"workbench.activityBar.location": "top",
+	"claudeCode.environmentVariables": [],
+	"claudeCode.preferredLocation": "sidebar",
+	"terminal.integrated.defaultProfile.osx": "zsh",
+	"editor.fontSize": 13
 }
