@@ -1,6 +1,11 @@
-# 共通設定を読み込む
-if [ -f "$HOME/.shell_common" ]; then
-  source "$HOME/.shell_common"
+# login shell 用：bashrcを読むだけにする
+if [ -f "$HOME/.bashrc" ]; then
+  . "$HOME/.bashrc"
+fi
+
+# 共通設定
+if [ -f "$HOME/.shellrc" ]; then
+  . "$HOME/.shellrc"
 fi
 
 # Bash固有の設定
