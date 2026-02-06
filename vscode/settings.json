@@ -26,8 +26,7 @@
     },
     "diffEditor.renderSideBySide": false,
     "lldb.library": "/Library/Developer/CommandLineTools/Library/PrivateFrameworks/LLDB.framework/Versions/A/LLDB",
-    "lldb.launch.expressions": "native",
-    "workbench.colorTheme": "Ayu Light Bordered",
+	"lldb.launch.expressions": "native",
     "git.autofetch": true,
     "debug.disassemblyView.showSourceCode": false,
     "cursor.windowSwitcher.sidebarHoverCollapsed": true,
@@ -58,5 +57,6 @@
 	"claudeCode.environmentVariables": [],
 	"claudeCode.preferredLocation": "sidebar",
 	"terminal.integrated.defaultProfile.osx": "zsh",
-	"editor.fontSize": 13
+	"editor.fontSize": 13,
+	"workbench.colorTheme": "Gruvbox Dark Medium"
 }

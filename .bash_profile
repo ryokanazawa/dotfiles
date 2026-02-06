@@ -4,8 +4,8 @@ if [ -f "$HOME/.bashrc" ]; then
 fi
 
 # 共通設定
-if [ -f "$HOME/.shellrc" ]; then
-  . "$HOME/.shellrc"
+if [ -f "$HOME/.shell_common" ]; then
+  . "$HOME/.shell_common"
 fi
 
 # Bash固有の設定
