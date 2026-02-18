@@ -50,7 +50,6 @@
     "chatgpt.apiBase": "",
     "chatgpt.cliExecutable": "",
 	"chatgpt.config": {},
-	"explorer.sortOrder": "modified",
 	"workbench.editor.enablePreviewFromQuickOpen": true,
 	"editor.fontFamily": "'Google Sans Code'",
 	"workbench.activityBar.location": "top",
@@ -58,5 +57,7 @@
 	"claudeCode.preferredLocation": "sidebar",
 	"terminal.integrated.defaultProfile.osx": "zsh",
 	"editor.fontSize": 13,
-	"workbench.colorTheme": "Gruvbox Dark Medium"
+	"workbench.colorTheme": "Ayu Light Bordered",
+	"claudeCode.selectedModel": "claude-sonnet-4-6",
+	"explorer.sortOrder": "modified"
 }

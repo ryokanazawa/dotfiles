@@ -297,5 +297,10 @@
         "key": "shift+f4",
         "command": "-search.action.focusPreviousSearchResult",
         "when": "hasSearchResult || inSearchEditor"
+    },
+    {
+        "key": "shift+cmd+c",
+        "command": "-workbench.action.terminal.openNativeConsole",
+        "when": "!terminalFocus"
     }
 ]
