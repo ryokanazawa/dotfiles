@@ -7,7 +7,7 @@ fi
 
 # 補完設定
 autoload -Uz compinit && compinit
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
 
 # History設定
 HISTSIZE=10000
