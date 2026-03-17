@@ -68,5 +68,6 @@
 	"chat.extensionTools.enabled": false,
 	"chat.extensionUnification.enabled": false,
 	"chat.mcp.apps.enabled": false,
-	"chatgpt.openOnStartup": true
+	"chatgpt.openOnStartup": true,
+	"chatgpt.followUpQueueMode": "queue"
 }
