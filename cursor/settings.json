@@ -16,7 +16,7 @@
     "workbench.editor.tabSizing": "fixed",
     "accessibility.dimUnfocused.enabled": true,
     "cursor.composer.shouldChimeAfterChatFinishes": true,
-    "workbench.colorTheme": "Cursor Dark High Contrast",
+    "workbench.colorTheme": "Gruvbox Dark Hard",
     "git.autofetch": true,
     "accessibility.dimUnfocused.opacity": 0.5,
     "update.releaseTrack": "prerelease",
