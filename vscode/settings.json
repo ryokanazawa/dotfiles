@@ -56,7 +56,7 @@
 	"claudeCode.preferredLocation": "sidebar",
 	"terminal.integrated.defaultProfile.osx": "zsh",
 	"editor.fontSize": 13,
-	"workbench.colorTheme": "Gruvbox Dark Hard",
+	"workbench.colorTheme": "Ayu Light Bordered",
 	"claudeCode.selectedModel": "default",
 	"explorer.sortOrder": "modified",
 	"editor.defaultFormatter": "vscode.markdown-language-features",

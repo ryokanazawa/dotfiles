@@ -52,10 +52,10 @@ theme = Xcode Dark hc
 
 macos-titlebar-style = tabs
 
-window-padding-x = 20
+window-padding-x = 30
+window-padding-y = 10
 
-font-family = "Guguru Sans Code"
-font-size = 14
-adjust-cell-height = 12
-
+font-family = "Guguru Sans Code 35"
+font-size = 13
+adjust-cell-height = 6
 keybind = cmd+enter=ignore
