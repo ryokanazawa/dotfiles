@@ -1,3 +1,7 @@
+# Xcode由来のSwift環境変数warningを抑制
+unset SWIFT_DEBUG_INFORMATION_FORMAT 2>/dev/null
+unset SWIFT_DEBUG_INFORMATION_VERSION 2>/dev/null
+
 ## language
 export LANG=ja_JP.UTF-8
 export LC_ALL=ja_JP.UTF-8
@@ -114,3 +118,4 @@ export PATH="$HOME/.local/bin:$PATH"
 if [ -d "$HOME/.antigravity/antigravity/bin" ]; then
   export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 fi
+
