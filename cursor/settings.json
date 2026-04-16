@@ -10,7 +10,6 @@
         "editor.occurrencesHighlight": "off"
     },
     "files.defaultLanguage": "markdown",
-    "editor.minimap.enabled": true,
     "explorer.confirmDelete": false,
     "explorer.autoReveal": false,
     "workbench.editor.tabSizing": "fixed",

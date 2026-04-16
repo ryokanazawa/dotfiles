@@ -48,14 +48,12 @@
 # # Just for example:
 # resize-overlay-duration = 4s 200ms
 
-theme = Xcode Dark hc
-
 macos-titlebar-style = tabs
 
 window-padding-x = 30
 window-padding-y = 10
 
-font-family = "Guguru Sans Code 35"
-font-size = 13
-adjust-cell-height = 6
+font-family = "Guguru Sans Code"
+font-size = 14
+adjust-cell-height = 3
 keybind = cmd+enter=ignore
