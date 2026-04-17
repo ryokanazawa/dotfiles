@@ -51,5 +51,6 @@
 	"explorer.sortOrder": "modified",
 	"editor.defaultFormatter": "vscode.markdown-language-features",
 	"workbench.secondarySideBar.defaultVisibility": "hidden",
-	"claudeCode.preferredLocation": "sidebar"
+	"claudeCode.preferredLocation": "sidebar",
+	"workbench.activityBar.compact": true
 }
