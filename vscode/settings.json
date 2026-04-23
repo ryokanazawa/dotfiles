@@ -1,5 +1,5 @@
 {
-    "window.zoomLevel": 1,
+    "window.zoomLevel": 0.4,
     "editor.mouseWheelZoom": false,
     "editor.insertSpaces": false,
     "editor.tabSize": 4,
@@ -56,7 +56,7 @@
 	"claudeCode.preferredLocation": "sidebar",
 	"terminal.integrated.defaultProfile.osx": "zsh",
 	"editor.fontSize": 13,
-	"workbench.colorTheme": "Ayu Light Bordered",
+	"workbench.colorTheme": "Gruvbox Dark Medium",
 	"claudeCode.selectedModel": "default",
 	"explorer.sortOrder": "modified",
 	"editor.defaultFormatter": "vscode.markdown-language-features",
