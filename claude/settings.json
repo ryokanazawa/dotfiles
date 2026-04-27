@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "mcp__pencil"
+    ]
+  },
+  "env": {
+    "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1"
+  },
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  },
+  "effortLevel": "high",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "light-daltonized",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.cwd' | { read -r d; printf '\\033]2;Claude · %s\\007' \"$(basename \"$d\")\" > /dev/tty 2>/dev/null; } || true"
+          }
+        ]
+      }
+    ]
+  }
+}

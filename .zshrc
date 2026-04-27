@@ -30,3 +30,15 @@ export PYTHONPATH="$PYTHONPATH:$RESOLVE_SCRIPT_API/Modules/"
 if [[ "$TERM_PROGRAM" == "kiro" ]] && command -v kiro >/dev/null 2>&1; then
   . "$(kiro --locate-shell-integration-path zsh)"
 fi
+
+# Claude Code のタイトル上書きを無効化
+export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1
+
+# プロンプト直前にタイトルをプロジェクト名 + cwd に
+precmd() {
+  # プロジェクト名（git ルートのディレクトリ名、なければ cwd の basename）
+  local project
+  project=$(git rev-parse --show-toplevel 2>/dev/null) && project="${project:t}" || project="${PWD:t}"
+  # タイトル：プロジェクト名、サブタイトル：相対パス
+  print -Pn "\e]0;${project} — %~\a"
+}
