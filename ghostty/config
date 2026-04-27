@@ -13,3 +13,4 @@ font-family = "Guguru Sans Code"
 font-size = 14
 adjust-cell-height = 3
 keybind = cmd+enter=ignore
+window-subtitle = "working-directory"
