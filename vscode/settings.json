@@ -48,10 +48,15 @@
 	"editor.fontFamily": "'Guguru Sans Code 35'",
 	"terminal.integrated.defaultProfile.osx": "zsh",
 	"editor.fontSize": 13,
-	"workbench.colorTheme": "Gruvbox Dark Medium",
+	"workbench.colorTheme": "Gruvbox Dark Hard",
 	"claudeCode.selectedModel": "default",
 	"explorer.sortOrder": "modified",
 	"editor.defaultFormatter": "vscode.markdown-language-features",
 	"workbench.secondarySideBar.defaultVisibility": "hidden",
-	"claudeCode.preferredLocation": "sidebar"
+	"workbench.panel.showLabels": false,
+	"claudeCode.allowDangerouslySkipPermissions": true,
+	"claudeCode.initialPermissionMode": "bypassPermissions",
+	"claudeCode.preferredLocation": "sidebar",
+	"git.confirmSync": false,
+	"git.replaceTagsWhenPull": true
 }

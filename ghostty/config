@@ -9,8 +9,9 @@ macos-titlebar-style = tabs
 window-padding-x = 30
 window-padding-y = 10
 
-font-family = "Guguru Sans Code"
-font-size = 14
+font-family = "Guguru Sans Code 35"
+font-size = 12
 adjust-cell-height = 3
 keybind = cmd+enter=ignore
-window-subtitle = "working-directory"
+# window-subtitle = "working-directory"
+shell-integration-features = no-title

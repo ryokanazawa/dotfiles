@@ -1,19 +1,18 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(git add:*)",
-      "mcp__pencil"
-    ]
-  },
   "env": {
     "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1"
   },
-  "enabledPlugins": {
-    "swift-lsp@claude-plugins-official": true
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "mcp__pencil",
+      "Bash(xcodebuild -project Swan2.xcodeproj -scheme Swan2 -destination 'platform=iOS Simulator,name=iPhone 17' -quiet build)",
+      "Bash(xcodebuild -project Swan2.xcodeproj -scheme Swan2 -destination 'platform=iOS Simulator,name=iPhone 17' -quiet test)",
+      "Bash(git commit -m ' *)",
+      "Bash(xcodebuild -project Swan2.xcodeproj -scheme Swan2 -destination 'platform=iOS Simulator,name=iPhone 17' test)"
+    ],
+    "defaultMode": "auto"
   },
-  "effortLevel": "high",
-  "skipDangerousModePermissionPrompt": true,
-  "theme": "light-daltonized",
   "hooks": {
     "SessionStart": [
       {
@@ -25,5 +24,14 @@
         ]
       }
     ]
-  }
+  },
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  },
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "auto",
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }

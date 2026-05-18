@@ -35,10 +35,8 @@ fi
 export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1
 
 # プロンプト直前にタイトルをプロジェクト名 + cwd に
-precmd() {
-  # プロジェクト名（git ルートのディレクトリ名、なければ cwd の basename）
+preexec() {
   local project
   project=$(git rev-parse --show-toplevel 2>/dev/null) && project="${project:t}" || project="${PWD:t}"
-  # タイトル：プロジェクト名、サブタイトル：相対パス
-  print -Pn "\e]0;${project} — %~\a"
-}
+  local cmd="${1%% *}"
+  print -Pn "\e]0;${project} ${cmd}\a"
