@@ -34,9 +34,18 @@ fi
 # Claude Code のタイトル上書きを無効化
 export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1
 
-# プロンプト直前にタイトルをプロジェクト名 + cwd に
+# コマンド実行直前にウィンドウタイトルを「<cmd> <project|dir>」に設定
+# 例: Brushpass で `claude` を叩くと "claude Brushpass" が出る
 preexec() {
   local project
   project=$(git rev-parse --show-toplevel 2>/dev/null) && project="${project:t}" || project="${PWD:t}"
   local cmd="${1%% *}"
-  print -Pn "\e]0;${project} ${cmd}\a"
+  print -Pn "\e]2;${cmd} ${project}\a"
+}
+
+# claude を抜けた後・通常のプロンプトでもディレクトリを出しておく
+precmd() {
+  local project
+  project=$(git rev-parse --show-toplevel 2>/dev/null) && project="${project:t}" || project="${PWD:t}"
+  print -Pn "\e]2;${project}\a"
+}

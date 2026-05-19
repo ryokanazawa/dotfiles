@@ -13,25 +13,14 @@
     ],
     "defaultMode": "auto"
   },
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r '.cwd' | { read -r d; printf '\\033]2;Claude · %s\\007' \"$(basename \"$d\")\" > /dev/tty 2>/dev/null; } || true"
-          }
-        ]
-      }
-    ]
-  },
   "enabledPlugins": {
     "swift-lsp@claude-plugins-official": true
   },
   "effortLevel": "high",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
-  "theme": "auto",
+  "theme": "light-daltonized",
+  "remoteControlAtStartup": false,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }
