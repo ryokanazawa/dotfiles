@@ -49,3 +49,8 @@ precmd() {
   project=$(git rev-parse --show-toplevel 2>/dev/null) && project="${project:t}" || project="${PWD:t}"
   print -Pn "\e]2;${project}\a"
 }
+
+# Ghostty シェル統合
+if [ -n "$GHOSTTY_RESOURCES_DIR" ]; then
+  builtin source "$GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration"
+fi

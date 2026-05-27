@@ -4,6 +4,8 @@
 
 theme = Dayfox
 
+working-directory = ~/Developer
+
 macos-titlebar-style = tabs
 
 window-padding-x = 30
@@ -12,8 +14,15 @@ window-padding-y = 10
 font-family = "Guguru Sans Code 35"
 font-size = 12
 adjust-cell-height = 3
+
 keybind = cmd+enter=ignore
+keybind = ctrl+shift+up=jump_to_prompt:-1
+keybind = ctrl+shift+down=jump_to_prompt:1
+
 # タブ/タイトル下に作業ディレクトリを表示 (macOS のサブタイトル枠)
-window-subtitle = "working-directory"
+# window-subtitle = "working-directory"
 # zsh の preexec/precmd で OSC 2 を直接送るので shell integration の title 機能は不要
-shell-integration-features = no-title
+# shell-integration-features = no-title
+confirm-close-surface = false
+
+shell-integration-features = cursor,sudo,title
