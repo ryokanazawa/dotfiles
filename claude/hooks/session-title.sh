@@ -23,11 +23,6 @@ title="$(printf '%s' "$input" | jq -r --argjson n "$TITLE_LEN" \
 # cwd は Ghostty の window-subtitle=working-directory で別枠表示するため含めない。
 seq="$(printf '\033]2;%s · claude\007' "$title")"
 
-# --- DEBUG（原因切り分け用・確認後に削除する）---
-printf '%s | title=[%s] | DISABLE=[%s] | TERM_PROGRAM=[%s]\n' \
-  "$(date '+%H:%M:%S')" "$title" "${CLAUDE_CODE_DISABLE_TERMINAL_TITLE:-unset}" "${TERM_PROGRAM:-unset}" \
-  >> /tmp/brushpass-hook-debug.log 2>/dev/null
-
 # Claude のセッション名（sessionTitle）とタブ名（terminalSequence）を同時に返す。
 jq -n --arg t "$title" --arg seq "$seq" \
   '{hookSpecificOutput: {hookEventName: "UserPromptSubmit", sessionTitle: $t}, terminalSequence: $seq}' 2>/dev/null
