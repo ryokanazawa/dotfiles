@@ -8,8 +8,8 @@ working-directory = ~/Developer
 
 macos-titlebar-style = tabs
 
-window-padding-x = 30
-window-padding-y = 10
+window-padding-x = 5
+window-padding-y = 5
 
 font-family = "Guguru Sans Code 35"
 font-size = 12
