@@ -13,20 +13,6 @@
     ],
     "defaultMode": "auto"
   },
-  "enabledPlugins": {
-    "swift-lsp@claude-plugins-official": true
-  },
-  "effortLevel": "high",
-  "tui": "fullscreen",
-  "skipDangerousModePermissionPrompt": true,
-  "theme": "light-daltonized",
-  "remoteControlAtStartup": false,
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "statusLine": {
-    "type": "command",
-    "command": "$HOME/.claude/statusline-command.sh"
-  },
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -39,5 +25,18 @@
       }
     ]
   },
-  "model": "sonnet"
+  "statusLine": {
+    "type": "command",
+    "command": "$HOME/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  },
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "light-daltonized",
+  "remoteControlAtStartup": false,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }
