@@ -52,5 +52,7 @@ precmd() {
 
 # Ghostty シェル統合
 if [ -n "$GHOSTTY_RESOURCES_DIR" ]; then
-  builtin source "$GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration"
+  ghostty_integration="$GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration"
+  [ -r "$ghostty_integration" ] && builtin source "$ghostty_integration"
+  unset ghostty_integration
 fi
