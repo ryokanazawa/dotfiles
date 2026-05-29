@@ -10,12 +10,20 @@
 
 input="$(cat)"
 
-# タイトル: プロンプト先頭 TITLE_LEN 文字（コードポイント単位なので日本語も安全）。
-# 制御文字（改行・タブ・ESC・BEL・DEL 等）はスペース化して連続スペースを畳み前後を trim する。
+# 整形: 制御文字（改行・タブ・ESC・BEL・DEL 等）をスペース化し連続スペースを畳んで前後を trim。
 # これで terminalSequence の allowlist 違反（制御文字混入による無視）も防ぐ。
+clean="$(printf '%s' "$input" | jq -r \
+  '(.prompt // "") | gsub("[[:cntrl:]]"; " ") | gsub(" +"; " ") | sub("^ +"; "") | sub(" +$"; "")' 2>/dev/null)"
+
+# 短い指示（「続けて」「commit」など）はタイトルを上書きしない＝直前の長いタイトルを残す。
+# trim 後のコードポイント数が MIN_LEN 未満なら、何も返さず exit 0（タイトル据え置き）。
+MIN_LEN=10
+clean_len="$(printf '%s' "$clean" | jq -sR 'length' 2>/dev/null)"
+[ -n "$clean_len" ] && [ "$clean_len" -lt "$MIN_LEN" ] 2>/dev/null && exit 0
+
+# タイトル: 先頭 TITLE_LEN 文字（コードポイント単位なので日本語も安全）。
 TITLE_LEN=40
-title="$(printf '%s' "$input" | jq -r --argjson n "$TITLE_LEN" \
-  '(.prompt // "") | gsub("[[:cntrl:]]"; " ") | gsub(" +"; " ") | sub("^ +"; "") | sub(" +$"; "") | .[0:$n]' 2>/dev/null)"
+title="$(printf '%s' "$clean" | jq -sRr --argjson n "$TITLE_LEN" '.[0:$n]' 2>/dev/null)"
 
 # プロジェクト名: cwd の git トップレベル名、取れなければ cwd のベース名（.zshrc precmd と同じ）。
 cwd="$(printf '%s' "$input" | jq -r '.cwd // ""' 2>/dev/null)"
