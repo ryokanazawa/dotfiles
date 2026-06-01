@@ -34,7 +34,11 @@ link_file "$DOTFILES_DIR/.rubocop.yml" "$HOME/.rubocop.yml"
 link_file "$DOTFILES_DIR/.vimrc" "$HOME/.vimrc"
 
 # Apps
+link_file "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 link_file "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
+link_file "$DOTFILES_DIR/claude/statusline-command.sh" "$HOME/.claude/statusline-command.sh"
+link_file "$DOTFILES_DIR/claude/hooks" "$HOME/.claude/hooks"
+link_file "$DOTFILES_DIR/claude/rules" "$HOME/.claude/rules"
 link_file "$DOTFILES_DIR/cursor/settings.json" "$HOME/Library/Application Support/Cursor/User/settings.json"
 link_file "$DOTFILES_DIR/ghostty/config" "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
 link_file "$DOTFILES_DIR/vscode/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindings.json"
