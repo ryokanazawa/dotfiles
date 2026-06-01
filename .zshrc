@@ -56,3 +56,6 @@ if [ -n "$GHOSTTY_RESOURCES_DIR" ]; then
   [ -r "$ghostty_integration" ] && builtin source "$ghostty_integration"
   unset ghostty_integration
 fi
+
+# emacs キーバインドを明示（EDITOR=vim による vi モード自動選択を上書き / Ctrl+R 履歴検索など）
+bindkey -e
