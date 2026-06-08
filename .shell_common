@@ -12,6 +12,7 @@ alias ll='ls -Fla'
 alias cu="cursor"
 alias codexauto='codex --full-auto'
 alias byword='cd "$HOME/Library/Mobile Documents/N39PJFAFEV~com~metaclassy~byword/Documents"'
+alias lg='lazygit'
 
 ## 写真を日付のフォルダに整理する
 function rename() {
