@@ -59,3 +59,6 @@ fi
 
 # emacs キーバインドを明示（EDITOR=vim による vi モード自動選択を上書き / Ctrl+R 履歴検索など）
 bindkey -e
+
+# Kiro CLI post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
