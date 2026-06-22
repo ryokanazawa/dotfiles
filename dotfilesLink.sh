@@ -21,6 +21,14 @@ link_file() {
   ln -s "$src" "$dest"
 }
 
+link_skill() {
+  local skill_name="$1"
+  local src="$DOTFILES_DIR/skills/$skill_name"
+
+  link_file "$src" "$HOME/.claude/skills/$skill_name"
+  link_file "$src" "$HOME/.codex/skills/$skill_name"
+}
+
 # Shell
 link_file "$DOTFILES_DIR/.bash_profile" "$HOME/.bash_profile"
 link_file "$DOTFILES_DIR/.shell_common" "$HOME/.shell_common"
@@ -39,6 +47,14 @@ link_file "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
 link_file "$DOTFILES_DIR/claude/statusline-command.sh" "$HOME/.claude/statusline-command.sh"
 link_file "$DOTFILES_DIR/claude/hooks" "$HOME/.claude/hooks"
 link_file "$DOTFILES_DIR/claude/rules" "$HOME/.claude/rules"
+link_file "$DOTFILES_DIR/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
+
+# Skills (shared between Claude and Codex)
+for skill_dir in "$DOTFILES_DIR"/skills/*/; do
+  [ -d "$skill_dir" ] || continue
+  link_skill "$(basename "$skill_dir")"
+done
+
 link_file "$DOTFILES_DIR/cursor/settings.json" "$HOME/Library/Application Support/Cursor/User/settings.json"
 link_file "$DOTFILES_DIR/ghostty/config" "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
 link_file "$DOTFILES_DIR/vscode/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindings.json"
