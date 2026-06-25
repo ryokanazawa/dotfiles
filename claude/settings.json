@@ -22,7 +22,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-opus-4-8",
+  "model": "claude-opus-4-6[1m]",
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -43,11 +43,12 @@
     "swift-lsp@claude-plugins-official": true
   },
   "language": "Japanese",
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
-  "theme": "light-daltonized",
+  "theme": "auto",
   "remoteControlAtStartup": false,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "skipWorkflowUsageWarning": true
 }

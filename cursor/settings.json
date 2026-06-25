@@ -15,11 +15,17 @@
     "workbench.editor.tabSizing": "fixed",
     "accessibility.dimUnfocused.enabled": true,
     "cursor.composer.shouldChimeAfterChatFinishes": true,
-    "workbench.colorTheme": "Gruvbox Dark Hard",
     "git.autofetch": true,
     "accessibility.dimUnfocused.opacity": 0.5,
-    "update.releaseTrack": "prerelease",
+    "update.releaseTrack": "dev",
     "editor.fontFamily": "Inconsolata-dz, 'Google Sans Code' ,Menlo, Monaco, 'Courier New', monospace",
     "claudeCode.preferredLocation": "sidebar",
-    "workbench.editor.enablePreview": false
+    "workbench.editor.enablePreview": false,
+    "window.autoDetectColorScheme": false,
+    "workbench.colorTheme": "Gruvbox Dark Soft",
+    "explorer.confirmPasteNative": false,
+    "cursor.general.glassShowWarningNotifications": true,
+    "editor.accessibilitySupport": "on",
+    "cursor.composer.editorConversationDensity": "compact-all-grouped",
+    "workbench.statusBar.visible": false
 }
