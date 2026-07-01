@@ -27,5 +27,5 @@
     "cursor.general.glassShowWarningNotifications": true,
     "editor.accessibilitySupport": "on",
     "cursor.composer.editorConversationDensity": "compact-all-grouped",
-    "workbench.statusBar.visible": false
+    "security.promptForLocalFileProtocolHandling": false
 }
