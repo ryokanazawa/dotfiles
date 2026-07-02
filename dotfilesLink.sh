@@ -59,3 +59,4 @@ link_file "$DOTFILES_DIR/cursor/settings.json" "$HOME/Library/Application Suppor
 link_file "$DOTFILES_DIR/ghostty/config" "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
 link_file "$DOTFILES_DIR/vscode/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindings.json"
 link_file "$DOTFILES_DIR/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+link_file "$DOTFILES_DIR/herdr/config.toml" "$HOME/.config/herdr/config.toml"
