@@ -10,6 +10,7 @@ export LC_ALL=ja_JP.UTF-8
 alias ls='ls -F'
 alias ll='ls -Fla'
 alias cu="cursor"
+alias cl="claude"
 alias codexauto='codex --full-auto'
 alias byword='cd "$HOME/Library/Mobile Documents/N39PJFAFEV~com~metaclassy~byword/Documents"'
 alias lg='lazygit'
