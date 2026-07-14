@@ -5,15 +5,19 @@ description: Break a PRD into independently-grabbable GitHub issues using tracer
 
 # PRD to Issues
 
+## 個人開発の運用ルール
+
+GitHub IssueやPRは作成しない。PRDから作業を分解する場合は、ローカルの `tasks/todo.md` にTODOとして書き出し、依存関係も同じファイルに記録する。実装後は日本語のコミットで進める。
+
 Break a PRD into independently-grabbable GitHub issues using vertical slices (tracer bullets).
 
 ## Process
 
 ### 1. Locate the PRD
 
-Ask the user for the PRD GitHub issue number (or URL).
+Read the local PRD file or ask the user for its local path.
 
-If the PRD is not already in your context window, fetch it with `gh issue view <number>` (with comments).
+Do not fetch a PRD from GitHub; use the local file or the conversation context.
 
 ### 2. Explore the codebase (optional)
 
@@ -49,9 +53,9 @@ Ask the user:
 
 Iterate until the user approves the breakdown.
 
-### 5. Create the GitHub issues
+### 5. Write local TODOs
 
-For each approved slice, create a GitHub issue using `gh issue create`. Use the issue body template below.
+For each approved slice, append a concise TODO to `tasks/todo.md`. Do not create GitHub issues, pull requests, or other external tracking artifacts.
 
 Create issues in dependency order (blockers first) so you can reference real issue numbers in the "Blocked by" field.
 
