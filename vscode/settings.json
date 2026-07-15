@@ -31,9 +31,8 @@
     "debug.disassemblyView.showSourceCode": false,
     "workbench.editor.editorActionsLocation": "hidden",
     "explorer.confirmDelete": false,
-    "[markdown]": {
-		"editor.fontFamily": "'SF Pro Display', serif",
-        "editor.lineHeight": 24,
+	"[markdown]": {
+		"editor.lineHeight": 24,
         "editor.renderLineHighlight": "none",
         "editor.lineNumbers": "on",
         "files.autoSave": "afterDelay",
@@ -45,7 +44,6 @@
     "explorer.confirmDragAndDrop": false,
     "lldb.suppressUpdateNotifications": true,
 	"workbench.editor.enablePreviewFromQuickOpen": true,
-	"editor.fontFamily": "'Guguru Sans Code 35'",
 	"terminal.integrated.defaultProfile.osx": "zsh",
 	"editor.fontSize": 13,
 	"workbench.colorTheme": "Gruvbox Dark Medium",
@@ -66,5 +64,6 @@
 	"editor.minimap.enabled": false,
 	"workbench.activityBar.location": "top",
 	"claudeCode.enableNewConversationShortcut": true,
-	"claudeCode.environmentVariables": []
+	"claudeCode.environmentVariables": [],
+	"editor.fontFamily": "'Guguru Sans Code 35', Menlo, Monaco, 'Courier New', monospace"
 }
