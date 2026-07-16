@@ -48,7 +48,6 @@
 	"editor.fontSize": 13,
 	"workbench.colorTheme": "Gruvbox Dark Medium",
 	"claudeCode.selectedModel": "default",
-	"explorer.sortOrder": "modified",
 	"editor.defaultFormatter": "vscode.markdown-language-features",
 	"workbench.secondarySideBar.defaultVisibility": "hidden",
 	"workbench.panel.showLabels": false,
