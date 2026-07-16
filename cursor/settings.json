@@ -10,7 +10,8 @@
     "window.autoDetectColorScheme": false,
     "explorer.confirmPasteNative": false,
     "cursor.composer.editorConversationDensity": "compact-all-grouped",
-    "claudeCode.preferredLocation": "panel",
+    "claudeCode.preferredLocation": "sidebar",
     "git.confirmSync": false,
-    "git.autofetch": true
+    "git.autofetch": true,
+    "workbench.agentsWindowButton.enabled": false
 }

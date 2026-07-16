@@ -252,10 +252,6 @@
         "command": "-workbench.action.focusFifthEditorGroup"
     },
     {
-        "key": "cmd+4",
-        "command": "chatgpt.sidebarView.focus"
-    },
-    {
         "key": "cmd+5",
         "command": "claude-vscode.sidebar.open"
     },
@@ -302,5 +298,9 @@
         "key": "shift+cmd+c",
         "command": "-workbench.action.terminal.openNativeConsole",
         "when": "!terminalFocus"
+    },
+    {
+        "key": "cmd+4",
+        "command": "chatgpt.sidebarSecondaryView.focus"
     }
 ]
