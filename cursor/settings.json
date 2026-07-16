@@ -9,5 +9,8 @@
     "workbench.colorTheme": "Gruvbox Dark Soft",
     "window.autoDetectColorScheme": false,
     "explorer.confirmPasteNative": false,
-    "cursor.composer.editorConversationDensity": "compact-all-grouped"
+    "cursor.composer.editorConversationDensity": "compact-all-grouped",
+    "claudeCode.preferredLocation": "panel",
+    "git.confirmSync": false,
+    "git.autofetch": true
 }
