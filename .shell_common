@@ -11,6 +11,7 @@ alias ls='ls -F'
 alias ll='ls -Fla'
 alias cu="cursor"
 alias cl="claude"
+alias ag="agent"
 alias codexauto='codex --full-auto'
 alias byword='cd "$HOME/Library/Mobile Documents/N39PJFAFEV~com~metaclassy~byword/Documents"'
 alias lg='lazygit'
