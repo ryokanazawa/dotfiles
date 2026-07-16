@@ -1,11 +1,11 @@
 ---
 name: commit
-description: Create a git commit following the user's personal rules — Japanese message, session-only diff, no `#N`, no new branches, optional task-log archive + todo/lessons updates. Use when the user types /commit or asks to commit changes.
+description: Create a git commit and push following the user's personal rules — Japanese message, session-only diff, no `#N`, no new branches, optional task-log archive + todo/lessons updates. Use when the user types /commit or asks to commit changes.
 ---
 
-# /commit — コミット作業の標準手順
+# /commit — コミット + push の標準手順
 
-このスキルは「コミットを作る」という単一目的のための手順書。スコープを広げない。
+このスキルは「コミットして remote に push する」ための手順書。スコープを広げない。
 
 ## 守るべきルール
 
@@ -117,13 +117,22 @@ EOF
 
 その後（直列で） `git status` を確認し、ワーキングツリーが期待通りクリーンかチェック。
 
-### 8. push しない
+### 8. push する
 
-明示指示がない限り `git push` しない。
+コミット成功後、現在ブランチを remote に push する。
+
+```sh
+git push
+```
+
+- upstream 未設定なら `git push -u origin HEAD` を使う。
+- `force` / `--force-with-lease` は使わない（ユーザーが明示した場合のみ）。
+- push 成功後に `git status` で remote と同期していることを確認する。
 
 ## 失敗時の対応
 
 - **pre-commit hook 失敗** → 失敗原因を読む → 原因を修正 → 再度 `git add` + 新規 `git commit`（**amend しない**）。
+- **push 失敗** → エラー内容を報告し、rebase/pull が必要ならユーザーに確認してから進める。勝手に force push しない。
 - **secrets 検出** → ユーザーに報告して指示を仰ぐ。
 - **無関係な差分発見** → コミットに含めず、報告だけする。ユーザーが「含めて」と言うまで待つ。
 
@@ -138,3 +147,4 @@ EOF
 - [ ] `tasks/lessons.md` に書くべき訂正があれば書いたか
 - [ ] `--no-verify` を使っていないか
 - [ ] 新ブランチを勝手に作っていないか
+- [ ] コミット後に `git push` したか（force は使っていないか）
