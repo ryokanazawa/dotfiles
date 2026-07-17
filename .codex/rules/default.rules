@@ -1,0 +1,9 @@
+prefix_rule(
+    pattern = [
+        "env",
+        "DEVELOPER_DIR=/Applications/Xcode_26.5.app/Contents/Developer",
+        "xcodebuild",
+    ],
+    decision = "allow",
+    justification = "Xcode 26.5を指定したxcodebuildを常時許可",
+)

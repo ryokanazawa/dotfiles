@@ -48,6 +48,7 @@ link_file "$DOTFILES_DIR/claude/statusline-command.sh" "$HOME/.claude/statusline
 link_file "$DOTFILES_DIR/claude/hooks" "$HOME/.claude/hooks"
 link_file "$DOTFILES_DIR/claude/rules" "$HOME/.claude/rules"
 link_file "$DOTFILES_DIR/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
+link_file "$DOTFILES_DIR/.codex/rules/default.rules" "$HOME/.codex/rules/default.rules"
 
 # Skills (shared between Claude and Codex)
 for skill_dir in "$DOTFILES_DIR"/skills/*/; do
