@@ -4,21 +4,12 @@
   },
   "permissions": {
     "allow": [
-      "Bash(git add:*)",
-      "mcp__pencil",
-      "Bash(xcodebuild -project Swan2.xcodeproj -scheme Swan2 -destination 'platform=iOS Simulator,name=iPhone 17' -quiet build)",
-      "Bash(xcodebuild -project Swan2.xcodeproj -scheme Swan2 -destination 'platform=iOS Simulator,name=iPhone 17' -quiet test)",
-      "Bash(git commit -m ' *)",
-      "Bash(xcodebuild -project Swan2.xcodeproj -scheme Swan2 -destination 'platform=iOS Simulator,name=iPhone 17' test)",
+      "Bash(git add *)",
       "Bash(git checkout *)",
       "Bash(git commit *)",
-      "Bash(xcodebuild -scheme Brushpass-Debug -configuration Debug -destination 'platform=macOS' build)",
-      "Bash(xcodebuild -list)",
-      "Bash(xcodebuild -scheme Brushpass -configuration Debug -destination 'platform=macOS' build)",
-      "Bash(xcodebuild -scheme Brushpass -configuration Debug -destination 'platform=macOS' test -only-testing:BrushpassTests)",
       "Bash(git stash *)",
-      "Bash(xcodebuild -scheme Brushpass -configuration Debug -destination 'platform=macOS' test -only-testing:BrushpassTests/WindowManagerSessionCommandTests/closeWindowCommandTargetingOwnProcessUsesNSWindowCloseAndBypassesAX)",
-      "Bash(xcodebuild -scheme Brushpass -configuration Debug -destination 'platform=macOS' test -only-testing:BrushpassTests/WindowManagerSessionCommandTests)"
+      "Bash(xcodebuild *)",
+      "mcp__pencil"
     ],
     "deny": [
       "EnterPlanMode",
