@@ -1,3 +1,4 @@
+onboarding = false
 [ui.toast]
 delivery = "off"
 
@@ -7,3 +8,10 @@ show_agent_labels_on_pane_borders = true
 agent_panel_sort = "priority"
 [experimental]
 pane_history = false
+
+switch_ascii_input_source_in_prefix = true
+[theme]
+name = "catppuccin-latte"
+auto_switch = false
+
+# ~/.config/herdr/config.toml

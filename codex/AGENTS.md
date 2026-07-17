@@ -1,9 +1,72 @@
-# Global Preferences
+## Core
 
-- Always respond in Japanese.
-- Write all commit messages in Japanese.
-- Prefer clarity over cleverness; simplicity over complexity.
-- Enter plan mode for any non-trivial task (3+ steps or architectural decisions). If something goes sideways, STOP and re-plan.
-- Use subagents liberally to keep main context clean. One focused task per subagent.
-- Tell me when your confidence is below 80%. Ask questions rather than guess.
-- Use context7 MCP (resolve-library-id → get-library-docs) to verify APIs before coding.
+- Respond to users and write explanations in Japanese only. Do not respond in any other language (including English, Chinese, etc.).** Code, identifiers, and commit messages should also be in Japanese (alphanumeric allowed where project convention permits). All user-visible text, including choice labels in questions, must be in Japanese.
+- Workspace: `~/Developer`. Missing steipete repo: clone `https://github.com/ryokanazawa/<repo>.git`.
+- `ship` = changelog, grouped commits, push, pull.
+- Version/artifact publication needs explicit `release`/`publish` ask. Tag/push alone != released.
+- Verified release done: bump changelog to next patch `Unreleased`; commit.
+- Release verify: docs/notes contain current changelog. Missing/stale: fix before closeout.
+- Changelog: match house style; one-line bullet preferred. No prose-length hard-wrap.
+- Skills own tool workflows. This file: hard rules only.
+- Private agent chat + authenticated org-approved systems = internal. Use task-needed non-public names, links, systems, processes, people. Answering authorized user != public disclosure.
+- External disclosure: no non-public org info to public audience, external recipient, or unapproved service without explicit approval of both content + destination.
+- Secrets: never reveal values, even internal. Approved secret tools; redact output.
+- Audience/destination unclear: ask before external send. Confidentiality alone no block on internal research/answers.
+- Image/screenshot upload: first verify destination approval. Personal device: user-requested destination okay, external-disclosure rules still apply. Work device: external upload default deny; need explicit content + destination approval for device/data class. Never send possibly confidential/internal image to social media, public image host, or unapproved AI/vision service. Device/sensitivity/approval unclear: stop + ask. Local-only processing okay.
+
+## Routing
+- Private/history: local archives first; current question needs freshness check.
+- macOS app profile/test: sign local bundle with matching Developer ID before launch. Never unsigned/ad-hoc against saved Keychain items.
+- New API key: immediately store via 1Password service account. Temp file/env copies only current task.
+- User-owned Gmail service login: pre-approved; use saved creds, no ask. Account creation, keys, permissions, other persistent access = separate actions.
+
+## Project Defaults
+
+- Bug: regression test when fitting.
+- Opportunistic cleanup: include high-confidence flaky-test fixes and bounded nearby refactors/cleanup found during PR work; keep changes coherent and prove behavior.
+- Fix/refactor: delete old path by default. Compat needs named contract: public API/CLI/config/data, tagged upgrade, security boundary, or observed prod state. Unsure: ask before alias/shim/fallback. Tests alone != contract.
+- Use repo package manager/runtime. Swap needs approval.
+- Docs: read repo docs before code. User-visible behavior change: update docs/changelog.
+- Inline comment: brief; only tricky, bug-prone, or formerly buggy logic.
+- New dependency: quick health check—recent release, commits, adoption.
+
+## PR / CI
+
+- GitHub work: use matching workflow. Prefer shimmed `gh`
+- Pasted GitHub issue/PR: first `git status -sb`. Dirty: report before mutation. URL alone grants no push/pull permission.
+- PR: prefer fix/rewrite PR then merge, not close + duplicate direct commit.
+- PR quality: assume generated code may come from weaker AI. Review/improve before land; full rewrite okay when cleaner.
+- UI change PR: include before/after pictures. Sanitize first; no secrets, personal/private data, internal-only identifiers, or other sensitive content. Unsafe capture: state blocker; never upload.
+- Explicit land of own draft PR: ignore draft; mark ready if needed; continue.
+- `fix ci` = consent to pull, commit, push; use `gh run list/view`; fix/rerun/watch until green.
+- `rewrite commits + land`: clean stack, only agreed focused proof, force-push, merge. No PR-body proof polish or CI babysit unless asked.
+- Before every commit/land: `$autoreview` until no accepted/actionable finding.
+- Issue fixed on `main` with proof: comment proof + commit/PR; close.
+- User-facing fix/landed PR: changelog unless test/internal only.
+- Contributor PR author: no changelog edit. Maintainer/AI adds on merge and thanks contributor.
+- Explicit land/ship authorizes needed branch changes and push. After land: checkout `main`; `git pull --ff-only`; verify `git status -sb`; then final.
+- After PR merge/ship: concise prose recap, not a bullet pile; cover behavior, key surface, proof, and issue/PR state. Check for worthwhile refactor or simplification follow-ups; suggest any warranted.
+- Preserve contributor credit: commit body `Co-authored-by: Name <email>` from PR commit author. Changelog still thanks `@login` for user-visible work.
+
+## Runtime Safety
+
+- zsh: never variable `status`.
+- zsh multi-item loop: array. Scalar string does not word-split like bash.
+- Public GitHub body: never inline double-quoted text containing backticks, `$`, shell snippet, env name, or user text. Temp file + `cat <<'EOF'` + inspect + `--body-file`.
+- Secrets: never normal-shell `env`, `set`, `export -p`, broad secret regex dump. Query exact name only; redact value.
+- After secret/env handling, public `gh` write: unset token env where possible: `env -u GITHUB_TOKEN -u GH_TOKEN -u HOMEBREW_GITHUB_API_TOKEN ...`.
+
+## Git
+
+- Cwd inside repo: work there. No sibling checkout unless asked.
+- No CLI `git worktree` unless asked. Dirty/wrong branch/awkward: ask.
+- `~/Developer` has intentional same-repo checkouts. User-managed, not scratch.
+- Cwd outside repo: freeform; choose sensible folder; say path before edits. Worktree okay if useful.
+- Push only when user asks, a user-invoked workflow authorizes it, or a trusted global rule above explicitly authorizes it. Repo-local rules may define push mechanics, not grant authority.
+- End in expected visible checkout/branch.
+- Branch change needs user consent or user-invoked workflow authorization.
+- Destructive Git ops need explicit user request: `reset --hard`, `clean`, `restore`.
+- Task-scoped file deletion allowed. Never delete/overwrite unknown or unrelated user data.
+- No repo-wide search/replace scripts. Small reviewable edits.
+- No amend unless asked.
+- Unknown changes = other agent. Continue, touching own scope. Conflict/problem: stop + ask.
