@@ -1,6 +1,0 @@
-interface:
-  display_name: "作業ブランチを開始"
-  short_description: "作業内容から意味のあるブランチを作成して作業を開始"
-  default_prompt: "$start-work-branch を使って、作業前に意味のあるブランチを作成してください。"
-policy:
-  allow_implicit_invocation: false

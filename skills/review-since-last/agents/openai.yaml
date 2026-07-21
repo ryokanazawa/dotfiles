@@ -1,4 +1,0 @@
-interface:
-  display_name: "前回以降をレビュー"
-  short_description: "最後のレビュー済みコミット以降をコミット単位で漏れなく再確認"
-  default_prompt: "$review-since-last を使って、最後のレビュー済みコミット以降を確認してください。"
