@@ -2,7 +2,7 @@
 # Additionally, each config option is also explained in detail
 # on Ghostty's website, at https://ghostty.org/docs/config.
 
-theme = Dayfox
+# theme = Dayfox
 
 working-directory = ~/Developer
 
@@ -24,5 +24,4 @@ keybind = ctrl+shift+down=jump_to_prompt:1
 # zsh の preexec/precmd で OSC 2 を直接送るので shell integration の title 機能は不要
 # shell-integration-features = no-title
 confirm-close-surface = false
-
 shell-integration-features = cursor,sudo,title
