@@ -68,6 +68,9 @@ for skill_dir in "$DOTFILES_DIR"/skills/*/; do
   link_skill "$(basename "$skill_dir")"
 done
 
+# エージェント共通のスキル標準配置
+link_file "$DOTFILES_DIR/skills/autoreview" "$HOME/.agents/skills/autoreview"
+
 link_file "$DOTFILES_DIR/cursor/settings.json" "$HOME/Library/Application Support/Cursor/User/settings.json"
 link_file "$DOTFILES_DIR/ghostty/config" "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
 link_file "$DOTFILES_DIR/vscode/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindings.json"
