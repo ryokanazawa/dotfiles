@@ -29,6 +29,17 @@ link_skill() {
   link_file "$src" "$HOME/.codex/skills/$skill_name"
 }
 
+install_vim_plug() {
+  local dest="$HOME/.vim/autoload/plug.vim"
+
+  if [ -f "$dest" ]; then
+    return
+  fi
+
+  curl --fail --location --output "$dest" --create-dirs --remove-on-error \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+}
+
 # Shell
 link_file "$DOTFILES_DIR/.bash_profile" "$HOME/.bash_profile"
 link_file "$DOTFILES_DIR/.shell_common" "$HOME/.shell_common"
@@ -40,6 +51,7 @@ link_file "$DOTFILES_DIR/.git-prompt.sh" "$HOME/.git-prompt.sh"
 link_file "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
 link_file "$DOTFILES_DIR/.rubocop.yml" "$HOME/.rubocop.yml"
 link_file "$DOTFILES_DIR/.vimrc" "$HOME/.vimrc"
+install_vim_plug
 
 # Apps
 link_file "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
