@@ -80,7 +80,7 @@ if [ -n "$GOPATH" ]; then
   export PATH="$GOPATH/bin:$PATH"
 fi
 
-export EDITOR=vim
+export EDITOR=fresh
 
 ## image magick 6
 if [ -d "/usr/local/opt/imagemagick@6/bin" ]; then

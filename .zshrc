@@ -57,7 +57,7 @@ if [ -n "$GHOSTTY_RESOURCES_DIR" ]; then
   unset ghostty_integration
 fi
 
-# emacs キーバインドを明示（EDITOR=vim による vi モード自動選択を上書き / Ctrl+R 履歴検索など）
+# emacs キーバインドを明示（EDITOR による vi モード自動選択を上書き / Ctrl+R 履歴検索など）
 bindkey -e
 
 # Kiro CLI post block. Keep at the bottom of this file.
