@@ -73,3 +73,4 @@ link_file "$DOTFILES_DIR/ghostty/config" "$HOME/Library/Application Support/com.
 link_file "$DOTFILES_DIR/vscode/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindings.json"
 link_file "$DOTFILES_DIR/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
 link_file "$DOTFILES_DIR/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+link_file "$DOTFILES_DIR/fresh/config.json" "$HOME/.config/fresh/config.json"
