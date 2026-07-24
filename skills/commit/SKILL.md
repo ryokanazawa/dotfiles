@@ -3,9 +3,13 @@ name: commit
 description: Create a git commit with changelog when needed, immediately merge worktree commits into main, and push. Use when the user types /commit or /ship, or asks to commit, ship, or push changes.
 ---
 
-# /commit — autoreview・changelog・コミット・main反映・push
+# /commit・/ship — autoreview・changelog・コミット・main反映・push
 
 今セッションの変更だけをコミットする。changelog更新の前に `autoreview` スキルで変更をチェックし、cleanになるまで直す。ユーザー向け変更なら `CHANGELOG.md`（またはリポジトリの changelog 相当）を更新する。worktree上のコミットは即mainへマージし、mainをpushしてからpullで同期を確認する。
+
+参考運用: [steipete/agent-scripts](https://github.com/steipete/agent-scripts) の `AGENTS.MD`・`docs/update-changelog.md`・`/landpr`（`ship` = changelog + grouped commits + push + pull。Shipped = GitHubへpush済み）。
+
+`/commit` と `/ship` は同じ手順だが、`/ship` は changelog が存在する場合に変更種別を問わず更新を必須とする。「changelog → grouped commits → push → pull」を明示した呼び方。
 
 ## 守るべきルール
 
@@ -43,26 +47,51 @@ changelogを更新する前に、必ず `autoreview` スキルを読んで従う
 
 autoreviewがcleanになるまで changelog 更新へ進まない。停止して確認が必要な残件、または収束しない残件がある場合は、changelog・コミット・pushをせずに報告して停止する。
 
-### 3. changelogを更新する（必要なとき）
+### 3. changelogを更新する（`/commit` はユーザー向け、`/ship` は全変更で必須）
 
-次のいずれかに当てはまる変更は、autoreviewがcleanになったあと、コミット前にchangelogへ追記する。
+**判定（ユーザーが観測できるか）**
 
-- ユーザー向けの挙動・UI・API・CLIの変更
-- バグ修正（ユーザーが観測できるもの）
-- 破壊的変更や移行が必要な変更
+追記する:
 
-次はchangelog不要。最終報告で「changelogスキップ」と理由を書く。
+- 機能追加・挙動変更・UI/UX の変化
+- ユーザーが観測できるバグ修正
+- 破壊的変更・移行が必要な変更
+- 公開 API / CLI の変更
 
-- テスト・内部リファクタ・CI・docs-only（ユーザー向け文書の追加を除く）
+`/commit` で追記しない（最終報告で「changelogスキップ」と理由）:
+
+- テストのみ・内部リファクタ・CI・型だけ・コメントのみ
+- docs-only（ユーザー向け文書の追加や実質的な利用者影響がある変更を除く）
+- ユーザー影響のない依存更新
+- 同一セッション内で追加して取り消した変更
 - changelogファイルがリポジトリに存在しない
 
-書き方:
+**ファイルの役割（リポジトリに両方ある場合）**
 
-1. 先頭の `## … Unreleased` セクションへ1行bulletを足す。既存スタイル（見出し・日付・言語）に合わせる。
-2. Unreleasedが無く、先頭がリリース済み（日付付き）なら、次のpatch版 `## X.Y.Z — Unreleased` を先頭に作ってから追記する。
-3. 1行・簡潔。冗長な硬折り返しや長文にしない。
-4. `#N`は書かない（ルール2）。PR番号が必要ならリポジトリ慣習に合わせ、無ければ省略。
-5. changelogの差分も今セッションの変更として、後続コミットに含める。
+| ファイル | いつ書く | 何を書く |
+|---|---|---|
+| `CHANGELOG.md` | ユーザー向け変更の `/commit`、およびすべての `/ship` | 開発用の1行履歴（必須） |
+| `docs/release_notes.md` など App Store「最新情報」用 | App Store 提出準備・明示依頼時のみ | ストア貼り付け用の丁寧な文面。毎回は書かない |
+
+`CHANGELOG.md` が無いリポジトリでは、存在する changelog 相当に従う。changelog が無い場合だけスキップする。
+
+**書き方（ハウススタイルに合わせる。不明なら確認して停止）**
+
+1. 先頭の `## … Unreleased`（または同等）へ追記。無ければ既存の版番号から次の patch 版を確定できる場合に限り、`## X.Y.Z — Unreleased` を先頭に作る。確定できなければ既存形式に合わせるか、判断不能として停止する。
+2. 分類があるリポジトリ（例: `### Added` / `### Changed` / `### Fixed`）では適切な見出しの下へ。無ければフラットな `-` リスト。
+3. **1行・簡潔**。`Area: 何をしたか` を優先。長文・硬折り返し・「〜しました。」の冗長連発を避ける。
+4. 影響順が慣習なら: 破壊的 → 機能 → 修正 → その他。
+5. `#N` はコミットと同様に書かない（ルール2）。PR番号がリポジトリ慣習ならそれに従い、無ければ省略。
+6. 重複エントリを作らない。既存 Unreleased に同旨があれば足さない。
+7. changelog の差分も今セッションの変更として後続コミットに含める。
+
+**App Store 最新情報（任意・提出時）**
+
+ユーザーがリリース／提出準備を求めたときだけ、`CHANGELOG.md` の当該版から `docs/release_notes.md`（または同等）を更新する。日常の `/commit`・`/ship` では触らない。
+
+**リリース直後**
+
+バージョンを確定してリリースした場合、次の patch の `## X.Y.Z — Unreleased` を先頭に作り、空の分類見出しを置いてから終える（steipete: verified release → bump Unreleased）。
 
 ### 4. ステージしてコミットする
 
@@ -126,3 +155,11 @@ push失敗時はforceせず、pullやrebaseが必要ならユーザーへ確認�
 - 日本語メッセージで今セッションの変更だけがコミットされ、各コミットにモデル名の`Co-authored-by`がある。
 - worktreeの場合、コミットがmainの祖先になっている。
 - mainがremoteへpushされ、pull後に同期しており、forceしていない。
+
+## 最終報告
+
+短くでよいが、次は必ず含める:
+
+- コミットSHAとタイトル
+- changelog: 追記内容、またはスキップ理由
+- push / main 同期の結果
