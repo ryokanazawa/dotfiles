@@ -1,15 +1,11 @@
 ---
 name: commit
-description: Create a git commit with changelog when needed, immediately merge worktree commits into main, and push. Use when the user types /commit or /ship, or asks to commit, ship, or push changes.
+description: Create a git commit with changelog when needed, immediately merge worktree commits into main, and push. Use when the user types /commit, or asks to commit or push changes.
 ---
 
-# /commit・/ship — autoreview・changelog・コミット・main反映・push
+# /commit — autoreview・changelog・コミット・main反映・push
 
 今セッションの変更だけをコミットする。changelog更新の前に `autoreview` スキルで変更をチェックし、cleanになるまで直す。ユーザー向け変更なら `CHANGELOG.md`（またはリポジトリの changelog 相当）を更新する。worktree上のコミットは即mainへマージし、mainをpushしてからpullで同期を確認する。
-
-参考運用: [steipete/agent-scripts](https://github.com/steipete/agent-scripts) の `AGENTS.MD`・`docs/update-changelog.md`・`/landpr`（`ship` = changelog + grouped commits + push + pull。Shipped = GitHubへpush済み）。
-
-`/commit` と `/ship` は同じ手順だが、`/ship` は changelog が存在する場合に変更種別を問わず更新を必須とする。「changelog → grouped commits → push → pull」を明示した呼び方。
 
 ## 守るべきルール
 
@@ -43,22 +39,20 @@ changelogファイルの有無も確認する（`CHANGELOG.md`、`CHANGELOG`、`
 
 changelogを更新する前に、必ず `autoreview` スキルを読んで従う。対象は今セッション由来のローカル変更（staged / unstaged / untracked）。無関係な差分は対象から除外し、除外したパスを記録する。
 
-`/commit`・`/ship` は変更を許可する依頼なので、autoreviewの「範囲内の阻害事項」は修正して再レビューする。commit・push・PR更新・マージはこの手順の後続ステップに任せ、autoreview自体では行わない。
+`/commit` は変更を許可する依頼なので、autoreviewの「範囲内の阻害事項」は修正して再レビューする。commit・push・PR更新・マージはこの手順の後続ステップに任せ、autoreview自体では行わない。
 
 autoreviewがcleanになるまで changelog 更新へ進まない。停止して確認が必要な残件、または収束しない残件がある場合は、changelog・コミット・pushをせずに報告して停止する。
 
-### 3. changelogを更新する（`/commit` はユーザー向け、`/ship` は全変更で必須）
+### 3. changelogを更新する
 
-**判定（ユーザーが観測できるか）**
-
-追記する:
+次のいずれかに当てはまる変更は、autoreviewがcleanになったあと、コミット前にchangelogへ追記する。
 
 - 機能追加・挙動変更・UI/UX の変化
 - ユーザーが観測できるバグ修正
 - 破壊的変更・移行が必要な変更
 - 公開 API / CLI の変更
 
-`/commit` で追記しない（最終報告で「changelogスキップ」と理由）:
+次は追記しない。最終報告で「changelogスキップ」と理由を書く。
 
 - テストのみ・内部リファクタ・CI・型だけ・コメントのみ
 - docs-only（ユーザー向け文書の追加や実質的な利用者影響がある変更を除く）
@@ -70,7 +64,7 @@ autoreviewがcleanになるまで changelog 更新へ進まない。停止して
 
 | ファイル | いつ書く | 何を書く |
 |---|---|---|
-| `CHANGELOG.md` | ユーザー向け変更の `/commit`、およびすべての `/ship` | 開発用の1行履歴（必須） |
+| `CHANGELOG.md` | 上記のユーザー向け変更 | 開発用の1行履歴 |
 | `docs/release_notes.md` など App Store「最新情報」用 | App Store 提出準備・明示依頼時のみ | ストア貼り付け用の丁寧な文面。毎回は書かない |
 
 `CHANGELOG.md` が無いリポジトリでは、存在する changelog 相当に従う。changelog が無い場合だけスキップする。
@@ -87,11 +81,11 @@ autoreviewがcleanになるまで changelog 更新へ進まない。停止して
 
 **App Store 最新情報（任意・提出時）**
 
-ユーザーがリリース／提出準備を求めたときだけ、`CHANGELOG.md` の当該版から `docs/release_notes.md`（または同等）を更新する。日常の `/commit`・`/ship` では触らない。
+ユーザーがリリース／提出準備を求めたときだけ、`CHANGELOG.md` の当該版から `docs/release_notes.md`（または同等）を更新する。日常の `/commit` では触らない。
 
 **リリース直後**
 
-バージョンを確定してリリースした場合、次の patch の `## X.Y.Z — Unreleased` を先頭に作り、空の分類見出しを置いてから終える（steipete: verified release → bump Unreleased）。
+バージョンを確定してリリースした場合、次の patch の `## X.Y.Z — Unreleased` を先頭に作り、空の分類見出しを置いてから終える。
 
 ### 4. ステージしてコミットする
 
