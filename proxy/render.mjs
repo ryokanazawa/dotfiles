@@ -75,13 +75,13 @@ function renderMessages(messages) {
 }
 
 /** Build the full Markdown audit document for one captured request/response. */
-export function renderMarkdown(c, audit, responseMd) {
-  const headers = Object.entries(c.headers).map(([k, v]) =>
+export function renderMarkdown(capture, audit, responseMd) {
+  const headers = Object.entries(capture.headers).map(([k, v]) =>
     `${k}: ${REDACT.has(k.toLowerCase()) ? "[REDACTED]" : Array.isArray(v) ? v.join(", ") : v ?? ""}`
   );
-  const req = c.reqJson;
+  const req = capture.reqJson;
   const parts = [
-    ["<meta>", "", `- **timestamp**: ${c.timestamp}`, `- **model**: ${req?.model ?? "unknown"}`, `- **endpoint**: ${c.method} ${c.path}`, `- **upstream status**: ${c.statusCode}`, "", "</meta>"].join("\n"),
+    ["<meta>", "", `- **timestamp**: ${capture.timestamp}`, `- **model**: ${req?.model ?? "unknown"}`, `- **endpoint**: ${capture.method} ${capture.path}`, `- **upstream status**: ${capture.statusCode}`, "", "</meta>"].join("\n"),
     renderAudit(audit),
     ["<headers>", "", "```", ...headers, "```", "", "</headers>"].join("\n"),
   ];

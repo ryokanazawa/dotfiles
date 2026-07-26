@@ -28,22 +28,22 @@ export function auditRequest(reqJson, realInputTokens) {
 }
 
 /** The ranked table, as Markdown. The hero of the whole document. */
-export function renderAudit(a) {
-  const pct = (b) => (a.totalBytes ? ((b / a.totalBytes) * 100).toFixed(1) : "0.0");
-  const rows = a.toolRows
+export function renderAudit(audit) {
+  const pct = (bytes) => (audit.totalBytes ? ((bytes / audit.totalBytes) * 100).toFixed(1) : "0.0");
+  const rows = audit.toolRows
     .map((r) => `| ${r.name} | ${r.bytes.toLocaleString()} | ~${r.tokens.toLocaleString()} | ${pct(r.bytes)}% |`)
     .join("\n");
 
   return [
     "<audit>",
     "",
-    a.realInputTokens != null
-      ? `**${a.realInputTokens.toLocaleString()} input tokens** billed for this request (from the response usage).`
+    audit.realInputTokens != null
+      ? `**${audit.realInputTokens.toLocaleString()} input tokens** billed for this request (from the response usage).`
       : "",
     "",
-    `- **tools**: ${a.toolCount} definitions, ${a.toolsBytes.toLocaleString()} bytes (~${estTokens(a.toolsBytes).toLocaleString()} tokens)`,
-    `- **system prompt**: ${a.systemBytes.toLocaleString()} bytes (~${estTokens(a.systemBytes).toLocaleString()} tokens)`,
-    `- **total request**: ${a.totalBytes.toLocaleString()} bytes`,
+    `- **tools**: ${audit.toolCount} definitions, ${audit.toolsBytes.toLocaleString()} bytes (~${estTokens(audit.toolsBytes).toLocaleString()} tokens)`,
+    `- **system prompt**: ${audit.systemBytes.toLocaleString()} bytes (~${estTokens(audit.systemBytes).toLocaleString()} tokens)`,
+    `- **total request**: ${audit.totalBytes.toLocaleString()} bytes`,
     "",
     "**Tools, ranked by size — this is your cut list:**",
     "",
@@ -56,14 +56,14 @@ export function renderAudit(a) {
 }
 
 /** The same ranking, compact, for the terminal — so you see the bloat live. */
-export function printAudit(a, base, log = console.log) {
-  const top = a.toolRows.slice(0, 12);
+export function printAudit(audit, base, log = console.log) {
+  const top = audit.toolRows.slice(0, 12);
   const w = Math.max(4, ...top.map((r) => r.name.length));
-  log(`\n[agent-proxy] ${a.toolCount} tools · ${a.toolsBytes.toLocaleString()} tool bytes` +
-    (a.realInputTokens != null ? ` · ${a.realInputTokens.toLocaleString()} real input tokens` : ""));
+  log(`\n[agent-proxy] ${audit.toolCount} tools · ${audit.toolsBytes.toLocaleString()} tool bytes` +
+    (audit.realInputTokens != null ? ` · ${audit.realInputTokens.toLocaleString()} real input tokens` : ""));
   for (const r of top) {
     log(`  ${r.name.padEnd(w)}  ${String(r.bytes).padStart(7)} B  ~${r.tokens} tok`);
   }
-  if (a.toolRows.length > top.length) log(`  … ${a.toolRows.length - top.length} more`);
+  if (audit.toolRows.length > top.length) log(`  … ${audit.toolRows.length - top.length} more`);
   log(`  logs/${base}.md\n`);
 }

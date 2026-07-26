@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { auditRequest, estTokens, renderAudit } from "./audit.mjs";
+import { auditRequest, estTokens, printAudit, renderAudit } from "./audit.mjs";
 
 describe("auditRequest", () => {
   it("ranks tools by serialized size descending", () => {
@@ -39,5 +39,15 @@ describe("estTokens / renderAudit", () => {
     const md = renderAudit(auditRequest({ tools: [{ name: "a" }] }, 42));
     assert.match(md, /42 input tokens/);
     assert.match(md, /\| a \|/);
+  });
+
+  it("prints the ranking through the injected logger", () => {
+    const lines = [];
+    const audit = auditRequest({ tools: [{ name: "peek", description: "look" }] }, 42);
+    printAudit(audit, "sample", (line) => lines.push(line));
+
+    assert.match(lines.join("\n"), /peek/);
+    assert.match(lines.join("\n"), /42 real input tokens/);
+    assert.match(lines.join("\n"), /logs\/sample\.md/);
   });
 });
