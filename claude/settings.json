@@ -127,7 +127,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/Developer/dotfiles/claude/hooks/session-title.sh"
+            "command": "$HOME/.claude/hooks/session-title.sh"
           }
         ]
       },
