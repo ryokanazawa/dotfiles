@@ -4,10 +4,13 @@
 # [ホスト名 ユーザー名: パス] モデル名 | Usage | git ブランチ名 [↑N] を表示する
 # 先頭の [ホスト名 ユーザー名: パス] (緑色) は旧シェル PS1 由来のプレフィックス
 
+# shellcheck source=/dev/null
+. "${HOME}/.claude/hooks/lib/json.sh"
+
 input=$(cat)
 
 # カレントディレクトリ (JSON 入力から取得。git コマンドはここを対象にする)
-cwd=$(echo "$input" | jq -r '.cwd // empty')
+cwd=$(hook_jq "$input" '.cwd // empty')
 
 # --- PS1 由来のプレフィックス [ホスト名 ユーザー名: パス] (緑色) ---
 green='\033[32m'
@@ -19,13 +22,15 @@ display_path=$(printf '%s' "$cwd" | sed "s|^$HOME|~|")
 prefix=$(printf '%b[%s %s: %s]%b' "$green" "$host_short" "$user_name" "$display_path" "$reset")
 
 # モデル表示名 (例: "Claude Sonnet 4.6")
-model=$(echo "$input" | jq -r '.model.display_name // "Unknown"')
+model=$(hook_jq "$input" '.model.display_name // "Unknown"')
+[ -n "$model" ] || model="Unknown"
 
 # コンテキスト使用率 (0-100 の数値。メッセージ未送信時は null)
-used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
+used_pct=$(hook_jq "$input" '.context_window.used_percentage // empty')
 
 # 累積入力トークン (キャッシュ読み込み分を含む)
-total_in=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
+total_in=$(hook_jq "$input" '.context_window.total_input_tokens // 0')
+[ -n "$total_in" ] || total_in=0
 
 # Usage 表示を組み立てる
 if [ -n "$used_pct" ]; then
