@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # where: dotfiles/claude/hooks (linked from ~/.claude/settings.json), UserPromptSubmit hook
-# what:  送信した最新プロンプトの先頭にプロジェクト名を添えて、Claude のセッション名を
-#        "<title> · <project>"、Ghostty のタブ名を "<title> · <project> · claude" に設定する。
+# what:  送信した最新プロンプトの先頭に project label を添えて、Claude のセッション名を
+#        "<title> · <project label>"、Ghostty のタブ名を "<title> · <project label> · claude" に設定する。
 # why:   会話一覧（/resume）でもターミナルのタブでも、何の話をどのプロジェクトでしているか
-#        一目で分かるように。タイトル断片は lib/prompt-title.sh、プロジェクト名は project-label。
+#        一目で分かるように。タイトル断片は lib/prompt-title.sh、project label は project-label。
 
 # 失敗してもプロンプト送信をブロックしないよう、常に exit 0 で抜ける（set -e は使わない）。
 
@@ -15,6 +15,7 @@ _HOOK_LIB="$(cd "$(dirname "$0")" && pwd)/lib"
 unset _HOOK_LIB
 
 _lib="${HOME}/.shell/project-label.sh"
+# Link install 未適用の既存環境では、標準 checkout を移行経路として使う。
 [ -f "$_lib" ] || _lib="${HOME}/Developer/dotfiles/shell/project-label.sh"
 # shellcheck source=/dev/null
 . "$_lib"
@@ -25,7 +26,7 @@ title="$(prompt_to_title_part "$(hook_jq "$input" '.prompt // ""')")"
 [ -n "$title" ] || exit 0
 
 cwd="$(hook_jq "$input" '.cwd // ""')"
-session_title="$(titled_with_project "$title" "$(project_label "$cwd")")"
+session_title="$(title_with_project_label "$title" "$(project_label "$cwd")")"
 
 # Ghostty のタブ/ウィンドウタイトルを OSC 2 で設定する。
 # フックは制御端末を持たない（v2.1.139+）ため /dev/tty へは書けない。代わりに

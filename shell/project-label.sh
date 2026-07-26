@@ -2,7 +2,7 @@
 #
 # Interface:
 #   project_label [cwd]              → git トップレベル名、なければ cwd のベース名
-#   titled_with_project base name    → name があれば "base · name"、なければ base
+#   title_with_project_label base label → label があれば "base · label"、なければ base
 #
 # bash / zsh 両対応。副作用なし（git 呼び出しのみ）。呼び出し側は薄い adapter。
 
@@ -24,16 +24,19 @@ project_label() {
     printf '%s\n' "${root##*/}"
   else
     cwd="${cwd%/}"
-    [ -n "$cwd" ] || cwd="."
-    printf '%s\n' "${cwd##*/}"
+    if [ -n "$cwd" ]; then
+      printf '%s\n' "${cwd##*/}"
+    else
+      printf '%s\n' "/"
+    fi
   fi
 }
 
-titled_with_project() {
+title_with_project_label() {
   local base="$1"
-  local name="$2"
-  if [ -n "$name" ]; then
-    printf '%s · %s\n' "$base" "$name"
+  local label="$2"
+  if [ -n "$label" ]; then
+    printf '%s · %s\n' "$base" "$label"
   else
     printf '%s\n' "$base"
   fi

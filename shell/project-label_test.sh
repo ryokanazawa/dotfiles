@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# project_label / titled_with_project の interface テスト。
+# project_label / title_with_project_label の interface テスト。
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -32,10 +32,11 @@ assert_eq "$(project_label "$gitrepo/src/app")" "Brushpass" "git nested cwd"
 
 # 末尾スラッシュ
 assert_eq "$(project_label "$tmpdir/myproj/")" "myproj" "trailing slash"
+assert_eq "$(project_label "/")" "/" "filesystem root"
 
-# titled_with_project
-assert_eq "$(titled_with_project "hello world" "Brushpass")" "hello world · Brushpass" "join"
-assert_eq "$(titled_with_project "hello world" "")" "hello world" "join empty project"
+# title_with_project_label
+assert_eq "$(title_with_project_label "hello world" "Brushpass")" "hello world · Brushpass" "join"
+assert_eq "$(title_with_project_label "hello world" "")" "hello world" "join empty label"
 
 # 空 cwd は空（session-title で .cwd 欠落時に PWD へ落ちない）
 assert_eq "$(project_label "")" "" "empty cwd arg"

@@ -1,6 +1,6 @@
 # UserPromptSubmit 用: 生プロンプト文字列 → セッションタイトル断片。
 # Interface:
-#   prompt_to_title_part <text>  → 短すぎれば空、否则先頭 PROMPT_TITLE_LEN コードポイント
+#   prompt_to_title_part <text>  → 短すぎれば空、それ以外は先頭 PROMPT_TITLE_LEN コードポイント
 #
 # 制御文字除去・長さ判定はここが正本。session-title.sh は adapter。
 
