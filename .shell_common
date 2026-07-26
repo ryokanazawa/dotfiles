@@ -1,4 +1,4 @@
-# Xcode由来のSwift環境変数warningを抑制
+# Xcode由来のSwift環境変数warningを抑制（bash 用。.zshenv でも同様に早期 unset）
 unset SWIFT_DEBUG_INFORMATION_FORMAT 2>/dev/null
 unset SWIFT_DEBUG_INFORMATION_VERSION 2>/dev/null
 
@@ -31,52 +31,38 @@ function rename() {
 ## color
 export CLICOLOR=1
 
+# *env 系: 存在すれば現在シェル向けに init する（anyenv / rbenv / goenv 共通）
+init_env_tool() {
+  local cmd="$1"
+  command -v "$cmd" >/dev/null 2>&1 || return 0
+  if [ -n "${ZSH_VERSION:-}" ]; then
+    eval "$("$cmd" init - zsh)"
+  elif [ -n "${BASH_VERSION:-}" ]; then
+    eval "$("$cmd" init - bash)"
+  else
+    eval "$("$cmd" init -)"
+  fi
+}
+
 ## anyenv
 export PATH="$HOME/.anyenv/bin:$PATH"
-if command -v anyenv >/dev/null 2>&1; then
-  # シェルに応じて適切な初期化を行う
-  if [ -n "$ZSH_VERSION" ]; then
-    eval "$(anyenv init - zsh)"
-  elif [ -n "$BASH_VERSION" ]; then
-    eval "$(anyenv init - bash)"
-  else
-    eval "$(anyenv init -)"
-  fi
-fi
+init_env_tool anyenv
 
 ## ruby
 export PATH="$HOME/.anyenv/envs/rbenv/shims:$PATH"
 export RBENV_ROOT="$HOME/.anyenv/envs/rbenv"
 export PATH="$RBENV_ROOT/bin:$PATH"
-if command -v rbenv >/dev/null 2>&1; then
-  # シェルに応じて適切な初期化を行う
-  if [ -n "$ZSH_VERSION" ]; then
-    eval "$(rbenv init - zsh)"
-  elif [ -n "$BASH_VERSION" ]; then
-    eval "$(rbenv init - bash)"
-  else
-    eval "$(rbenv init -)"
-  fi
-fi
+init_env_tool rbenv
 
 ## go
 export GOENV_ROOT="$HOME/.anyenv/envs/goenv"
 export PATH="$GOENV_ROOT/bin:$PATH"
-if command -v goenv >/dev/null 2>&1; then
-  # シェルに応じて適切な初期化を行う
-  if [ -n "$ZSH_VERSION" ]; then
-    eval "$(goenv init - zsh)"
-  elif [ -n "$BASH_VERSION" ]; then
-    eval "$(goenv init - bash)"
-  else
-    eval "$(goenv init -)"
-  fi
-fi
+init_env_tool goenv
 # GOROOTとGOPATHはgoenv init後に設定
-if [ -n "$GOROOT" ]; then
+if [ -n "${GOROOT:-}" ]; then
   export PATH="$GOROOT/bin:$PATH"
 fi
-if [ -n "$GOPATH" ]; then
+if [ -n "${GOPATH:-}" ]; then
   export PATH="$GOPATH/bin:$PATH"
 fi
 
@@ -117,7 +103,7 @@ if [ -d "$HOME/.codeium/windsurf/bin" ]; then
   export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 fi
 
-# Added by Cursor Agent
+# Added by Cursor Agent / Hermes など
 export PATH="$HOME/.local/bin:$PATH"
 
 # Added by Antigravity
@@ -129,4 +115,3 @@ fi
 if [ -d "$HOME/.opencode/bin" ]; then
   export PATH="$HOME/.opencode/bin:$PATH"
 fi
-

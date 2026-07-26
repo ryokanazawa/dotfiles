@@ -43,6 +43,7 @@ install_vim_plug() {
 # Shell
 link_file "$DOTFILES_DIR/.bash_profile" "$HOME/.bash_profile"
 link_file "$DOTFILES_DIR/.shell_common" "$HOME/.shell_common"
+link_file "$DOTFILES_DIR/.zshenv" "$HOME/.zshenv"
 link_file "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 link_file "$DOTFILES_DIR/shell/project-label.sh" "$HOME/.shell/project-label.sh"
 
