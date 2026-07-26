@@ -31,23 +31,30 @@ if [[ "$TERM_PROGRAM" == "kiro" ]] && command -v kiro >/dev/null 2>&1; then
   . "$(kiro --locate-shell-integration-path zsh)"
 fi
 
-# Claude Code のタイトル上書きを無効化
+# Claude Code のタイトル上書きを無効化（settings.json と同値。導出名は shell/project-label.sh）
 export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1
+
+# ウィンドウタイトル用のプロジェクト名（shell/project-label.sh）
+_project_label_sh="$HOME/.shell/project-label.sh"
+[ -f "$_project_label_sh" ] || _project_label_sh="$HOME/Developer/dotfiles/shell/project-label.sh"
+if [ -f "$_project_label_sh" ]; then
+  # shellcheck source=/dev/null
+  source "$_project_label_sh"
+fi
+unset _project_label_sh
 
 # コマンド実行直前にウィンドウタイトルを「<cmd> <project|dir>」に設定
 # 例: Brushpass で `claude` を叩くと "claude Brushpass" が出る
 preexec() {
-  local project
-  project=$(git rev-parse --show-toplevel 2>/dev/null) && project="${project:t}" || project="${PWD:t}"
-  local cmd="${1%% *}"
+  local project cmd
+  project="$(project_label)"
+  cmd="${1%% *}"
   print -Pn "\e]2;${cmd} ${project}\a"
 }
 
 # claude を抜けた後・通常のプロンプトでもディレクトリを出しておく
 precmd() {
-  local project
-  project=$(git rev-parse --show-toplevel 2>/dev/null) && project="${project:t}" || project="${PWD:t}"
-  print -Pn "\e]2;${project}\a"
+  print -Pn "\e]2;$(project_label)\a"
 }
 
 # Ghostty シェル統合
