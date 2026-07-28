@@ -7,3 +7,5 @@ prefix_rule(
     decision = "allow",
     justification = "Xcode 26.5を指定したxcodebuildを常時許可",
 )
+prefix_rule(pattern=["git", "add"], decision="allow")
+prefix_rule(pattern=["git", "commit"], decision="allow")

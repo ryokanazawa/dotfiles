@@ -27,6 +27,7 @@ link_skill() {
 
   link_file "$src" "$HOME/.claude/skills/$skill_name"
   link_file "$src" "$HOME/.codex/skills/$skill_name"
+  link_file "$src" "$HOME/.agents/skills/$skill_name"
 }
 
 install_vim_plug() {
@@ -62,16 +63,13 @@ link_file "$DOTFILES_DIR/claude/statusline-command.sh" "$HOME/.claude/statusline
 link_file "$DOTFILES_DIR/claude/hooks" "$HOME/.claude/hooks"
 link_file "$DOTFILES_DIR/claude/rules" "$HOME/.claude/rules"
 link_file "$DOTFILES_DIR/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
-link_file "$DOTFILES_DIR/.codex/rules/default.rules" "$HOME/.codex/rules/default.rules"
+link_file "$DOTFILES_DIR/codex/rules/default.rules" "$HOME/.codex/rules/default.rules"
 
-# Skills (shared between Claude and Codex)
+# Skills (shared between Claude, Codex, and agents)
 for skill_dir in "$DOTFILES_DIR"/skills/*/; do
   [ -d "$skill_dir" ] || continue
   link_skill "$(basename "$skill_dir")"
 done
-
-# エージェント共通のスキル標準配置
-link_file "$DOTFILES_DIR/skills/autoreview" "$HOME/.agents/skills/autoreview"
 
 link_file "$DOTFILES_DIR/cursor/settings.json" "$HOME/Library/Application Support/Cursor/User/settings.json"
 link_file "$DOTFILES_DIR/cursor/keybindings.json" "$HOME/Library/Application Support/Cursor/User/keybindings.json"

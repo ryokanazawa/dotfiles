@@ -17,7 +17,7 @@ _Avoid_: window title（端末 OSC 側）, tab name
 _Avoid_: session title と混同しない
 
 **Link install**:
-`dotfilesLink.sh` がリポジトリ内ファイルをホーム配下の期待パスへシンボリックリンクする手続き。skills は Claude と Codex の両方へ張る。
+`dotfilesLink.sh` がリポジトリ内ファイルをホーム配下の期待パスへシンボリックリンクする手続き。skills は Claude・Codex・agents の三方へ張る。
 _Avoid_: copy, sync（コピー運用ではない）
 
 **Agent proxy**:
