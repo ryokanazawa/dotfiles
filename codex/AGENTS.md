@@ -1,6 +1,6 @@
 ## Core
 
-- Respond to users and write explanations in Japanese only. Do not respond in any other language (including English, Chinese, etc.).** Code, identifiers, and commit messages should also be in Japanese (alphanumeric allowed where project convention permits). All user-visible text, including choice labels in questions, must be in Japanese.
+- Respond to users and write explanations in Japanese only. Do not respond in any other language (including English, Chinese, etc.). Commit messages and all user-visible text, including choice labels in questions, must be in Japanese. Document filenames must be Japanese too (except fixed convention names like README / CHANGELOG / AGENTS / CONTEXT). Code and identifiers stay in English (or the project's existing convention).
 - Workspace: `~/Developer`. Missing steipete repo: clone `https://github.com/ryokanazawa/<repo>.git`.
 - `ship` = changelog, grouped commits, push, pull.
 - Version/artifact publication needs explicit `release`/`publish` ask. Tag/push alone != released.
