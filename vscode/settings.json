@@ -45,6 +45,11 @@
     "lldb.suppressUpdateNotifications": true,
 	"workbench.editor.enablePreviewFromQuickOpen": true,
 	"terminal.integrated.defaultProfile.osx": "zsh",
+	"terminal.integrated.env.osx": {
+		"TERM": "xterm-256color",
+		"COLORTERM": "truecolor",
+		"NO_COLOR": null
+	},
 	"editor.fontSize": 13,
 	"workbench.colorTheme": "Gruvbox Dark Medium",
 	"claudeCode.selectedModel": "default",
