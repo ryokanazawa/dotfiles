@@ -79,3 +79,7 @@ autoload -Uz compinit && compinit -C
 
 # kimi-code
 export PATH="$HOME/.kimi-code/bin:$PATH"
+
+# Qwen Code PATH block begin
+export PATH='/Users/ryo/.local/bin':$PATH
+# Qwen Code PATH block end
