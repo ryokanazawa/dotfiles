@@ -64,6 +64,8 @@ link_file "$DOTFILES_DIR/claude/hooks" "$HOME/.claude/hooks"
 link_file "$DOTFILES_DIR/claude/rules" "$HOME/.claude/rules"
 link_file "$DOTFILES_DIR/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 link_file "$DOTFILES_DIR/codex/rules/default.rules" "$HOME/.codex/rules/default.rules"
+# API キーは追跡外の ~/.qwen/.env で提供する
+link_file "$DOTFILES_DIR/qwen/settings.json" "$HOME/.qwen/settings.json"
 
 # Skills (shared between Claude, Codex, and agents)
 for skill_dir in "$DOTFILES_DIR"/skills/*/; do

@@ -1,0 +1,59 @@
+{
+  "$version": 4,
+  "modelProviders": {
+    "openai": [
+      {
+        "id": "qwen3.8-max",
+        "name": "[Bailian] qwen3.8-max",
+        "baseUrl": "https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1",
+        "envKey": "DASHSCOPE_API_KEY"
+      }
+    ]
+  },
+  "security": {
+    "auth": {
+      "selectedType": "openai",
+      "baseUrl": "https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1"
+    }
+  },
+  "model": {
+    "name": "qwen3.8-max",
+    "baseUrl": "https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1"
+  },
+  "tools": {
+    "computerUse": {
+      "enabled": false
+    },
+    "disabled": [
+      "notebook_edit",
+      "record_artifact",
+      "display_image",
+      "zoom_image",
+      "cron_create",
+      "cron_list",
+      "cron_delete",
+      "loop_wakeup",
+      "create_sub_session",
+      "get_goal",
+      "update_goal"
+    ]
+  },
+  "skills": {
+    "disabledLevels": ["bundled"],
+    "disabled": [
+      "bailian-cli",
+      "bailian-finetune",
+      "bailian-gen",
+      "bailian-managed-agent",
+      "bailian-protocol"
+    ]
+  },
+  "memory": {
+    "enableAutoSkill": false,
+    "enableManagedAutoMemory": false,
+    "enableManagedAutoDream": false
+  },
+  "ui": {
+    "autoModeAcknowledged": true
+  }
+}
