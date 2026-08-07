@@ -65,10 +65,11 @@ xcodebuild -list -json                           # Package.swift のあるディ
 
 ```sh
 # -workspace / -project / 省略 の使い分けは手順 4 と同じ
-xcodebuild -showdestinations -project "$CONTAINER" -scheme "$SCHEME" 2>&1 | tail -20
+xcodebuild -showdestinations -project "$CONTAINER" -scheme "$SCHEME" \
+  | grep -o 'platform:[^,}]*' | sort -u
 ```
 
-出た `platform:` を見て選ぶ。
+`platform:` だけを抜くと、シミュレータの台数やランタイム数に左右されずに候補の軸が出る（macOS 単体アプリなら `platform:macOS` の 1 行、iOS アプリなら `platform:iOS` と `platform:iOS Simulator` の 2 行）。出たものを見て選ぶ。一覧は stdout に出るので、`2>&1` を挟まなければスキーム名の誤りなどは stderr にそのまま表示される。
 
 | 候補にあるもの | 指定 |
 |---|---|
@@ -81,7 +82,7 @@ xcodebuild -showdestinations -project "$CONTAINER" -scheme "$SCHEME" 2>&1 | tail
 
 ### 6. ビルドする
 
-出力が長いのでログをファイルへ落とし、成否は終了コードで判定する。
+出力が長いのでログを `/tmp/xcodebuild.log` へ落とし、成否は終了コードで判定する。書き込みと読み出しは別のシェル呼び出しになるので、パスは固定にして両者を確実に一致させる。
 
 ```sh
 # -workspace/-project と destination は手順2・5で決めたものに置き換える
@@ -89,7 +90,7 @@ xcodebuild build \
   -workspace "$CONTAINER" \
   -scheme "$SCHEME" \
   -destination 'generic/platform=iOS Simulator' \
-  > "/tmp/xcodebuild-$SCHEME.log" 2>&1; echo "exit=$?"
+  > /tmp/xcodebuild.log 2>&1; echo "exit=$?"
 ```
 
 - `-derivedDataPath` は付けない。DerivedData はコンテナのパスでハッシュ分割されるので worktree ごとに既に分かれており、既定のままなら GUI 側のビルドと同じキャッシュが温まる。
@@ -98,8 +99,8 @@ xcodebuild build \
 ログからは次を抜き出して読む。警告を同じ grep に混ぜるとエラー行が押し流されるので、エラーを先に取り、警告は件数で見る。
 
 ```sh
-grep -n -E "error:|BUILD (SUCCEEDED|FAILED)|The following build commands failed" "/tmp/xcodebuild-$SCHEME.log" | head -40
-grep -c "warning:" "/tmp/xcodebuild-$SCHEME.log"
+grep -n -E "error:|BUILD (SUCCEEDED|FAILED)|The following build commands failed" /tmp/xcodebuild.log | head -40
+grep -c "warning:" /tmp/xcodebuild.log
 ```
 
 終了コード 0 かつ `** BUILD SUCCEEDED **` なら成功。
