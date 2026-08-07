@@ -154,9 +154,7 @@
     "type": "command",
     "command": "$HOME/.claude/statusline-command.sh"
   },
-  "enabledPlugins": {
-    "swift-lsp@claude-plugins-official": true
-  },
+  "enabledPlugins": {},
   "language": "Japanese",
   "effortLevel": "high",
   "advisorModel": "fable",
