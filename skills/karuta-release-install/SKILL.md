@@ -1,5 +1,6 @@
 ---
 name: karuta-release-install
+description: Karuta の現在HEADを Release でアーカイブし、署名・アーキテクチャ・ハッシュを検証して /Applications/Karuta.app を置き換え、起動まで行う。Karuta の書き出し、ローカル実機へのインストール、Release ビルドの差し替え、最新版の再インストールを依頼されたときに使う。Developer ID 署名・公証・配布は対象外。
 disable-model-invocation: true
 ---
 
