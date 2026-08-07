@@ -1,0 +1,3 @@
+interface:
+  display_name: "Xcode Build"
+  short_description: "Open the current worktree in Xcode and build it"
