@@ -75,17 +75,34 @@ OUT=$(cat /private/tmp/Karuta-Export.latest)
 NEW="$OUT/書き出し/Karuta.app"
 test -d "$NEW" || { echo "書き出しが無い"; exit 1; }
 
+wait_gone() {
+  local n=0
+  while pgrep -x Karuta >/dev/null; do
+    n=$((n + 1)); [ "$n" -ge 24 ] && return 1
+    sleep 0.5
+  done
+  return 0
+}
+signal_all() {
+  local sig="$1" p
+  local pids=($(pgrep -x Karuta))
+  for p in "${pids[@]}"; do
+    ps -p "$p" -o comm= | grep -q '/Karuta\.app/Contents/MacOS/Karuta$' \
+      || { echo "想定外のプロセス pid=$p"; return 1; }
+    echo "$sig pid=$p ($(ps -p "$p" -o comm=))"
+    kill -"$sig" "$p"
+  done
+  return 0
+}
+
 osascript -e 'tell application id "jp.co.rigato.karuta" to quit' >/dev/null 2>&1 || true
-for i in 1 2 3 4 5 6 7 8 9 10; do pgrep -x Karuta >/dev/null || break; sleep 0.5; done
-pids=($(pgrep -x Karuta))
-for p in "${pids[@]}"; do
-  ps -p "$p" -o comm= | grep -q '/Karuta\.app/Contents/MacOS/Karuta$' \
-    || { echo "想定外のプロセス pid=$p"; exit 1; }
-  echo "TERM pid=$p ($(ps -p "$p" -o comm=))"
-  kill -TERM "$p"
-done
-for i in 1 2 3 4 5 6 7 8 9 10; do pgrep -x Karuta >/dev/null || break; sleep 0.5; done
-pgrep -x Karuta >/dev/null && { echo "終了できない: $(pgrep -x Karuta)"; exit 1; }
+if ! wait_gone; then
+  signal_all TERM || exit 1
+  if ! wait_gone; then
+    signal_all KILL || exit 1
+    wait_gone || { echo "終了できない: $(pgrep -x Karuta)"; exit 1; }
+  fi
+fi
 echo "プロセス終了確認"
 
 mkdir -p "$OUT/旧版"
@@ -110,6 +127,8 @@ echo "旧版退避先: $OUT/旧版/Karuta.app"
 ```
 
 完了条件: 起動 PID の実行ファイルが `/Applications/Karuta.app/Contents/MacOS/Karuta`、インストール版も署名検証成功、両バイナリの SHA-256 が一致、`git status -sb` が手順1と同じ。
+
+終了は AppleScript の quit → `TERM` → `KILL` の順に上げ、各段階で最大12秒待つ。TERM に数秒かかることがあるので、待ちを詰めない。`KILL` は最終手段だが省略しない。省略すると置換前に止まり、`/Applications` 版だけ quit された状態が残る。
 
 `/Applications` 版以外（DerivedData の Debug ビルド）を終了させた場合は、ユーザーの開発中インスタンスを落としたことになる。手順から外れた措置として報告に明記する。
 
