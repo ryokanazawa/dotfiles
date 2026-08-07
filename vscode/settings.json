@@ -70,5 +70,7 @@
 	"claudeCode.enableNewConversationShortcut": true,
 	"claudeCode.environmentVariables": [],
 	"editor.fontFamily": "'Guguru Sans Code 35', Menlo, Monaco, 'Courier New', monospace",
-	"workbench.experimental.modernUI": true
+	"workbench.experimental.modernUI": true,
+	"update.showReleaseNotes": false,
+	"security.workspace.trust.untrustedFiles": "open"
 }
