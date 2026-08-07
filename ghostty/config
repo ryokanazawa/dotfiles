@@ -2,7 +2,7 @@
 # Additionally, each config option is also explained in detail
 # on Ghostty's website, at https://ghostty.org/docs/config.
 
-theme = Dayfox
+# theme = Dayfox
 # theme = Atom One Dark
 
 # tcell (lazygit等) がxterm-ghosttyのterminfoを解決できず単色になるため固定
@@ -12,11 +12,11 @@ working-directory = ~/Developer
 
 macos-titlebar-style = tabs
 
-window-padding-x = 15
-window-padding-y = 15
+# window-padding-x = 15
+# window-padding-y = 15
 
 font-family = "Guguru Sans Code 35"
-font-size = 12
+font-size = 13
 adjust-cell-height = 3
 
 keybind = cmd+enter=ignore
