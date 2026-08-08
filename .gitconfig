@@ -6,7 +6,7 @@
 [user]
 	name = Ryo Kanazawa
 	email = ryoau9@gmail.com
-	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBqZzvHC3k2XmHNeKrbfiw5ZUAQCf2FbOtispQ2theGB
+	signingkey = ~/.ssh/id_ed25519
 [color]
 	ui = auto
 [alias]
@@ -27,7 +27,5 @@
 	helper = !/opt/homebrew/bin/gh auth git-credential
 [gpg]
 	format = ssh
-[gpg "ssh"]
-	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
 [commit]
 	gpgsign = true
