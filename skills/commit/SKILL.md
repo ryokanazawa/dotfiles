@@ -5,7 +5,7 @@ description: Create a git commit with changelog when needed, immediately merge w
 
 # /commit — autoreview・changelog・コミット・main反映・push
 
-今セッションの変更だけをコミットする。changelog更新の前に `autoreview` スキルで変更をチェックし、cleanになるまで直す。ユーザー向け変更なら `CHANGELOG.md`（またはリポジトリの changelog 相当）を更新する。worktree上のコミットは即mainへマージし、mainをpushしてからpullで同期を確認する。
+今セッションの変更だけをコミットする。changelog更新の前に `autoreview` スキルで変更をチェックし、cleanになるまで直す。ユーザー向け変更なら `CHANGELOG.md`（またはリポジトリの changelog 相当）を更新する。worktree上のコミットは最新のmainへrebaseしてから必ずfast-forwardで統合し（merge commit禁止）、mainをpushしてからpullで同期を確認する。
 
 ## 守るべきルール
 
@@ -108,19 +108,20 @@ EOF
 
 複数コミットする場合も、各コミットに同じ`Co-authored-by`を付ける。コミットSHA（複数なら全部）を取得し、作業worktreeが期待どおりの状態なら完了。
 
-### 5. worktreeなら即mainへマージする
+### 5. worktreeなら即mainへマージする（rebase → ff-only、merge commit禁止）
 
 `git worktree list --porcelain`で`refs/heads/main`のチェックアウト先を特定する。現在地がmainでなければ、コミット直後に次を行う。
 
-1. mainチェックアウトで`git status --short --branch`を確認する。
-2. mainの未コミット変更パスと今回のコミット群の変更パスを比較する。
-3. パスが重ならなければ、mainの未コミット変更を保持したまま`git merge --ff-only <先端コミットSHA>`を実行する。
-4. mainが進んでいてfast-forwardできない場合は`git merge --no-edit <先端コミットSHA>`を実行する。
-5. `git merge-base --is-ancestor <各コミットSHA> main`で反映を確認する。
+1. mainチェックアウトで`git status --short --branch`を確認する。remoteがありmainが遅れていれば`git pull --ff-only`でローカルmainを最新化する（remoteが無い、または失敗した場合はローカルmainのままで進める）。
+2. worktreeブランチ上で`git rebase main`を実行し、mainに追いつかせる。コンフリクトしたら解消して`git rebase --continue`する。rebaseすると先端SHAが変わる点に注意する。
+3. mainの未コミット変更パスと今回のコミット群の変更パスを比較する。
+4. パスが重ならなければ、mainチェックアウト側で`git merge --ff-only <rebase後の先端コミットSHA>`を実行する。mainの未コミット変更は保持したまま行う。
+5. `--ff-only`が失敗する場合はrebaseが不足しているので、ステップ2へ戻って`git rebase main`からやり直す。`--no-ff`や通常の`git merge`は絶対に使わない。
+6. `git merge-base --is-ancestor <rebase後の各コミットSHA> main`で反映を確認する。
 
-mainがdirtyという理由だけでは停止しない。変更パスが重なる、未追跡ファイルを上書きする、または競合した場合だけ停止し、mainの変更をstash・破棄・同梱しない。
+mainがdirtyという理由だけでは停止しない。変更パスが重なる、未追跡ファイルを上書きする場合だけ停止し、mainの変更をstash・破棄・同梱しない。rebaseのコンフリクトを解消できない場合は`git rebase --abort`で元に戻してから停止する。
 
-mainチェックアウトが存在しない場合は、新しいworktreeやブランチを作らず、コミットSHAを報告して停止する。
+mainチェックアウトが存在しない場合は、新しいworktreeやブランチを作らず、rebase後のコミットSHAを報告して停止する。
 
 ### 6. mainをpushし、pullで確認する
 
@@ -137,7 +138,8 @@ push失敗時はforceせず、pullやrebaseが必要ならユーザーへ確認�
 
 - autoreviewがcleanにならない: changelog・コミット・pushをせず、残件と停止理由を報告する。
 - pre-commit hook失敗: 原因を直し、再ステージして新しいコミットを作る。amendしない。
-- mainとのパス重複・競合: worktreeのコミットSHAを報告して停止する。
+- mainとのパス重複: worktreeのrebase後コミットSHAを報告して停止する。
+- rebaseのコンフリクトを解消できない: `git rebase --abort`で元に戻し、状況とコミットSHAを報告して停止する。
 - secret検出: ステージせず、ユーザーへ報告する。
 - 無関係な差分: 含めず、最終報告で列挙する。
 - changelogのUnreleased形式が不明: 既存スタイルを推測できない場合は追記せず、ユーザーへ確認する。
