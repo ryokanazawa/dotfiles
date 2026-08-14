@@ -22,7 +22,14 @@ ROOT=/Users/ryo/Developer/Karuta
 OUT=$(mktemp -d /private/tmp/Karuta-Export.XXXXXX)
 printf '%s\n' "$OUT" > /private/tmp/Karuta-Export.latest
 echo "OUT=$OUT"
-git -C "$ROOT" status -sb | tee "$OUT/status1.txt"
+git -C "$ROOT" status -sb | tee "$OUT/status1.txt" || exit 1
+git -C "$ROOT" rev-parse HEAD | tee "$OUT/head1.txt" || exit 1
+git -C "$ROOT" status --porcelain=v1 --untracked-files=all > "$OUT/worktree1.txt" || exit 1
+if [ -s "$OUT/worktree1.txt" ]; then
+  echo "作業ツリーが clean でないため、現在の HEAD と同一の成果物を保証できない"
+  cat "$OUT/worktree1.txt"
+  exit 1
+fi
 git -C "$ROOT" log -1 --oneline --decorate
 security find-identity -v -p codesigning
 xcodebuild -project "$ROOT/Karuta.xcodeproj" -scheme Karuta -configuration Release \
@@ -38,9 +45,9 @@ ditto "$OUT/Karuta.xcarchive/Products/Applications/Karuta.app" "$OUT/書き出�
 ls -d "$OUT/書き出し/Karuta.app"
 ```
 
-完了条件: `build_exit=0`、`** ARCHIVE SUCCEEDED **`、`$OUT/書き出し/Karuta.app` の `ls` が出る。
+完了条件: 作業ツリーが clean、`build_exit=0`、`** ARCHIVE SUCCEEDED **`、`$OUT/書き出し/Karuta.app` の `ls` が出る。
 
-署名 identity は `security find-identity` の実測値で呼ぶ。`Apple Development` を `Developer ID Application` と呼ばない。`warning_count` は成功結果とは別に報告する。`git status -sb` は `$OUT/status1.txt` にも落とし、手順3 がスクリプト内で突き合わせる。
+署名 identity は `security find-identity` の実測値で呼ぶ。`Apple Development` を `Developer ID Application` と呼ばない。`warning_count` は成功結果とは別に報告する。`git status -sb` と `git rev-parse HEAD` はファイルにも落とし、手順3 がスクリプト内で突き合わせる。
 
 `: error:` で絞るのは、Swift の関数シグネチャ（`(value: T?, error: AXError)` など）が素の `error:` に誤ヒットするため。xcodebuild の実エラーは `ファイル:行:桁: error:` 形式なので取りこぼさない。
 
@@ -51,15 +58,35 @@ ls -d "$OUT/書き出し/Karuta.app"
 ```sh
 set -uo pipefail
 OUT=$(cat /private/tmp/Karuta-Export.latest)
-codesign --verify --deep --strict --verbose=2 "$OUT/書き出し/Karuta.app" 2>&1
-codesign -d --verbose=2 "$OUT/書き出し/Karuta.app" 2>&1 | grep -E '^(Identifier|Authority|TeamIdentifier)='
-lipo -archs "$OUT/書き出し/Karuta.app/Contents/MacOS/Karuta"
+APP="$OUT/書き出し/Karuta.app"
+EXPECTED_BUNDLE_ID=jp.co.rigato.karuta
+EXPECTED_TEAM=5SF8ZY3PT8
+test -d "$APP" || { echo "書き出しが無い: $APP"; exit 1; }
+
+codesign --verify --deep --strict --verbose=2 "$APP" 2>&1 \
+  || { echo "書き出し版の署名検証に失敗"; exit 1; }
+codesign -d --verbose=2 "$APP" 2>&1 \
+  | grep -E '^(Identifier|Authority|TeamIdentifier)=' \
+  | tee "$OUT/signature2.txt" \
+  || { echo "書き出し版の署名情報を取得できない"; exit 1; }
+grep -Fxq "Identifier=$EXPECTED_BUNDLE_ID" "$OUT/signature2.txt" \
+  || { echo "Bundle ID が違う"; exit 1; }
+grep -Eq '^Authority=Apple Development:' "$OUT/signature2.txt" \
+  || { echo "Apple Development 署名でない"; exit 1; }
+grep -Fxq "TeamIdentifier=$EXPECTED_TEAM" "$OUT/signature2.txt" \
+  || { echo "Team ID が違う"; exit 1; }
+
+archs=$(lipo -archs "$APP/Contents/MacOS/Karuta") \
+  || { echo "アーキテクチャを取得できない"; exit 1; }
+echo "archs=$archs"
+case " $archs " in *' arm64 '*) ;; *) echo "arm64 が無い"; exit 1;; esac
+case " $archs " in *' x86_64 '*) ;; *) echo "x86_64 が無い"; exit 1;; esac
 ls -ld /Applications/Karuta.app 2>&1 || true
 pgrep -x Karuta | while read -r p; do echo "running pid=$p $(ps -p "$p" -o comm=)"; done
 echo "検証終了"
 ```
 
-完了条件: `valid on disk` と `satisfies its Designated Requirement` の両方、`Identifier=jp.co.rigato.karuta`、`x86_64 arm64`。
+完了条件: 終了コード 0 と `検証終了`、`valid on disk`、`satisfies its Designated Requirement`、`Identifier=jp.co.rigato.karuta`、`Authority=Apple Development: ...`、`TeamIdentifier=5SF8ZY3PT8`、`archs` に `x86_64` と `arm64` の両方。
 
 `codesign` は結果を stderr に出すので `2>&1` を外さない。アーキテクチャが `arm64` だけなら完了条件未達。取り繕わずに報告し、`-destination` の arch 指定を外すか `ARCHS="arm64 x86_64"` で再アーカイブする。
 
@@ -73,6 +100,8 @@ echo "検証終了"
 set -uo pipefail
 ROOT=/Users/ryo/Developer/Karuta
 OUT=$(cat /private/tmp/Karuta-Export.latest)
+EXPECTED_BUNDLE_ID=jp.co.rigato.karuta
+EXPECTED_TEAM=5SF8ZY3PT8
 case "$OUT" in
   *..*|/private/tmp/Karuta-Export.*/*) echo "想定外の OUT: $OUT"; exit 1;;
   /private/tmp/Karuta-Export.?*) ;;
@@ -82,6 +111,8 @@ NEW="$OUT/書き出し/Karuta.app"
 OLD="$OUT/旧版/Karuta.app"
 test -d "$NEW" || { echo "書き出しが無い"; exit 1; }
 test -s "$OUT/status1.txt" || { echo "手順1の status1.txt が無い/空: $OUT"; exit 1; }
+test -s "$OUT/head1.txt" || { echo "手順1の head1.txt が無い/空: $OUT"; exit 1; }
+test -s "$OUT/signature2.txt" || { echo "手順2の signature2.txt が無い/空: $OUT"; exit 1; }
 [ -e "$OLD" ] && { echo "旧版が既にある。手順1からやり直す: $OUT"; exit 1; }
 
 fail() {
@@ -135,7 +166,21 @@ fi
 
 codesign --verify --deep --strict --verbose=2 /Applications/Karuta.app 2>&1 \
   || fail "インストール版の署名検証に失敗"
-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/Karuta.app
+codesign -d --verbose=2 /Applications/Karuta.app 2>&1 \
+  | grep -E '^(Identifier|Authority|TeamIdentifier)=' \
+  | tee "$OUT/signature3.txt" \
+  || fail "インストール版の署名情報を取得できない"
+grep -Fxq "Identifier=$EXPECTED_BUNDLE_ID" "$OUT/signature3.txt" \
+  || fail "インストール版の Bundle ID が違う"
+grep -Eq '^Authority=Apple Development:' "$OUT/signature3.txt" \
+  || fail "インストール版が Apple Development 署名でない"
+grep -Fxq "TeamIdentifier=$EXPECTED_TEAM" "$OUT/signature3.txt" \
+  || fail "インストール版の Team ID が違う"
+diff -q "$OUT/signature2.txt" "$OUT/signature3.txt" >/dev/null \
+  || fail "書き出し版とインストール版の署名情報が違う"
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
+  -f /Applications/Karuta.app \
+  || fail "Launch Services への登録に失敗"
 open /Applications/Karuta.app || fail "open に失敗"
 
 n=0
@@ -149,25 +194,42 @@ echo "起動 pid=$pid ($(ps -p "$pid" -o comm=))"
 ps -p "$pid" -o comm= | grep -q '/Applications/Karuta\.app/Contents/MacOS/Karuta$' \
   || fail "起動したのが /Applications 版でない"
 
-sum_new=$(shasum -a 256 "$NEW/Contents/MacOS/Karuta" | cut -d' ' -f1)
-sum_installed=$(shasum -a 256 /Applications/Karuta.app/Contents/MacOS/Karuta | cut -d' ' -f1)
+sum_new=$(shasum -a 256 "$NEW/Contents/MacOS/Karuta" | cut -d' ' -f1) \
+  || fail "書き出し版の SHA-256 計算に失敗"
+sum_installed=$(shasum -a 256 /Applications/Karuta.app/Contents/MacOS/Karuta | cut -d' ' -f1) \
+  || fail "インストール版の SHA-256 計算に失敗"
+[ -n "$sum_new" ] || fail "書き出し版の SHA-256 が空"
+[ -n "$sum_installed" ] || fail "インストール版の SHA-256 が空"
 echo "sha256=$sum_new"
 [ "$sum_new" = "$sum_installed" ] || fail "SHA-256 不一致 $sum_new / $sum_installed"
 
-git -C "$ROOT" status -sb | tee "$OUT/status3.txt"
+git -C "$ROOT" status -sb | tee "$OUT/status3.txt" \
+  || fail "最終 git status の取得に失敗"
+git -C "$ROOT" rev-parse HEAD | tee "$OUT/head3.txt" \
+  || fail "最終 HEAD の取得に失敗"
 diff -q "$OUT/status1.txt" "$OUT/status3.txt" >/dev/null \
   || fail "git status が手順1と違う"
+diff -q "$OUT/head1.txt" "$OUT/head3.txt" >/dev/null \
+  || fail "HEAD が手順1と違う"
 
+if [ -d "$OLD" ]; then
+  backup=$(mktemp -d /private/tmp/Karuta-Backup.XXXXXX) \
+    || { echo "旧版の保持先を作れない: $OLD"; exit 1; }
+  mv "$OLD" "$backup/Karuta.app" \
+    || { rmdir "$backup" 2>/dev/null || true; echo "旧版を保持先へ移せない: $OLD"; exit 1; }
+  echo "旧版退避先: $backup/Karuta.app（明示承認までは削除しない）"
+fi
 rm -rf "$OUT" || { echo "一時ディレクトリを消せない: $OUT"; exit 1; }
-rm -f /private/tmp/Karuta-Export.latest
+rm -f /private/tmp/Karuta-Export.latest \
+  || { echo "一時ポインタを消せない: /private/tmp/Karuta-Export.latest"; exit 1; }
 echo "一時ディレクトリを削除した: $OUT"
 find /private/tmp -maxdepth 1 -name 'Karuta-Export.*' -exec echo "残骸: {}" \;
 echo "完了"
 ```
 
-完了条件: `完了` が出る。起動 PID の実行ファイルが `/Applications/Karuta.app/Contents/MacOS/Karuta`、インストール版も署名検証成功、両バイナリの SHA-256 が一致、`git status -sb` が手順1と同じ。いずれかを落とすとスクリプトはそこで `exit 1` し、一時ディレクトリは残る。
+完了条件: `完了` が出る。起動 PID の実行ファイルが `/Applications/Karuta.app/Contents/MacOS/Karuta`、インストール版も同じ Bundle ID・Apple Development Authority・Team ID で署名検証成功、両バイナリの SHA-256 が一致、`HEAD` と `git status -sb` が手順1と同じ。いずれかを落とすとスクリプトはそこで `exit 1` し、旧版と検証材料は残る。
 
-完了条件をすべて満たしたときだけ、スクリプトが `$OUT` と `/private/tmp/Karuta-Export.latest` を消す。`/private/tmp` に残骸を残さない。旧版は `$OUT` の中なので一緒に消えるが、それは起動と SHA-256 一致まで確認した後なので復元先は要らない。逆に失敗した場合は消さずに残す — 旧版の復元とログの確認に要る。`残骸:` の行が出たら、それは他の実行が残したもの。
+完了条件をすべて満たしたときだけ、スクリプトがアーカイブ・書き出し・ログを含む `$OUT` と `/private/tmp/Karuta-Export.latest` を消す。旧版がある場合は先に `/private/tmp/Karuta-Backup.*/Karuta.app` へ移し、パスを報告する。旧版はユーザーが削除を明示承認するまで残す。失敗した場合は `$OUT` を消さず、旧版の復元とログ確認に使える状態を保つ。`残骸:` の行が出たら、それは他の実行が残したもの。
 
 終了は AppleScript の quit → `TERM` → `KILL` の順に上げ、各段階で最大12秒待つ。TERM に数秒かかることがあるので、待ちを詰めない。`KILL` は最終手段だが省略しない。省略すると置換前に止まり、`/Applications` 版だけ quit された状態が残る。
 
@@ -176,7 +238,8 @@ echo "完了"
 ## 境界
 
 - `Apple Development` 署名はローカル実機確認用。配布用 Developer ID 署名・公証・公開は別依頼。Gatekeeper や公証の確認は範囲外。
-- 成功時は一時ディレクトリを残さない。失敗時は消さず、パスを報告する。
+- 現在の `HEAD` と同一の成果物を保証するため、作業ツリーが clean でない場合は手順1で停止する。未コミット変更をインストールしたい場合は、このスキルの対象外として別途依頼する。
+- 成功時は書き出し用の一時ディレクトリを消し、旧版だけを別のバックアップ先へ保持する。旧版の削除は明示承認後に行う。失敗時は消さず、パスを報告する。
 - 署名、終了、置換、起動、ハッシュ確認のどれかが未達なら完了と報告しない。
 - `/private/tmp/Karuta-Export.latest` は実行間で共有される。このスキルを同時に2つ走らせない。
 - 失敗したあと手順3 だけを再実行しない。退避済みの旧版を壊すため、スクリプトは `旧版が既にある` で止まる。やり直すなら手順1 から。
