@@ -1,11 +1,13 @@
 ---
 name: commit
-description: Create a git commit with changelog when needed, immediately merge worktree commits into main, and push. Use when the user types /commit, or asks to commit or push changes.
+description: Default commit workflow: create a git commit with changelog when needed, immediately merge worktree commits into main, and push. Use when the user types /commit or asks to commit; run the full flow including push unless the user explicitly wants a local-only commit.
 ---
 
 # /commit — autoreview, changelog, commit, merge into main, push
 
 Commit only the changes from the current session. Before updating the changelog, use the `autoreview` skill to check the changes and fix them until clean. If the changes are user-facing, update `CHANGELOG.md` (or the repository's changelog equivalent). Commits made on a worktree must be rebased onto the latest main and then always integrated via fast-forward (merge commits are forbidden); push main, then confirm synchronization with a pull.
+
+This is the default workflow for every commit request. A plain request to commit (e.g. "commit", "commitして") runs this entire flow — including merge into main and push — exactly like `/commit`. Skip merge or push only when the user explicitly asks to keep the commit local.
 
 ## Rules to follow
 
@@ -125,7 +127,7 @@ If no main checkout exists, do not create a new worktree or branch; report the p
 
 ### 6. Push main and verify with a pull
 
-If you committed on a worktree, run `git push` from the main checkout; if you committed directly on main, run it from the current location. If upstream is not configured, use `git push -u origin main`.
+Push is part of the default flow; do not stop after committing. If you committed on a worktree, run `git push` from the main checkout; if you committed directly on main, run it from the current location. If upstream is not configured, use `git push -u origin main`.
 
 After pushing:
 
