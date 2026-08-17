@@ -1,70 +1,70 @@
 ---
 name: app-release
-description: アプリのリリース準備を、前回リリースとの差分確認、次バージョンの提案とユーザー確認、バージョン・ビルド番号更新、CHANGELOGとストア向けリリースノート整理、テスト・ビルド検証まで進める。アプリのリリース、リリース準備、App StoreやTestFlightへの提出、版上げ、バージョン更新を依頼されたときに使う。コミット、タグ、push、アップロード、審査提出、公開は依頼された範囲だけ実行する。
+description: Prepare an app release, proceeding through diff review against the previous release, proposing the next version and confirming with the user, updating version and build numbers, organizing the CHANGELOG and store release notes, and test and build verification. Use when asked to release the app, prepare a release, submit to the App Store or TestFlight, bump the version, or update the version. Perform commits, tags, pushes, uploads, review submission, and publication only within the requested scope.
 ---
 
-# アプリをリリースする
+# Release the app
 
-リポジトリの実状態からリリース対象を確定する。バージョン選択は人間の判断点として残し、候補と根拠を示してから必ず確認する。
+Determine the release target from the repository's actual state. Keep version selection as a human decision point: present candidates with rationale and always confirm before proceeding.
 
-## 1. 現状と慣習を確定する
+## 1. Establish the current state and conventions
 
-1. `git status -sb`、現在のブランチ、最新コミット、最新の到達可能なリリースタグを確認する。未コミット・未追跡変更を由来別に分類し、無関係な変更を保持する。
-2. `AGENTS.md`、README、リリース手順、`CHANGELOG.md`、ストア向けリリースノート、プロジェクト設定を読む。存在するファイルとコマンドを正とし、過去案件の版番号や手順を流用しない。
-3. 前回リリースタグから `HEAD` までのコミットと差分を確認する。CHANGELOGの未リリース項目と照合し、今回残るユーザー向け変更を一つずつ確定する。実装後に取り消された機能、内部リファクタ、テスト、開発用変更はリリース項目から外す。
-4. マーケティングバージョン、ビルド番号、それらを持つ全ターゲット、版更新用スクリプト、検証コマンドを特定する。
+1. Check `git status -sb`, the current branch, the latest commit, and the latest reachable release tag. Classify uncommitted and untracked changes by origin, and preserve unrelated changes.
+2. Read `AGENTS.md`, the README, the release procedure, `CHANGELOG.md`, the store release notes, and the project configuration. Treat existing files and commands as authoritative; do not reuse version numbers or procedures from past work.
+3. Review the commits and diffs from the previous release tag to `HEAD`. Cross-check against the CHANGELOG's unreleased entries and confirm, one by one, the user-facing changes that remain for this release. Exclude features reverted after implementation, internal refactors, tests, and developer-only changes from the release entries.
+4. Identify the marketing version, the build number, all targets that carry them, any version-bump scripts, and the verification commands.
 
-完了条件: 現在版、前回リリース、今回残るユーザー向け変更、版番号の全更新箇所、リポジトリ固有の検証方法を説明できる。
+Completion criteria: you can explain the current version, the previous release, the user-facing changes remaining for this release, every location where version numbers are updated, and the repository-specific verification methods.
 
-## 2. 次バージョンを提案して確認する
+## 2. Propose the next version and confirm
 
-次の基準を、CHANGELOGと実差分の両方に適用する。複数に該当するときは最も大きい変更を推奨する。
+Apply the following criteria to both the CHANGELOG and the actual diff. When multiple apply, recommend the largest change.
 
-- **メジャー**: 互換性を失う変更、既存データや利用方法に移行が必要な変更、製品世代を切り替える変更。
-- **マイナー**: 後方互換な新機能、新しい利用場面、ユーザーが認識できるまとまった機能拡張。
-- **パッチ**: 不具合修正、表示・文言・性能の改善、小規模な既存機能の調整。
+- **Major**: compatibility-breaking changes, changes requiring migration of existing data or usage patterns, changes that switch the product generation.
+- **Minor**: backward-compatible new features, new usage scenarios, user-recognizable feature expansions.
+- **Patch**: bug fixes, display/wording/performance improvements, small tweaks to existing features.
 
-未リリース項目が空で前回タグからの差分もない場合は、版上げではなくリリース見送りを推奨する。ユーザーが変更なしでのリリースを必要としている場合だけ、パッチ版を候補にする。
+If the unreleased entries are empty and there is no diff since the previous tag, recommend holding the release rather than bumping the version. Offer a patch version as a candidate only if the user needs to release without changes.
 
-「現在 `1.1.1`、変更内容は○○なのでパッチの `1.1.2` を推奨します」の形で、候補と短い根拠を提示する。そのうえで、どの桁を上げるか、または正確な次バージョンをユーザーに聞く。CHANGELOGが曖昧なら差分を追加調査してから提案し、推測だけで版を選ばない。
+Present the candidate with a short rationale, e.g. "Currently `1.1.1`, and since the changes are ○○, I recommend patch `1.1.2`." Then ask the user which digit to bump, or for the exact next version. If the CHANGELOG is ambiguous, investigate the diff further before proposing; do not pick a version on guesswork alone.
 
-バージョン関連ファイルは、ユーザーが次バージョンを明示的に選ぶまで変更しない。「それで」「はい」など、提示した候補への明確な同意は選択として扱う。
+Do not modify version-related files until the user explicitly chooses the next version. A clear agreement with the presented candidate, such as "go with that" or "yes," counts as a selection.
 
-完了条件: 次のマーケティングバージョンがユーザーの回答で一意に確定している。
+Completion criteria: the next marketing version is uniquely determined by the user's answer.
 
-## 3. リリース内容を整える
+## 3. Prepare the release contents
 
-1. リポジトリの規則に従い、マーケティングバージョンとビルド番号を全ターゲットで更新する。ビルド番号の規則を既存値や履歴から確定できない場合は、候補を示して確認する。
-2. CHANGELOGの未リリース項目を確定版へ移す。見出し、日付、分類、次の未リリース欄は既存形式とリポジトリ規則に合わせる。
-3. ストア向けリリースノートを、今回届けるユーザー向け変更だけから書く。簡潔な自然文または短い箇条書きにし、内部実装、テスト、開発手順、サブスクリプションの制度説明、アプリ全体の概要を含めない。それらが必要なら役割の合う別文書へ移す。
-4. リリース手順やチェックリストに特定版が固定されている場合は、今回も有効な箇所だけ更新する。
-5. 差分を再確認し、選択された版とリリース対象以外が混ざっていないことを確認する。
+1. Following the repository's rules, update the marketing version and build number across all targets. If the build number convention cannot be determined from existing values or history, present candidates and confirm.
+2. Move the CHANGELOG's unreleased entries to the finalized version. Match the heading, date, categories, and the next unreleased section to the existing format and repository rules.
+3. Write the store release notes from only the user-facing changes delivered in this release. Use concise natural prose or short bullet points; do not include internal implementation, tests, development procedures, explanations of the subscription system, or app-wide overviews. If those are needed, move them to a separate document that fits their role.
+4. If specific versions are pinned in the release procedure or checklist, update only the parts still valid for this release.
+5. Re-check the diff and confirm nothing besides the selected version and release target has been mixed in.
 
-完了条件: 全ターゲットの版が一致し、CHANGELOGとリリースノートが今回の実差分を過不足なく表している。
+Completion criteria: the versions match across all targets, and the CHANGELOG and release notes represent this release's actual diff exactly, with nothing missing or extra.
 
-## 4. 検証する
+## 4. Verify
 
-リポジトリが定める順序で、関連テスト、全体テスト、Releaseビルドまたはアーカイブ、`git diff --check`を実行する。利用可能な検証だけを実行し、省略した検証は理由とともに残す。
+In the order defined by the repository, run the relevant tests, the full test suite, a Release build or archive, and `git diff --check`. Run only available verifications, and record any skipped ones with reasons.
 
-ビルド成果物または生成済み設定からマーケティングバージョンとビルド番号を再取得し、ソース設定だけの確認で済ませない。リリースノートの各項目が対象版に実在することも再確認する。
+Re-extract the marketing version and build number from the build artifact or generated configuration; do not rely solely on checking the source configuration. Also reconfirm that each release note item actually exists in the target version.
 
-完了条件: 実行した検証の成功証拠、版番号の一致、未実施項目と残リスクを区別して説明できる。
+Completion criteria: you can distinguish and explain the evidence of successful verifications performed, the version number consistency, and the unperformed items with remaining risks.
 
-## 5. 依頼された範囲まで進める
+## 5. Proceed as far as requested
 
-- リリース**準備**の依頼では、ローカルの版・文書・検証までを完了する。
-- コミットやpushの依頼がある場合は、リポジトリのレビュー・コミット手順に従う。
-- タグ、成果物のアップロード、TestFlight/App Storeへの提出、公開は、依頼文で明示された操作と送信先だけ実行する。操作前に対象版、ビルド番号、送信先を再確認する。
-- 公開完了を外部状態で確認した後、リポジトリ規則が求める場合は次のパッチ版の未リリース欄を作り、別コミットとして扱う。
+- For a release **preparation** request, complete the local version updates, documentation, and verification.
+- If commits or pushes are requested, follow the repository's review and commit procedures.
+- Tags, artifact uploads, submission to TestFlight/App Store, and publication: perform only the operations and destinations explicitly stated in the request. Reconfirm the target version, build number, and destination before each operation.
+- After confirming publication via external state, if the repository rules require it, create the unreleased section for the next patch version and handle it as a separate commit.
 
-## 報告する
+## Report
 
-次を分けて短く報告する。
+Report the following briefly, separated:
 
-- 確定したマーケティングバージョンとビルド番号
-- CHANGELOGとリリースノートに載せたユーザー向け変更
-- テスト、Releaseビルド、版番号照合の結果
-- コミット、タグ、push、アップロード、審査提出、公開それぞれの実施状態
-- 未実施の手動確認と残リスク
+- The finalized marketing version and build number
+- The user-facing changes put in the CHANGELOG and release notes
+- The results of tests, the Release build, and version number cross-checks
+- The status of each of: commit, tag, push, upload, review submission, publication
+- Unperformed manual checks and remaining risks
 
-後段の操作が未実施なら、リリース済み・提出済み・公開済みとは表現しない。
+If later-stage operations were not performed, do not describe the app as released, submitted, or published.

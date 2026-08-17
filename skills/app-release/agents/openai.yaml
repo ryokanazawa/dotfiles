@@ -1,4 +1,4 @@
 interface:
-  display_name: "アプリのリリース"
-  short_description: "変更内容から版を提案し、アプリのリリース準備を進める"
-  default_prompt: "$app-release を使って、このアプリの次のリリースを準備してください。"
+  display_name: "App Release"
+  short_description: "Propose a version from the changes and prepare the app release"
+  default_prompt: "Use $app-release to prepare the next release of this app."

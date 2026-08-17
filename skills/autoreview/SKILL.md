@@ -1,113 +1,113 @@
 ---
 name: autoreview
-description: コミット・push・PR更新・マージ前の変更を、実装者とは分離した観点でレビューし、指摘の検証、範囲内の修正、テスト、再レビューを指摘がなくなるまで繰り返す。ユーザーがautoreview、自動レビュー、コミット前レビュー、第二の目、別エージェントや別モデルでの確認を求めたとき、または非自明なコード変更の完了確認に使う。
+description: Review changes before commit, push, PR updates, or merges from a perspective separate from the implementer's, then verify findings, fix in-scope issues, test, and re-review until no findings remain. Use when the user asks for autoreview, an automatic review, a pre-commit review, a second pair of eyes, verification by another agent or model, or completion confirmation of non-trivial code changes.
 ---
 
-# 自動コードレビュー
+# Automated code review
 
-変更を閉じる直前の品質ゲートとして使う。特定のエージェント製品、モデル、CLIには依存しない。利用可能なら独立したサブエージェントへレビューだけを委ね、利用できなければ呼び出し元が新しいレビュー観点で同じ手順を実行する。
+Use as the quality gate just before closing out a change. Do not depend on any specific agent product, model, or CLI. When available, delegate the review alone to an independent subagent; when not, the caller runs the same procedure with a fresh review perspective.
 
-レビュー結果は助言であり、機械的に適用しない。すべての指摘を実コードと隣接経路で検証し、元の依頼範囲にある問題だけを直す。
+Review results are advice, not to be applied mechanically. Verify every finding against the actual code and adjacent paths, and fix only problems within the original request's scope.
 
-## 実行権限を守る
+## Respect execution authority
 
-autoreviewの呼び出し自体は、ファイル変更の許可を与えない。ユーザーがレビュー、診断、説明だけを求めた場合、フォーマットを含むファイル編集、commit、push、PR更新、マージを行わず、検証済みの指摘を報告して終了する。
+Invoking autoreview by itself grants no permission to modify files. If the user asked only for a review, diagnosis, or explanation, report the verified findings and finish without editing files (including formatting), committing, pushing, updating PRs, or merging.
 
-実装、修正、commitなど、元の依頼がすでに変更を許可している場合だけ、同じ依頼範囲にある指摘を修正して再レビューする。この場合もcommit以降の操作は、元の依頼または別の明示的なワークフローが許可したときだけ行う。
+Only when the original request already authorizes changes — implementation, fixes, commits, etc. — fix findings within that same request scope and re-review. Even then, perform operations from commit onward only when the original request or a separate explicit workflow authorizes them.
 
-## 1. 対象と範囲を固定する
+## 1. Fix the target and scope
 
-レビュー開始前に次を記録する。
+Before starting the review, record:
 
-- 元の依頼、Issue、仕様などの意図
-- 対象ブランチと比較基準
-- 期待するユーザー向け挙動
-- 変更の所有境界
-- 変更ファイルとテスト以外の変更行数
-- `HEAD`と対象差分の内容から得た開始時点の指紋
-- すでに実行済みの検証
+- The intent: the original request, issue, or spec
+- The target branch and comparison base
+- The expected user-facing behavior
+- The ownership boundaries of the change
+- Changed files and changed line count excluding tests
+- A starting-point fingerprint taken from `HEAD` and the target diff contents
+- Verifications already performed
 
-対象は次の優先順位で決める。
+Determine the target with the following priority:
 
-1. ユーザーがパス、commit、範囲、ブランチ、PR、または作業目的を明示した場合は、その依頼に属する変更だけを対象にする。
-2. 指定がなければ、このセッション中に呼び出し元が作成または変更したstaged、unstaged、untracked、commit済みの変更だけを対象にする。作業ツリーに存在するという理由だけで、他セッションや別作業の変更を含めない。
-3. ユーザーが過去セッションのコミット忘れや未コミット変更の確認を依頼した場合は、明示されたファイル・commit、または履歴と差分から同じ作業だと確認できる変更だけを追加する。判別できなければ対象を確認する。
-4. このセッション中の変更がすでにcommit済みなら、そのcommitまたは一連のcommitを対象にする。明示されていないブランチ全体を自動で対象にしない。
+1. If the user specified paths, commits, a scope, a branch, a PR, or a work objective, target only the changes belonging to that request.
+2. Otherwise, target only the staged, unstaged, untracked, and committed changes that the caller created or modified during this session. Do not include changes from other sessions or other work merely because they exist in the working tree.
+3. If the user asked to check commits missed in past sessions or uncommitted changes, add only explicitly named files/commits, or changes confirmed via history and diffs to belong to the same work. If they cannot be distinguished, confirm the target.
+4. If this session's changes are already committed, target that commit or series of commits. Do not automatically target an entire branch that was not explicitly named.
 
-比較基準を推測できない、または対象差分が空なら、レビュー済みと装わず停止して理由を伝える。レビューのためだけにfetch、push、ブランチ変更をしない。
+If the comparison base cannot be inferred, or the target diff is empty, stop and explain the reason rather than pretending the review was done. Do not fetch, push, or change branches just for the review.
 
-完了判定の直前に`HEAD`、対象ファイル、staged、unstaged、untrackedを再確認する。対象範囲の内容が開始時点または直前の修正後から変わっていたら、古いレビュー結果を破棄して最新差分を再レビューする。無関係な別作業の変更は常に対象から除外し、除外したパスを報告する。
+Immediately before judging completion, re-check `HEAD`, the target files, and staged, unstaged, and untracked state. If the target scope's contents changed since the start or since the last fix, discard the stale review results and re-review the latest diff. Always exclude unrelated changes from other work, and report the excluded paths.
 
-リポジトリ内の`AGENTS.md`、`CLAUDE.md`、`CONTRIBUTING.md`、設計文書、テスト方針、元仕様を先に読む。変更が許可され、フォーマッタが行位置を変える場合はレビュー前に実行する。読み取り専用の場合はフォーマット差分の有無だけを検査する。
+First read the repository's `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, design documents, testing policy, and original spec. If changes are authorized and a formatter moves line positions, run it before the review. If read-only, only check whether formatting diffs exist.
 
-内部向けの文章または`SKILL.md`だけの変更は、差分の直接確認と利用可能な軽量バリデーションでよい。設定、スクリプト、実行可能な例、生成物、ユーザー向け文書は軽量扱いにしない。
+Changes limited to internal prose or `SKILL.md` may be covered by direct diff inspection and available lightweight validation. Do not treat configuration, scripts, runnable examples, generated artifacts, or user-facing documentation as lightweight.
 
-## 2. レビューを実行する
+## 2. Run the review
 
-利用可能な方法を次の順で選ぶ。
+Choose the available method in this order:
 
-1. 独立したサブエージェントを起動できる場合は、1つだけ使う。同じモデルでも独立したコンテキストならよく、別モデルを必須にしない。
-2. サブエージェントがなければ、呼び出し元が差分を先頭から読み直し、実装時の判断を正当化せずにレビューする。
+1. If an independent subagent can be launched, use exactly one. An independent context with the same model is sufficient; a different model is not required.
+2. If no subagent is available, the caller re-reads the diff from the top and reviews without justifying the implementation-time decisions.
 
-独立レビュアーを使う場合は、対象、意図、比較基準、期待する挙動、所有境界、変更ファイル、検証結果、前回却下した指摘と理由を渡す。今回の差分が導入した具体的な問題だけを、重大度、場所、影響、根拠、最小修正とともに報告させる。レビュアーには読み取り専用を指示し、編集、commit、push、別レビュアーの起動を許可しない。
+When using an independent reviewer, pass the target, intent, comparison base, expected behavior, ownership boundaries, changed files, verification results, and previously rejected findings with reasons. Have it report only concrete problems introduced by this diff, each with severity, location, impact, evidence, and a minimal fix. Instruct the reviewer to stay read-only: no edits, commits, pushes, or launching other reviewers.
 
-独立レビュアーへ渡す前に、対象パスと内容にsecret、認証情報、個人情報、非公開情報がないか確認する。secretや認証情報の値は送信せず、出力にも含めない。個人情報や非公開情報は、タスクに必要な範囲だけを承認済みの非公開レビュアーへ渡す。送信先や公開範囲が不明、または未承認の外部サービスなら、内容と送信先の承認を得るまで渡さない。
+Before passing anything to an independent reviewer, check the target paths and contents for secrets, credentials, personal data, and private information. Never transmit secret or credential values, and never include them in output. Pass personal data or private information only to an approved private reviewer, limited to what the task requires. If the destination or disclosure scope is unknown, or the external service is not approved, do not pass anything until the content and destination are approved.
 
-未信頼のPR、fork、依存コードをレビューするときは、必要な指示、差分、関連コードだけを含むサニタイズ済み入力を、元リポジトリ、ignoredファイル、認証情報、シェル、不要なネットワークへアクセスできない隔離環境で渡す。隔離を保証できなければ独立サブエージェントを使わず、呼び出し元が対象差分を直接レビューする。
+When reviewing untrusted PRs, forks, or dependency code, pass sanitized input containing only the necessary instructions, diff, and related code, inside an isolated environment with no access to the original repository, ignored files, credentials, a shell, or unnecessary network. If isolation cannot be guaranteed, do not use an independent subagent; the caller reviews the target diff directly.
 
-特定のモデルやエンジンをユーザーが指定した場合だけ、その指定を使う。利用不能なら無断で別モデルへ切り替えず、同じモデルで再試行できる一時障害か、ユーザー判断が必要な未対応かを報告する。
+Use a specific model or engine designation only when the user specified it. If it is unavailable, do not silently switch to another model; report whether it is a transient failure retryable with the same model, or an unsupported case requiring the user's judgment.
 
-レビューでは差分全体と関連コードを読み、次を確認する。
+In the review, read the entire diff and related code, checking for:
 
-- 仕様との不一致、誤った前提、境界値
-- 既存挙動の回帰、失敗経路、状態遷移
-- 並行処理、再試行、永続化、互換性の破綻
-- 具体的で悪用可能なセキュリティ問題や安全策の削除
-- 依存API、型、設定、データ形式との契約違反
-- 実際の回帰を見逃すテスト不足
-- 不要な複雑化、重複、誤った所有境界
+- Mismatches with the spec, wrong assumptions, boundary values
+- Regressions of existing behavior, failure paths, state transitions
+- Concurrency, retries, persistence, compatibility breakage
+- Concrete, exploitable security issues or removal of safeguards
+- Contract violations with dependency APIs, types, configuration, data formats
+- Test gaps that would miss real regressions
+- Unnecessary complication, duplication, wrong ownership boundaries
 
-スタイル上の好み、根拠のない将来不安、変更で生じていない既存問題、過度に仮想的な入力、広範な書き直しは指摘しない。外部挙動に依存する指摘は、公式文書、型、依存元コードのいずれかで確認する。
+Do not flag stylistic preferences, unfounded future concerns, pre-existing issues not introduced by the change, overly hypothetical inputs, or broad rewrites. Verify findings that depend on external behavior against official documentation, types, or the dependency's code.
 
-## 3. 指摘を検証して分類する
+## 3. Verify and classify findings
 
-各指摘について、該当行だけでなく呼び出し元、呼び出し先、型、テスト、失敗経路を読む。必要なら最小の再現や焦点を絞ったテストを実行する。そのうえで次に分類する。
+For each finding, read not just the line in question but its callers, callees, types, tests, and failure paths. Run a minimal reproduction or a focused test if needed. Then classify:
 
-- **範囲内の阻害事項**: 今回の差分が導入し、同じ所有境界で、依頼の契約を変えずに直せる。
-- **却下**: 誤読、既存問題、現実的でない条件、すでに守られる不変条件、修正の方が複雑になる。
-- **フォローアップ**: 実在するが、隣接領域の改善、一般化、広い堅牢化に属する。
-- **停止して確認**: 公開API、設定、データ形式、移行、別の所有境界、リリース手順、製品判断の変更が必要。
+- **In-scope blocker**: introduced by this diff, fixable within the same ownership boundary without changing the request's contract.
+- **Rejected**: misreading, pre-existing issue, unrealistic condition, invariant already upheld, or the fix would be more complicated.
+- **Follow-up**: real, but belongs to adjacent-area improvements, generalization, or broader hardening.
+- **Stop and confirm**: requires changing public APIs, configuration, data formats, migrations, another ownership boundary, release procedures, or product decisions.
 
-却下理由は簡潔に記録する。不変条件や所有判断を将来の読者が知る必要がある場合だけ、短いコードコメントを追加する。
+Record rejection reasons concisely. Add a short code comment only when future readers need to know the invariant or ownership decision.
 
-同じバグ形が今回の変更範囲に複数あると判明したら、兄弟箇所を確認して一度に直す。変更範囲の外まで探索的に直さない。
+If the same bug shape appears multiple times within this change's scope, check the sibling sites and fix them all at once. Do not explore beyond the change scope to fix things.
 
-## 4. 修正・検証・再レビューする
+## 4. Fix, verify, re-review
 
-読み取り専用の場合は、検証済みの指摘を報告してこの手順を終了する。
+If read-only, report the verified findings and end the procedure.
 
-変更が許可されている場合は、範囲内の阻害事項を最小の変更で直し、関連するテストと静的検査を再実行する。コードを変更したら、更新後の差分全体を同じ対象基準で再レビューする。前回却下した指摘は理由もレビュアーへ渡し、新しい根拠がある場合だけ再提示させる。
+If changes are authorized, fix in-scope blockers with minimal changes and re-run the relevant tests and static checks. After changing code, re-review the entire updated diff with the same target criteria. Pass previously rejected findings with their reasons to the reviewer, and have it re-raise them only with new evidence.
 
-次のいずれかになるまで繰り返す。
+Repeat until one of the following:
 
-- 受け入れるべき、実行可能な指摘がなくなる。
-- 範囲外の設計判断が必要になる。
-- レビュー起因の修正を2巡しても収束しない。
+- There are no actionable findings left to accept.
+- An out-of-scope design decision is needed.
+- Two rounds of review-driven fixes have not converged.
 
-2巡で収束しない場合は残件をすべて再分類する。残件がすべて範囲内で修正も狭い場合だけ、もう1巡進める。それ以外は変更を広げず、最小の安全な完了範囲とフォローアップを報告する。
+If two rounds do not converge, reclassify all remaining items. Proceed to one more round only if every remaining item is in scope and the fixes are narrow. Otherwise, do not widen the change; report the minimal safe completion scope and the follow-ups.
 
-元のファイル数またはテスト以外の変更行数が概ね2倍を超える修正、アーキテクチャ変更、プロトコル変更、移行、リリース手順変更へ発展する場合は停止する。例外は、進行中のデータ損失、クラッシュ、インストール・更新不能、リリース阻害、具体的なセキュリティ露出に限る。
+Stop if fixes would exceed roughly double the original file count or non-test changed line count, or grow into architecture changes, protocol changes, migrations, or release procedure changes. Exceptions are limited to ongoing data loss, crashes, inability to install/update, release blockers, and concrete security exposure.
 
-release、beta、stable、hotfix、署名、notarize、publishに関する作業では、リリース阻害だけを直す。非阻害の指摘は`main`向けフォローアップにし、リリース作業をリファクタリングの場にしない。
+For work involving release, beta, stable, hotfix, signing, notarize, or publish, fix only release blockers. Make non-blocking findings follow-ups for `main`; do not turn release work into a refactoring venue.
 
-## 5. 完了を報告する
+## 5. Report completion
 
-次を簡潔にまとめる。
+Summarize concisely:
 
-- レビュー対象と比較基準
-- レビュー方法。独立サブエージェントを使わなかった場合はその旨
-- 実行したテスト、静的検査、再現手順
-- 受け入れた指摘と修正、却下した指摘と理由
-- 最終レビューで実行可能な指摘がなかったこと、または残件と停止理由
+- Review target and comparison base
+- Review method; note if no independent subagent was used
+- Tests, static checks, and reproduction steps performed
+- Accepted findings and fixes; rejected findings and reasons
+- That the final review had no actionable findings, or the remaining items and the reason for stopping
 
-対象の指紋が最終レビュー後も一致し、実行可能な指摘がない場合だけcleanとする。cleanなら、文言を整えるためだけの追加レビューや第二意見を実行しない。autoreview自体はcommit、push、PR更新、マージを行わない。
+Mark clean only if the target fingerprint still matches after the final review and no actionable findings remain. Once clean, do not run additional reviews or second opinions merely to polish wording. autoreview itself does not commit, push, update PRs, or merge.

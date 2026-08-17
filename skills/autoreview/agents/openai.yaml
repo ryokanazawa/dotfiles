@@ -1,4 +1,4 @@
 interface:
-  display_name: "自動コードレビュー"
-  short_description: "コミット前の変更を独立検証し、指摘がなくなるまで確認"
-  default_prompt: "$autoreview を使って、現在の変更をコミット前にレビューしてください。"
+  display_name: "Automated Code Review"
+  short_description: "Independently verify pre-commit changes until no findings remain"
+  default_prompt: "Use $autoreview to review the current changes before committing."

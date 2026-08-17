@@ -3,159 +3,159 @@ name: commit
 description: Create a git commit with changelog when needed, immediately merge worktree commits into main, and push. Use when the user types /commit, or asks to commit or push changes.
 ---
 
-# /commit — autoreview・changelog・コミット・main反映・push
+# /commit — autoreview, changelog, commit, merge into main, push
 
-今セッションの変更だけをコミットする。changelog更新の前に `autoreview` スキルで変更をチェックし、cleanになるまで直す。ユーザー向け変更なら `CHANGELOG.md`（またはリポジトリの changelog 相当）を更新する。worktree上のコミットは最新のmainへrebaseしてから必ずfast-forwardで統合し（merge commit禁止）、mainをpushしてからpullで同期を確認する。
+Commit only the changes from the current session. Before updating the changelog, use the `autoreview` skill to check the changes and fix them until clean. If the changes are user-facing, update `CHANGELOG.md` (or the repository's changelog equivalent). Commits made on a worktree must be rebased onto the latest main and then always integrated via fast-forward (merge commits are forbidden); push main, then confirm synchronization with a pull.
 
-## 守るべきルール
+## Rules to follow
 
-1. タイトル・本文は日本語で書く。
-2. `#N`を書かない。GitHubのissue参照になるため、必要なら「todo 147」のように書く。
-3. 今セッションで触ったファイルだけを名指しでステージする。`git add -A`と`git add .`は禁止。
-4. 無関係な変更はコミットせず、最終報告で列挙する。
-5. 新しいブランチを作らない。amendしない。force pushしない。
-6. `--no-verify`と`--no-gpg-sign`を使わない。
-7. `.env`、`credentials*`、鍵などのsecretを含めない。
-8. detached HEADを含むworktreeのコミットは、作業worktreeからpushして終わらず、即mainへマージする。
-9. 論理的に分かれる変更はgrouped commitsにする（無関係な塊を1コミットにまとめない）。
-10. すべてのコミット本文末尾に`Co-authored-by`を付ける。**実行中の自分自身のモデル名とメールアドレスを入れる**（プレースホルダのまま残さない・他モデルの名前を使わない）。形式は`Co-authored-by: NAME <EMAIL>`。Cursor上なら EMAIL は`cursoragent@cursor.com`。タイトルと本文のあいだに空行を置き、trailerの直前にも空行を置く。モデル名は省略・改変しない（例: `Co-authored-by: Cursor Grok 4.5 <cursoragent@cursor.com>`）。
+1. Write the title and body in Japanese.
+2. Do not write `#N`. It becomes a GitHub issue reference; if needed, write something like `todo 147` instead.
+3. Stage only the files touched in the current session, by explicit path. `git add -A` and `git add .` are forbidden.
+4. Do not commit unrelated changes; list them in the final report.
+5. Do not create new branches. Do not amend. Do not force push.
+6. Do not use `--no-verify` or `--no-gpg-sign`.
+7. Do not include secrets such as `.env`, `credentials*`, or keys.
+8. Commits on a worktree — including a detached HEAD — must be merged into main immediately; do not finish by pushing from the working worktree.
+9. Split logically separable changes into grouped commits (do not bundle unrelated chunks into one commit).
+10. Append a `Co-authored-by` trailer to the end of every commit message body. **Use the model name and email address of the agent currently running** (do not leave placeholders, and do not use another model's name). The format is `Co-authored-by: NAME <EMAIL>`. On Cursor, EMAIL is `cursoragent@cursor.com`. Put a blank line between the title and the body, and another blank line immediately before the trailer. Do not abbreviate or alter the model name (example: `Co-authored-by: Cursor Grok 4.5 <cursoragent@cursor.com>`).
 
-## 手順
+## Procedure
 
-### 1. 状態を確認する
+### 1. Check the state
 
-以下を並列で実行する。
+Run the following in parallel:
 
-- `git status`（`-uall`は使わない）
+- `git status` (do not use `-uall`)
 - `git diff`
 - `git diff --staged`
 - `git log --oneline -10`
 
-changelogファイルの有無も確認する（`CHANGELOG.md`、`CHANGELOG`、`changelog.md`など。リポジトリの慣習に従う）。
+Also check whether a changelog file exists (`CHANGELOG.md`, `CHANGELOG`, `changelog.md`, etc. — follow the repository's conventions).
 
-全変更を今セッション由来・無関係・secret候補へ分類できたら完了。
+Done once all changes can be classified as from the current session, unrelated, or secret candidates.
 
-### 2. autoreviewでチェックする
+### 2. Check with autoreview
 
-changelogを更新する前に、必ず `autoreview` スキルを読んで従う。対象は今セッション由来のローカル変更（staged / unstaged / untracked）。無関係な差分は対象から除外し、除外したパスを記録する。
+Before updating the changelog, always read and follow the `autoreview` skill. The scope is the local changes from the current session (staged / unstaged / untracked). Exclude unrelated diffs from the scope and record the excluded paths.
 
-`/commit` は変更を許可する依頼なので、autoreviewの「範囲内の阻害事項」は修正して再レビューする。commit・push・PR更新・マージはこの手順の後続ステップに任せ、autoreview自体では行わない。
+`/commit` is a request that authorizes changes, so fix autoreview's "in-scope blockers" and re-review. Leave commit, push, PR updates, and merges to the subsequent steps of this procedure; autoreview itself must not perform them.
 
-autoreviewがcleanになるまで changelog 更新へ進まない。停止して確認が必要な残件、または収束しない残件がある場合は、changelog・コミット・pushをせずに報告して停止する。
+Do not proceed to the changelog update until autoreview is clean. If there are outstanding items that require stopping and confirmation, or items that do not converge, stop and report without touching the changelog, committing, or pushing.
 
-### 3. changelogを更新する
+### 3. Update the changelog
 
-次のいずれかに当てはまる変更は、autoreviewがcleanになったあと、コミット前にchangelogへ追記する。
+Changes matching any of the following must be appended to the changelog after autoreview is clean and before committing:
 
-- 機能追加・挙動変更・UI/UX の変化
-- ユーザーが観測できるバグ修正
-- 破壊的変更・移行が必要な変更
-- 公開 API / CLI の変更
+- New features, behavior changes, UI/UX changes
+- User-observable bug fixes
+- Breaking changes and changes requiring migration
+- Public API / CLI changes
 
-次は追記しない。最終報告で「changelogスキップ」と理由を書く。
+Do not add entries for the following. In the final report, note "changelog skipped" with the reason.
 
-- テストのみ・内部リファクタ・CI・型だけ・コメントのみ
-- docs-only（ユーザー向け文書の追加や実質的な利用者影響がある変更を除く）
-- ユーザー影響のない依存更新
-- 同一セッション内で追加して取り消した変更
-- changelogファイルがリポジトリに存在しない
+- Tests only, internal refactoring, CI, type-only changes, comments only
+- Docs-only changes (except additions of user-facing documentation or changes with real user impact)
+- Dependency updates with no user impact
+- Changes added and reverted within the same session
+- Repositories with no changelog file
 
-**ファイルの役割（リポジトリに両方ある場合）**
+**File roles (when both exist in the repository)**
 
-| ファイル | いつ書く | 何を書く |
+| File | When to write | What to write |
 |---|---|---|
-| `CHANGELOG.md` | 上記のユーザー向け変更 | 開発用の1行履歴 |
-| `docs/release_notes.md` など App Store「最新情報」用 | App Store 提出準備・明示依頼時のみ | ストア貼り付け用の丁寧な文面。毎回は書かない |
+| `CHANGELOG.md` | User-facing changes listed above | One-line history for developers |
+| `docs/release_notes.md` or equivalent for the App Store "What's New" | Only when preparing an App Store submission or when explicitly asked | Polished copy for pasting into the store. Do not write every time |
 
-`CHANGELOG.md` が無いリポジトリでは、存在する changelog 相当に従う。changelog が無い場合だけスキップする。
+In repositories without `CHANGELOG.md`, follow the existing changelog equivalent. Skip only when there is no changelog at all.
 
-**書き方（ハウススタイルに合わせる。不明なら確認して停止）**
+**How to write (match the house style; if unclear, stop and ask)**
 
-1. 先頭の `## … Unreleased`（または同等）へ追記。無ければ既存の版番号から次の patch 版を確定できる場合に限り、`## X.Y.Z — Unreleased` を先頭に作る。確定できなければ既存形式に合わせるか、判断不能として停止する。
-2. 分類があるリポジトリ（例: `### Added` / `### Changed` / `### Fixed`）では適切な見出しの下へ。無ければフラットな `-` リスト。
-3. **1行・簡潔**。`Area: 何をしたか` を優先。長文・硬折り返し・「〜しました。」の冗長連発を避ける。
-4. 影響順が慣習なら: 破壊的 → 機能 → 修正 → その他。
-5. `#N` はコミットと同様に書かない（ルール2）。PR番号がリポジトリ慣習ならそれに従い、無ければ省略。
-6. 重複エントリを作らない。既存 Unreleased に同旨があれば足さない。
-7. changelog の差分も今セッションの変更として後続コミットに含める。
+1. Append under the leading `## … Unreleased` (or equivalent). If there is none, create `## X.Y.Z — Unreleased` at the top only when the next patch version can be determined from the existing version numbers. If it cannot be determined, follow the existing format or stop because the decision cannot be made.
+2. In repositories with categories (e.g. `### Added` / `### Changed` / `### Fixed`), place entries under the appropriate heading. Otherwise use a flat `-` list.
+3. **One line, concise.** Prefer `Area: what was done`. Avoid long prose, hard wraps, and repeated verbose phrasing.
+4. If ordering by impact is the convention: breaking → features → fixes → other.
+5. Do not write `#N` in the changelog either (rule 2). If PR numbers are the repository convention, follow it; otherwise omit them.
+6. Do not create duplicate entries. If the existing Unreleased section already has an entry with the same gist, do not add one.
+7. The changelog diff is part of the current session's changes; include it in a subsequent commit.
 
-**App Store 最新情報（任意・提出時）**
+**App Store What's New (optional, at submission time)**
 
-ユーザーがリリース／提出準備を求めたときだけ、`CHANGELOG.md` の当該版から `docs/release_notes.md`（または同等）を更新する。日常の `/commit` では触らない。
+Only when the user asks for release/submission preparation, update `docs/release_notes.md` (or equivalent) from the relevant version of `CHANGELOG.md`. Do not touch it during everyday `/commit` runs.
 
-**リリース直後**
+**Right after a release**
 
-バージョンを確定してリリースした場合、次の patch の `## X.Y.Z — Unreleased` を先頭に作り、空の分類見出しを置いてから終える。
+If a release was made with a finalized version, finish by creating `## X.Y.Z — Unreleased` for the next patch at the top, with empty category headings in place.
 
-### 4. ステージしてコミットする
+### 4. Stage and commit
 
-関連ファイルを名指しで`git add`し、ステージ差分を再確認してからコミットする。ステージとコミットは直列に行う。
+`git add` the relevant files by explicit path, re-check the staged diff, then commit. Stage and commit sequentially.
 
-論理単位が複数ある場合は、単位ごとにステージ→コミットを繰り返す（例: 実装とchangelogを分ける、無関係なモジュールを分ける）。
+If there are multiple logical units, repeat stage → commit per unit (e.g. separate implementation and changelog, separate unrelated modules).
 
 ```sh
 git commit -m "$(cat <<'EOF'
-<タイトル日本語>
+<title in Japanese>
 
-<本文（任意）>
+<body (optional)>
 
 Co-authored-by: NAME <EMAIL>
 EOF
 )"
 ```
 
-注: `NAME` と `EMAIL` は実行中エージェント自身のモデル名とメールに置き換える（例: `Cursor Grok 4.5` / `cursoragent@cursor.com`）。プレースホルダのままコミットしない。
+Note: replace `NAME` and `EMAIL` with the model name and email of the agent currently running (example: `Cursor Grok 4.5` / `cursoragent@cursor.com`). Do not commit with placeholders left in place.
 
-複数コミットする場合も、各コミットに同じ`Co-authored-by`を付ける。コミットSHA（複数なら全部）を取得し、作業worktreeが期待どおりの状態なら完了。
+When creating multiple commits, attach the same `Co-authored-by` to each. Record the commit SHA (all of them if multiple); done once the working worktree is in the expected state.
 
-### 5. worktreeなら即mainへマージする（rebase → ff-only、merge commit禁止）
+### 5. On a worktree, merge into main immediately (rebase → ff-only, merge commits forbidden)
 
-`git worktree list --porcelain`で`refs/heads/main`のチェックアウト先を特定する。現在地がmainでなければ、コミット直後に次を行う。
+Use `git worktree list --porcelain` to identify where `refs/heads/main` is checked out. If the current location is not main, do the following right after committing:
 
-1. mainチェックアウトで`git status --short --branch`を確認する。remoteがありmainが遅れていれば`git pull --ff-only`でローカルmainを最新化する（remoteが無い、または失敗した場合はローカルmainのままで進める）。
-2. worktreeブランチ上で`git rebase main`を実行し、mainに追いつかせる。コンフリクトしたら解消して`git rebase --continue`する。rebaseすると先端SHAが変わる点に注意する。
-3. mainの未コミット変更パスと今回のコミット群の変更パスを比較する。
-4. パスが重ならなければ、mainチェックアウト側で`git merge --ff-only <rebase後の先端コミットSHA>`を実行する。mainの未コミット変更は保持したまま行う。
-5. `--ff-only`が失敗する場合はrebaseが不足しているので、ステップ2へ戻って`git rebase main`からやり直す。`--no-ff`や通常の`git merge`は絶対に使わない。
-6. `git merge-base --is-ancestor <rebase後の各コミットSHA> main`で反映を確認する。
+1. Check `git status --short --branch` in the main checkout. If a remote exists and main is behind, update the local main with `git pull --ff-only` (if there is no remote, or this fails, proceed with the local main as-is).
+2. Run `git rebase main` on the worktree branch to catch it up to main. If conflicts occur, resolve them and `git rebase --continue`. Note that rebasing changes the tip SHA.
+3. Compare the paths of uncommitted changes on main with the paths changed by these commits.
+4. If the paths do not overlap, run `git merge --ff-only <post-rebase tip commit SHA>` in the main checkout, keeping main's uncommitted changes intact.
+5. If `--ff-only` fails, the rebase was insufficient: go back to step 2 and redo `git rebase main`. Never use `--no-ff` or a plain `git merge`.
+6. Confirm integration with `git merge-base --is-ancestor <each post-rebase commit SHA> main`.
 
-mainがdirtyという理由だけでは停止しない。変更パスが重なる、未追跡ファイルを上書きする場合だけ停止し、mainの変更をstash・破棄・同梱しない。rebaseのコンフリクトを解消できない場合は`git rebase --abort`で元に戻してから停止する。
+Do not stop merely because main is dirty. Stop only when the changed paths overlap or untracked files would be overwritten; do not stash, discard, or bundle main's changes. If rebase conflicts cannot be resolved, restore the original state with `git rebase --abort` and then stop.
 
-mainチェックアウトが存在しない場合は、新しいworktreeやブランチを作らず、rebase後のコミットSHAを報告して停止する。
+If no main checkout exists, do not create a new worktree or branch; report the post-rebase commit SHA and stop.
 
-### 6. mainをpushし、pullで確認する
+### 6. Push main and verify with a pull
 
-worktreeでコミットした場合はmainチェックアウトから、mainで直接コミットした場合は現在地から`git push`する。upstream未設定なら`git push -u origin main`を使う。
+If you committed on a worktree, run `git push` from the main checkout; if you committed directly on main, run it from the current location. If upstream is not configured, use `git push -u origin main`.
 
-push後:
+After pushing:
 
-1. `git pull --ff-only`（または同等のfast-forward同期）
-2. `git status --short --branch`でmainとremoteの同期を確認する
+1. `git pull --ff-only` (or an equivalent fast-forward sync)
+2. Confirm with `git status --short --branch` that main and the remote are in sync
 
-push失敗時はforceせず、pullやrebaseが必要ならユーザーへ確認する。
+If the push fails, do not force it; if a pull or rebase is needed, confirm with the user.
 
-## 失敗時
+## On failure
 
-- autoreviewがcleanにならない: changelog・コミット・pushをせず、残件と停止理由を報告する。
-- pre-commit hook失敗: 原因を直し、再ステージして新しいコミットを作る。amendしない。
-- mainとのパス重複: worktreeのrebase後コミットSHAを報告して停止する。
-- rebaseのコンフリクトを解消できない: `git rebase --abort`で元に戻し、状況とコミットSHAを報告して停止する。
-- secret検出: ステージせず、ユーザーへ報告する。
-- 無関係な差分: 含めず、最終報告で列挙する。
-- changelogのUnreleased形式が不明: 既存スタイルを推測できない場合は追記せず、ユーザーへ確認する。
+- autoreview does not become clean: do not touch the changelog, commit, or push; report the outstanding items and the reason for stopping.
+- pre-commit hook failure: fix the cause, re-stage, and create a new commit. Do not amend.
+- Path overlap with main: report the post-rebase commit SHA on the worktree and stop.
+- Rebase conflicts cannot be resolved: restore the original state with `git rebase --abort`, then report the situation and the commit SHA and stop.
+- Secret detected: do not stage; report to the user.
+- Unrelated diffs: do not include them; list them in the final report.
+- Unknown changelog Unreleased format: if the existing style cannot be inferred, do not append anything; confirm with the user.
 
-## 完了条件
+## Completion criteria
 
-- autoreviewがcleanである。
-- 必要なchangelogが更新されている（またはスキップ理由が報告されている）。
-- 日本語メッセージで今セッションの変更だけがコミットされ、各コミットにモデル名の`Co-authored-by`がある。
-- worktreeの場合、コミットがmainの祖先になっている。
-- mainがremoteへpushされ、pull後に同期しており、forceしていない。
+- autoreview is clean.
+- The required changelog has been updated (or a skip reason has been reported).
+- Only the current session's changes have been committed with Japanese messages, and every commit has a `Co-authored-by` with the model name.
+- On a worktree, the commits are ancestors of main.
+- main has been pushed to the remote, is in sync after the pull, and no force push was used.
 
-## 最終報告
+## Final report
 
-短くでよいが、次は必ず含める:
+Keep it short, but always include the following:
 
-- コミットSHAとタイトル
-- changelog: 追記内容、またはスキップ理由
-- push / main 同期の結果
+- Commit SHAs and titles
+- Changelog: what was appended, or the reason for skipping
+- The result of the push / main sync
