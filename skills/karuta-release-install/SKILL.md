@@ -10,7 +10,7 @@ disable-model-invocation: true
 
 手順は決まりきっている。advisor は呼ばない。各段階の判断はスクリプトの終了コードと出力で足りる。3 本のスクリプトを順に実行し、途中で完了条件を落としたらそこで止める。
 
-`$OUT` はシェルをまたいで残らないため、手順1が退避先を `/private/tmp/Karuta-Export.latest` に書き、手順2・3 がそれを読む。スクリプトを書き換える必要はない。
+書き出し先は `~/Desktop/Karuta-Export` に固定である。3本の手順は同じ `$OUT` を直接使う。
 
 ## 手順1: アーカイブと書き出し
 
@@ -19,8 +19,14 @@ disable-model-invocation: true
 ```sh
 set -uo pipefail
 ROOT=/Users/ryo/Developer/Karuta
-OUT=$(mktemp -d /private/tmp/Karuta-Export.XXXXXX)
-printf '%s\n' "$OUT" > /private/tmp/Karuta-Export.latest
+OUT="$HOME/Desktop/Karuta-Export"
+if [ -d "$OUT/旧版" ]; then
+  echo "前回の旧版が保持されたまま: $OUT/旧版/Karuta.app"
+  echo "削除の明示承認（または別場所への退避）を得てから手順1を再開する"
+  exit 1
+fi
+rm -rf "$OUT" || { echo "書き出し先を消せない: $OUT"; exit 1; }
+mkdir -p "$OUT" || { echo "書き出し先を作れない: $OUT"; exit 1; }
 echo "OUT=$OUT"
 git -C "$ROOT" status -sb | tee "$OUT/status1.txt" || exit 1
 git -C "$ROOT" rev-parse HEAD | tee "$OUT/head1.txt" || exit 1
@@ -57,7 +63,7 @@ ls -d "$OUT/書き出し/Karuta.app"
 
 ```sh
 set -uo pipefail
-OUT=$(cat /private/tmp/Karuta-Export.latest)
+OUT="$HOME/Desktop/Karuta-Export"
 APP="$OUT/書き出し/Karuta.app"
 EXPECTED_BUNDLE_ID=jp.co.rigato.karuta
 EXPECTED_TEAM=5SF8ZY3PT8
@@ -94,19 +100,14 @@ echo "検証終了"
 
 ## 手順3: 置換と起動
 
-権限付き実行。終了・退避・配置・再検証・起動・確認を 1 本で行う。`ditto` による配置そのものが失敗したときだけ旧版へ自動復元する。それ以降（署名再検証・`open`・起動・ハッシュ・`git status`）で落ちたときは自動復元せず、退避した旧版を `$OLD`（`$OUT/旧版/Karuta.app`）に残して停止する。復元は手動で、`fail` がそのパスを出す。`/Applications/Karuta.app` が元から無い新規インストールでは退避すべき旧版が無いので、`fail` は代わりに「旧版なし」と一時ディレクトリのパスを出す。
+権限付き実行。終了・退避・配置・再検証・起動・確認を 1 本で行う。`ditto` による配置そのものが失敗したときだけ旧版へ自動復元する。それ以降（署名再検証・`open`・起動・ハッシュ・`git status`）で落ちたときは自動復元せず、退避した旧版を `$OLD`（`$OUT/旧版/Karuta.app`）に残して停止する。復元は手動で、`fail` がそのパスを出す。`/Applications/Karuta.app` が元から無い新規インストールでは退避すべき旧版が無いので、`fail` は代わりに「旧版なし」と書き出し先のパスを出す。
 
 ```sh
 set -uo pipefail
 ROOT=/Users/ryo/Developer/Karuta
-OUT=$(cat /private/tmp/Karuta-Export.latest)
+OUT="$HOME/Desktop/Karuta-Export"
 EXPECTED_BUNDLE_ID=jp.co.rigato.karuta
 EXPECTED_TEAM=5SF8ZY3PT8
-case "$OUT" in
-  *..*|/private/tmp/Karuta-Export.*/*) echo "想定外の OUT: $OUT"; exit 1;;
-  /private/tmp/Karuta-Export.?*) ;;
-  *) echo "想定外の OUT: $OUT"; exit 1;;
-esac
 NEW="$OUT/書き出し/Karuta.app"
 OLD="$OUT/旧版/Karuta.app"
 test -d "$NEW" || { echo "書き出しが無い"; exit 1; }
@@ -119,7 +120,7 @@ fail() {
   if [ -d "$OLD" ]; then
     echo "$1（旧版: $OLD）"
   else
-    echo "$1（旧版なし・新規インストール。一時ディレクトリ: $OUT）"
+    echo "$1（旧版なし・新規インストール。書き出し先: $OUT）"
   fi
   exit 1
 }
@@ -154,8 +155,8 @@ if ! wait_gone; then
 fi
 echo "プロセス終了確認"
 
-mkdir -p "$OUT/旧版"
 if [ -d /Applications/Karuta.app ]; then
+  mkdir -p "$OUT/旧版"
   mv /Applications/Karuta.app "$OLD" || exit 1
 fi
 if ! ditto "$NEW" /Applications/Karuta.app; then
@@ -213,27 +214,15 @@ diff -q "$OUT/head1.txt" "$OUT/head3.txt" >/dev/null \
   || fail "HEAD が手順1と違う"
 
 if [ -d "$OLD" ]; then
-  # /private/tmp は OS が定期清理するため、「承認まで保持」する旧版は
-  # Application Support 配下の恒久的な置き場所へ退避する。
-  backup_root="$HOME/Library/Application Support/Karuta/backups"
-  mkdir -p "$backup_root" || { echo "旧版の保持先を作れない: $backup_root"; exit 1; }
-  backup=$(mktemp -d "$backup_root/Karuta-Backup.XXXXXX") \
-    || { echo "旧版の保持先を作れない: $backup_root"; exit 1; }
-  mv "$OLD" "$backup/Karuta.app" \
-    || { rmdir "$backup" 2>/dev/null || true; echo "旧版を保持先へ移せない: $OLD"; exit 1; }
-  echo "旧版退避先: $backup/Karuta.app（明示承認までは削除しない）"
+  echo "旧版の保持先: $OLD（明示承認までは削除しない）"
 fi
-rm -rf "$OUT" || { echo "一時ディレクトリを消せない: $OUT"; exit 1; }
-rm -f /private/tmp/Karuta-Export.latest \
-  || { echo "一時ポインタを消せない: /private/tmp/Karuta-Export.latest"; exit 1; }
-echo "一時ディレクトリを削除した: $OUT"
-find /private/tmp -maxdepth 1 -name 'Karuta-Export.*' -exec echo "残骸: {}" \;
+echo "書き出し先: $NEW"
 echo "完了"
 ```
 
 完了条件: `完了` が出る。起動 PID の実行ファイルが `/Applications/Karuta.app/Contents/MacOS/Karuta`、インストール版も同じ Bundle ID・Apple Development Authority・Team ID で署名検証成功、両バイナリの SHA-256 が一致、`HEAD` と `git status -sb` が手順1と同じ。いずれかを落とすとスクリプトはそこで `exit 1` し、旧版と検証材料は残る。
 
-完了条件をすべて満たしたときだけ、スクリプトがアーカイブ・書き出し・ログを含む `$OUT` と `/private/tmp/Karuta-Export.latest` を消す。旧版がある場合は先に `~/Library/Application Support/Karuta/backups/Karuta-Backup.*/Karuta.app` へ移し、パスを報告する。旧版はユーザーが削除を明示承認するまで残す（`/private/tmp` は OS が定期清理するため使わない）。失敗した場合は `$OUT` を消さず、旧版の復元とログ確認に使える状態を保つ。`残骸:` の行が出たら、それは他の実行が残したもの。
+スクリプトは成功時も `$OUT` を消さない。書き出しは `$OUT/書き出し/Karuta.app`、旧版は `$OUT/旧版/Karuta.app` として Desktop に残り、パスが報告される。旧版はユーザーが削除を明示承認するまで残す。失敗した場合も `$OUT` はそのまま残り、旧版の復元とログ確認に使える状態を保つ。
 
 終了は AppleScript の quit → `TERM` → `KILL` の順に上げ、各段階で最大12秒待つ。TERM に数秒かかることがあるので、待ちを詰めない。`KILL` は最終手段だが省略しない。省略すると置換前に止まり、`/Applications` 版だけ quit された状態が残る。
 
@@ -243,7 +232,7 @@ echo "完了"
 
 - `Apple Development` 署名はローカル実機確認用。配布用 Developer ID 署名・公証・公開は別依頼。Gatekeeper や公証の確認は範囲外。
 - 現在の `HEAD` と同一の成果物を保証するため、作業ツリーが clean でない場合は手順1で停止する。未コミット変更をインストールしたい場合は、このスキルの対象外として別途依頼する。
-- 成功時は書き出し用の一時ディレクトリを消し、旧版だけを別のバックアップ先へ保持する。旧版の削除は明示承認後に行う。失敗時は消さず、パスを報告する。
+- 書き出し先は `~/Desktop/Karuta-Export` に固定で、成功時も失敗時も消さない。旧版は `~/Desktop/Karuta-Export/旧版/Karuta.app` に保持し、削除は明示承認後に行う。
 - 署名、終了、置換、起動、ハッシュ確認のどれかが未達なら完了と報告しない。
-- `/private/tmp/Karuta-Export.latest` は実行間で共有される。このスキルを同時に2つ走らせない。
+- `~/Desktop/Karuta-Export` は実行間で共有される固定パスである。このスキルを同時に2つ走らせない。
 - 失敗したあと手順3 だけを再実行しない。退避済みの旧版を壊すため、スクリプトは `旧版が既にある` で止まる。やり直すなら手順1 から。
