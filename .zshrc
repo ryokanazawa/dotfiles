@@ -83,3 +83,5 @@ export PATH="$HOME/.kimi-code/bin:$PATH"
 # Qwen Code PATH block begin
 export PATH='/Users/ryo/.local/bin':$PATH
 # Qwen Code PATH block end
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
