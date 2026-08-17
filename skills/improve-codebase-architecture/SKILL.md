@@ -1,71 +1,71 @@
 ---
 name: improve-codebase-architecture
-description: Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.
+description: コードベースをスキャンしてdeepening opportunities（深化の機会）を探し、視覚的なHTMLレポートとして提示する。選んだ候補をgrillingで徹底検討する。
 disable-model-invocation: true
 ---
 
-# Improve Codebase Architecture
+# コードベースのアーキテクチャ改善
 
-Surface architectural friction and propose **deepening opportunities** — refactors that turn shallow modules into deep ones. The aim is testability and AI-navigability.
+アーキテクチャの摩擦を明らかにし、**deepening opportunity**（深化の機会）を提案する。浅いmoduleを深いmoduleに変えるリファクタリングである。狙いはテストのしやすさと、AIにとっての動きやすさである。
 
-This command is _informed_ by the project's domain model and built on a shared design vocabulary:
+このコマンドは、プロジェクトのドメインモデルに _裏付けられ_、共有の設計語彙の上に成り立つ。
 
-- Run the `/codebase-design` skill for the architecture vocabulary (**module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**) and its principles (the deletion test, "the interface is the test surface", "one adapter = hypothetical seam, two = real"). Use these terms exactly in every suggestion — don't drift into "component," "service," "API," or "boundary."
-- The domain language in `CONTEXT.md` gives names to good seams; ADRs in `docs/adr/` record decisions this command should not re-litigate.
+- `/codebase-design` skillを実行し、アーキテクチャの語彙（**module**、**interface**、**depth**、**seam**、**adapter**、**leverage**、**locality**）とその原則（deletion test、「interfaceがテスト面である」「adapter1つ＝仮説上のseam、2つ＝本物」）を得る。あらゆる提案でこれらの語を正確に使い、「component」「service」「API」「boundary」へ流れない。
+- `CONTEXT.md`のドメイン言語は、良いseamに名前を与える。`docs/adr/`のADRは、このコマンドが蒸し返すべきでない決定を記録している。
 
-## Process
+## 手順
 
-### 1. Explore
+### 1. 探索
 
-**Scope before you scan — YAGNI.** Deepening a module pays off by making future changes to it easier, so put extra weight on the parts of the codebase that have recently changed. Decide *where* to look before you look:
+**スキャンの前に範囲を決める — YAGNI。** moduleを深化させる見返りは、将来そこへ加える変更を楽にすることである。だから最近変更のあったコードベースの部分に重みを置く。見る前に、*どこ*を見るかを決める。
 
-- If the user named a direction — a module, a subsystem, a pain point — take it, and skip the inference below.
-- Otherwise, walk back a good stretch of the commit history (`git log --oneline`) to find the codebase's hot spots — the files and areas that keep coming up — and let those paths pull your attention first. If the changes are scattered with no clear hot spot, widen the net.
+- ユーザーが方向性を示した場合は — module、サブシステム、痛点 — それを受け取り、以下の推論を省く。
+- そうでなければ、commit履歴（`git log --oneline`）を適度な長さ遡り、コードベースのホットスポット — 繰り返し現れるファイルや領域 — を見つけ、まずそのパスに注意を引かせる。変更が散らばっていて明確なホットスポットがなければ、網を広げる。
 
-Read the project's domain glossary (`CONTEXT.md`) and any ADRs in the area you're touching first.
+まずプロジェクトのドメイン用語集（`CONTEXT.md`）と、触る領域に関するADRを読む。
 
-Then use the Agent tool with `subagent_type=Explore` to walk the codebase. Don't follow rigid heuristics — explore organically and note where you experience friction:
+次にAgentツールを`subagent_type=Explore`で使い、コードベースを歩く。固定的なヒューリスティックに従わず、有機的に探索して、摩擦を感じた箇所を記録する。
 
-- Where does understanding one concept require bouncing between many small modules?
-- Where are modules **shallow** — interface nearly as complex as the implementation?
-- Where have pure functions been extracted just for testability, but the real bugs hide in how they're called (no **locality**)?
-- Where do tightly-coupled modules leak across their seams?
-- Which parts of the codebase are untested, or hard to test through their current interface?
+- どこで、一つの概念を理解するのに多くの小さなmoduleを行き来しなければならないか。
+- どこでmoduleが **shallow**（浅い）か — interfaceが実装とほぼ同じくらい複雑になっていないか。
+- どこで、テストのためだけに純粋関数が抽出され、実際のバグはその呼び出し方に隠れているか（**locality**が無い）。
+- どこで、強く結合したmoduleがseamを越えて漏れているか。
+- コードベースのどこが未テストか、または現在のinterface越しではテストしにくいか。
 
-Apply the **deletion test** to anything you suspect is shallow: would deleting it concentrate complexity, or just move it? A "yes, concentrates" is the signal you want.
+浅いと疑ったものには **deletion test** を適用する。それを消すと複雑さは集中するか、ただ移動するだけか。「はい、集中します」が求めるシグナルである。
 
-### 2. Present candidates as an HTML report
+### 2. 候補をHTMLレポートとして提示
 
-Write a self-contained HTML file to the OS temp directory so nothing lands in the repo. Resolve the temp dir from `$TMPDIR`, falling back to `/tmp` (or `%TEMP%` on Windows), and write to `<tmpdir>/architecture-review-<timestamp>.html` so each run gets a fresh file. Open it for the user — `xdg-open <path>` on Linux, `open <path>` on macOS, `start <path>` on Windows — and tell them the absolute path.
+リポジトリに何も置かないよう、自己完結したHTMLファイルをOSの一時ディレクトリへ書き出す。一時ディレクトリは`$TMPDIR`から解決し、フォールバックは`/tmp`（Windowsでは`%TEMP%`）。`<tmpdir>/architecture-review-<timestamp>.html`へ書き、実行ごとに新しいファイルにする。ユーザーのために開く — Linuxでは`xdg-open <path>`、macOSでは`open <path>`、Windowsでは`start <path>` — そして絶対パスを伝える。
 
-The report uses **Tailwind via CDN** for layout and styling, and **Mermaid via CDN** for diagrams where a graph/flow/sequence reliably communicates the structure. Mix Mermaid with hand-crafted CSS/SVG visuals — use Mermaid when relationships are graph-shaped (call graphs, dependencies, sequences), and hand-built divs/SVG when you want something more editorial (mass diagrams, cross-sections, collapse animations). Each candidate gets a **before/after visualisation**. Be visual.
+レポートはレイアウトとスタイリングに **CDN経由のTailwind** を使い、グラフ・フロー・シーケンスで構造が確実に伝わる図には **CDN経由のMermaid** を使う。Mermaidと手作りのCSS/SVGビジュアルを混ぜる。関係がグラフの形のとき（call graph、依存、sequence）はMermaidを使い、より編集的なもの（mass diagram、断面図、collapseのアニメーション）が欲しいときは手作りのdiv/SVGを使う。各候補には **before/afterのビジュアル** を付ける。ビジュアルであれ。
 
-For each candidate, render a card with:
+各候補について、次を含むカードを描く。
 
-- **Files** — which files/modules are involved
-- **Problem** — why the current architecture is causing friction
-- **Solution** — plain English description of what would change
-- **Benefits** — explained in terms of locality and leverage, and how tests would improve
-- **Before / After diagram** — side-by-side, custom-drawn, illustrating the shallowness and the deepening
-- **Recommendation strength** — one of `Strong`, `Worth exploring`, `Speculative`, rendered as a badge
+- **Files** — 関係するファイル・module
+- **Problem** — なぜ今のアーキテクチャが摩擦を起こしているか
+- **Solution** — 何が変わるかの平易な説明
+- **Benefits** — localityとleverageの観点で、テストがどう改善するか
+- **Before / After の図** — 並べて、手作りで、浅さと深化を示す
+- **Recommendation strength** — `Strong`、`Worth exploring`、`Speculative`のいずれかで、バッジとして描画
 
-End the report with a **Top recommendation** section: which candidate you'd tackle first and why.
+レポートの最後を **Top recommendation** のセクションで締める。どの候補に最初に取り組むかと、その理由である。
 
-**Use CONTEXT.md vocabulary for the domain, and the `/codebase-design` vocabulary for the architecture.** If `CONTEXT.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
+**ドメインには`CONTEXT.md`の語彙を、アーキテクチャには`/codebase-design`の語彙を使う。** `CONTEXT.md`が「Order」と定義しているなら、「the Order intake module」と語る。「the FooBarHandler」でも「the Order service」でもない。
 
-**ADR conflicts**: if a candidate contradicts an existing ADR, only surface it when the friction is real enough to warrant revisiting the ADR. Mark it clearly in the card (e.g. a warning callout: _"contradicts ADR-0007 — but worth reopening because…"_). Don't list every theoretical refactor an ADR forbids.
+**ADRとの衝突**: 候補が既存のADRと矛盾する場合、その摩擦がADRを見直すに足るほど本物のときだけ表面化させる。カードに明示する（例: 警告のcallout: _「ADR-0007と矛盾する — しかし〜のため再考する価値がある」_）。ADRが禁じる理論上のリファクタリングをすべて列挙しない。
 
-See [HTML-REPORT.md](HTML-REPORT.md) for the full HTML scaffold, diagram patterns, and styling guidance.
+完全なHTMLのscaffold、図のパターン、スタイリングの指針は [HTML-REPORT.md](HTML-REPORT.md) を参照。
 
-Do NOT propose interfaces yet. After the file is written, ask the user: "Which of these would you like to explore?"
+interfaceはまだ提案しない。ファイルを書いた後、ユーザーに「この中でどれを検討しますか」と尋ねる。
 
-### 3. Grilling loop
+### 3. Grillingのループ
 
-Once the user picks a candidate, run the `/grilling` skill to walk the decision tree with them — constraints, dependencies, the shape of the deepened module, what sits behind the seam, what tests survive.
+ユーザーが候補を選んだら、`/grilling` skillを実行し、決定木を一緒にたどる。制約、依存、深化したmoduleの形、seamの裏に置くもの、生き残るテストである。
 
-Side effects happen inline as decisions crystallize — run the `/domain-modeling` skill to keep the domain model current as you go:
+決定が固まるにつれ、副作用はinlineで起きる。`/domain-modeling` skillを実行して、ドメインモデルを最新に保つ。
 
-- **Naming a deepened module after a concept not in `CONTEXT.md`?** Add the term to `CONTEXT.md`. Create the file lazily if it doesn't exist.
-- **Sharpening a fuzzy term during the conversation?** Update `CONTEXT.md` right there.
-- **User rejects the candidate with a load-bearing reason?** Offer an ADR, framed as: _"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ Only offer when the reason would actually be needed by a future explorer to avoid re-suggesting the same thing — skip ephemeral reasons ("not worth it right now") and self-evident ones.
-- **Want to explore alternative interfaces for the deepened module?** Run the `/codebase-design` skill and use its design-it-twice parallel sub-agent pattern.
+- **深化したmoduleに、`CONTEXT.md`に無い概念から名前を付ける？** その用語を`CONTEXT.md`に加える。ファイルが無ければ遅延生成する。
+- **会話の中で曖昧な用語を研いだ？** その場で`CONTEXT.md`を更新する。
+- **ユーザーが、重みのある理由で候補を却下した？** ADRを提案する。こう切り出す。_「将来のアーキテクチャレビューが同じものを再提案しないよう、これをADRとして記録しますか」_ その理由が将来の探索者に本当に同じ再提案を避けるために必要になるときだけ提案する。一時的な理由（「今やるほどの価値は無い」）や自明な理由は省く。
+- **深化したmoduleの別のinterfaceを検討したい？** `/codebase-design` skillを実行し、design-it-twiceの並列サブエージェントパターンを使う。

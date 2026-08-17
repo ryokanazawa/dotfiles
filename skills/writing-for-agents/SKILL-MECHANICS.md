@@ -1,22 +1,22 @@
-# Skill mechanics
+# Skillの仕組み
 
-The skill-specific branch of [`writing-for-agents`](SKILL.md): what changes when the document is a skill — frontmatter, the invocation choice, and router skills. Everything else about writing it is the universal reference in `SKILL.md`.
+[`writing-for-agents`](SKILL.md)の、skillに特有の **branch**（分岐）。文書がskillのとき何が変わるか — frontmatter、呼び出し方法の選択、router skills。書き方のそれ以外は、すべて`SKILL.md`の汎用リファレンスどおりである。
 
-## Invocation
+## 呼び出し
 
-Two choices, trading the two loads:
+二つの選択があり、二つの負荷をトレードする。
 
-- A **model-invoked** skill keeps a `description`, so the agent can fire it autonomously — and other skills can reach it. You can still type its name: model-invocation always _includes_ user reach; a description only ever adds agent discovery, never removes the human's. The description is the skill's top-level context pointer, forced to stay loaded at all times — permanent context load in exchange for discoverability. A model-invoked skill whose content is all reference is also one home for shared reference: another skill can invoke it, so reference needed by several skills lives in one place. Mechanics: omit `disable-model-invocation`, and write a model-facing description carrying the trigger branches (the pointer-writing rules in `SKILL.md` apply in full).
-- A **user-invoked** skill strips the description from the agent's reach: only the human typing its name can invoke it, and no other skill can. Zero context load, but it spends cognitive load — you are the index that must remember it exists. Mechanics: set `disable-model-invocation: true`; the `description` becomes human-facing — a one-line summary, trigger lists stripped.
+- **model-invoked**（モデル呼び出し）のskillは`description`を保つ。そのためエージェントが自律的に発火でき、他のskillからも到達できる。名前をタイプして使うこともできる。model-invocationは常にユーザーからの到達を _含む_。descriptionはエージェントによる発見を加えるだけで、人間からの到達を決して奪わない。descriptionはそのskillの最上位のcontext pointerであり、常に読み込まれたままになる。発見性と引き換えの、恒久的なcontext loadである。中身がすべてreferenceのmodel-invoked skillは、共有referenceの置き場所にもなる。他のskillがそれを呼び出せるので、複数のskillが必要とするreferenceが一箇所にまとまる。仕組み: `disable-model-invocation`を省略し、triggerのbranch群を載せたモデル向けdescriptionを書く（`SKILL.md`のポインタ作成ルールがすべて適用される）。
+- **user-invoked**（ユーザー呼び出し）のskillは、descriptionをエージェントの到達圏から外す。名前をタイプした人間だけが呼び出せ、他のskillからは呼び出せない。context loadはゼロだが、cognitive loadを消費する。それが存在することを覚えていなければならないあなたが、索引である。仕組み: `disable-model-invocation: true`を設定する。`description`は人間向けになり、一行の要約で、triggerの列挙は取り除く。
 
-Pick model-invocation only when the agent must reach the skill on its own, or another skill must. If it only ever fires by hand, make it user-invoked and pay no context load.
+model-invocationを選ぶのは、エージェント自身がそのskillに到達する必要があるか、他のskillから到達する必要があるときだけである。手動でしか発火しないなら、user-invokedにしてcontext loadを支払わない。
 
-Shared reference that two user-invoked skills both need can live in neither — with no descriptions, neither can fire the other. Push it to a plain file outside the skill system: external reference any skill can point at.
+二つのuser-invoked skillの両方が必要とする共有referenceは、そのどちらにも置けない。descriptionが無ければ、どちらからも他方を発火できないからである。skillシステムの外にあるただのファイルへ押し出す。どのskillからも指せる外部referenceにする。
 
-## Splitting by invocation
+## 呼び出しでの分割
 
-The invocation cut of splitting (the sequence cut lives in `SKILL.md`): split off a model-invoked skill when you have a distinct leading word that should trigger it on its own — a trigger word you actually use in your prompts — or another skill must reach it. You pay context load for the new always-loaded description, so that independent reach has to be worth it.
+分割のうち、呼び出しによる切り口（sequenceによる切り口は`SKILL.md`にある）。独立したleading wordがあり、それ単独でtriggerになるべきときは、model-invoked skillとして切り出す — 実際にプロンプトで使っているtriggerの単語である。あるいは、他のskillから到達する必要があるときも同じである。新たに常に読み込まれるdescriptionの分のcontext loadを支払うので、その独立した到達は見合う必要がある。
 
 ## Router skills
 
-When user-invoked skills multiply past what you can remember, that piled-up cognitive load is cured by a **router skill**: one user-invoked skill that names the others and when to reach for each, so the human has one skill to remember instead of many. It can only hint, never fire them: user-invoked skills have no description, so nothing but the human can reach them.
+user-invoked skillが増えて覚えきれなくなったら、積み上がったcognitive loadは **router skill**（ルータースキル）で解消する。一つのuser-invoked skillが、他のskillの名前と、それぞれにいつ到達するかを列挙する。人間が覚えるskillが複数ではなく一つで済む。できるのは示唆だけで、発火は決してできない。user-invoked skillにはdescriptionが無いので、人間以外からは到達できない。

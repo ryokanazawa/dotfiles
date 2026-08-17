@@ -1,142 +1,142 @@
 ---
 name: find-skills
-description: Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.
+description: 「Xはどうやるの」「X用のskillを探して」「〜できるskillはある？」といった質問や、機能拡張への関心に対して、agent skillの発見とインストールを助ける。ユーザーがインストール可能なskillとして存在しうる機能を探しているときに使う。
 ---
 
-# Find Skills
+# skillを探す
 
-This skill helps you discover and install skills from the open agent skills ecosystem.
+このskillは、open agent skillsエコシステムからskillを発見してインストールするのを助ける。
 
-## When to Use This Skill
+## このskillを使うとき
 
-Use this skill when the user:
+次の場合にこのskillを使う:
 
-- Asks "how do I do X" where X might be a common task with an existing skill
-- Says "find a skill for X" or "is there a skill for X"
-- Asks "can you do X" where X is a specialized capability
-- Expresses interest in extending agent capabilities
-- Wants to search for tools, templates, or workflows
-- Mentions they wish they had help with a specific domain (design, testing, deployment, etc.)
+- 「Xはどうやるの」と聞き、Xが既存skillがありそうな一般的なタスクのとき
+- 「X用のskillを探して」「Xのskillはある？」と言ったとき
+- 「Xはできる？」と聞き、Xが特殊な機能のとき
+- agentの機能拡張に関心を示したとき
+- ツール・テンプレート・workflowを探したいとき
+- 特定の分野（design、testing、deploymentなど）の助けが欲しいと言ったとき
 
-## What is the Skills CLI?
+## Skills CLIとは
 
-The Skills CLI (`npx skills`) is the package manager for the open agent skills ecosystem. Skills are modular packages that extend agent capabilities with specialized knowledge, workflows, and tools.
+Skills CLI（`npx skills`）はopen agent skillsエコシステムのpackage managerである。skillは、専門知識・workflow・ツールによってagentの機能を拡張するモジュール式のパッケージである。
 
-**Key commands:**
+**主要コマンド:**
 
-- `npx skills find [query]` - Search for skills interactively or by keyword
-- `npx skills add <package>` - Install a skill from GitHub or other sources
-- `npx skills check` - Check for skill updates
-- `npx skills update` - Update all installed skills
+- `npx skills find [query]` - skillを対話式またはキーワードで検索する
+- `npx skills add <package>` - GitHubなどのソースからskillをインストールする
+- `npx skills check` - skillの更新を確認する
+- `npx skills update` - インストール済みskillをすべて更新する
 
-**Browse skills at:** https://skills.sh/
+**skillの閲覧:** https://skills.sh/
 
-## How to Help Users Find Skills
+## ユーザーのskill探しを助ける手順
 
-### Step 1: Understand What They Need
+### ステップ1: ニーズを理解する
 
-When a user asks for help with something, identify:
+ユーザーが何かの助けを求めたとき、次を見極める:
 
-1. The domain (e.g., React, testing, design, deployment)
-2. The specific task (e.g., writing tests, creating animations, reviewing PRs)
-3. Whether this is a common enough task that a skill likely exists
+1. 分野（例: React、testing、design、deployment）
+2. 具体的なタスク（例: テストを書く、アニメーションを作る、PRをレビューする）
+3. skillが存在しそうなほど一般的なタスクかどうか
 
-### Step 2: Check the Leaderboard First
+### ステップ2: まずleaderboardを確認する
 
-Before running a CLI search, check the [skills.sh leaderboard](https://skills.sh/) to see if a well-known skill already exists for the domain. The leaderboard ranks skills by total installs, surfacing the most popular and battle-tested options.
+CLI検索を実行する前に、[skills.shのleaderboard](https://skills.sh/)でその分野に有名なskillがすでにないか確認する。leaderboardは総インストール数でskillを順位付けしており、最も人気があり実戦で鍛えられた選択肢が分かる。
 
-For example, top skills for web development include:
-- `vercel-labs/agent-skills` — React, Next.js, web design (100K+ installs each)
-- `anthropics/skills` — Frontend design, document processing (100K+ installs)
+例: web開発の上位skill:
+- `vercel-labs/agent-skills` — React、Next.js、web design（各100K+インストール）
+- `anthropics/skills` — フロントエンドdesign、ドキュメント処理（100K+インストール）
 
-### Step 3: Search for Skills
+### ステップ3: skillを検索する
 
-If the leaderboard doesn't cover the user's need, run the find command:
+leaderboardがユーザーのニーズをカバーしていない場合は、findコマンドを実行する:
 
 ```bash
 npx skills find [query]
 ```
 
-For example:
+例:
 
-- User asks "how do I make my React app faster?" → `npx skills find react performance`
-- User asks "can you help me with PR reviews?" → `npx skills find pr review`
-- User asks "I need to create a changelog" → `npx skills find changelog`
+- ユーザーが「Reactアプリを速くしたい」と言った場合 → `npx skills find react performance`
+- ユーザーが「PRレビューを手伝って」と言った場合 → `npx skills find pr review`
+- ユーザーが「changelogを作りたい」と言った場合 → `npx skills find changelog`
 
-### Step 4: Verify Quality Before Recommending
+### ステップ4: 推奨前に品質を確認する
 
-**Do not recommend a skill based solely on search results.** Always verify:
+**検索結果だけでskillを推奨しない。** 必ず次を確認する:
 
-1. **Install count** — Prefer skills with 1K+ installs. Be cautious with anything under 100.
-2. **Source reputation** — Official sources (`vercel-labs`, `anthropics`, `microsoft`) are more trustworthy than unknown authors.
-3. **GitHub stars** — Check the source repository. A skill from a repo with <100 stars should be treated with skepticism.
+1. **インストール数** — 1K+インストールのskillを優先する。100未満は慎重に扱う。
+2. **ソースの信頼性** — 公式ソース（`vercel-labs`、`anthropics`、`microsoft`）は出所不明の作者より信頼できる。
+3. **GitHub stars** — ソースリポジトリを確認する。starsが100未満のリポジトリのskillは懐疑的に扱う。
 
-### Step 5: Present Options to the User
+### ステップ5: 選択肢をユーザーに提示する
 
-When you find relevant skills, present them to the user with:
+関連するskillが見つかったら、次を添えてユーザーに提示する:
 
-1. The skill name and what it does
-2. The install count and source
-3. The install command they can run
-4. A link to learn more at skills.sh
+1. skill名と機能
+2. インストール数とソース
+3. 実行できるインストールコマンド
+4. skills.shで詳しく分かるリンク
 
-Example response:
+応答例:
 
 ```
-I found a skill that might help! The "react-best-practices" skill provides
-React and Next.js performance optimization guidelines from Vercel Engineering.
-(185K installs)
+役に立ちそうなskillを見つけました。「react-best-practices」は、Vercel Engineeringによる
+ReactとNext.jsのパフォーマンス最適化ガイドラインを提供するskillです。
+（185Kインストール）
 
-To install it:
+インストールするには:
 npx skills add vercel-labs/agent-skills@react-best-practices
 
-Learn more: https://skills.sh/vercel-labs/agent-skills/react-best-practices
+詳細: https://skills.sh/vercel-labs/agent-skills/react-best-practices
 ```
 
-### Step 6: Offer to Install
+### ステップ6: インストールを提案する
 
-If the user wants to proceed, you can install the skill for them:
+ユーザーが進めたい場合は、代わりにskillをインストールできる:
 
 ```bash
 npx skills add <owner/repo@skill> -g -y
 ```
 
-The `-g` flag installs globally (user-level) and `-y` skips confirmation prompts.
+`-g`フラグはグローバル（ユーザーレベル）にインストールし、`-y`は確認プロンプトをスキップする。
 
-## Common Skill Categories
+## よくあるskillカテゴリ
 
-When searching, consider these common categories:
+検索時は次の一般的なカテゴリを検討する:
 
-| Category        | Example Queries                          |
+| カテゴリ | クエリ例 |
 | --------------- | ---------------------------------------- |
-| Web Development | react, nextjs, typescript, css, tailwind |
-| Testing         | testing, jest, playwright, e2e           |
-| DevOps          | deploy, docker, kubernetes, ci-cd        |
-| Documentation   | docs, readme, changelog, api-docs        |
-| Code Quality    | review, lint, refactor, best-practices   |
-| Design          | ui, ux, design-system, accessibility     |
-| Productivity    | workflow, automation, git                |
+| web開発 | react, nextjs, typescript, css, tailwind |
+| テスト | testing, jest, playwright, e2e |
+| DevOps | deploy, docker, kubernetes, ci-cd |
+| ドキュメント | docs, readme, changelog, api-docs |
+| コード品質 | review, lint, refactor, best-practices |
+| デザイン | ui, ux, design-system, accessibility |
+| 生産性 | workflow, automation, git |
 
-## Tips for Effective Searches
+## 効果的な検索のコツ
 
-1. **Use specific keywords**: "react testing" is better than just "testing"
-2. **Try alternative terms**: If "deploy" doesn't work, try "deployment" or "ci-cd"
-3. **Check popular sources**: Many skills come from `vercel-labs/agent-skills` or `ComposioHQ/awesome-claude-skills`
+1. **具体的なキーワードを使う**: 「testing」だけより「react testing」の方が良い
+2. **別の表現も試す**: 「deploy」で見つからなければ「deployment」や「ci-cd」を試す
+3. **人気ソースを確認する**: 多くのskillは`vercel-labs/agent-skills`や`ComposioHQ/awesome-claude-skills`から来ている
 
-## When No Skills Are Found
+## skillが見つからないとき
 
-If no relevant skills exist:
+関連するskillが存在しない場合:
 
-1. Acknowledge that no existing skill was found
-2. Offer to help with the task directly using your general capabilities
-3. Suggest the user could create their own skill with `npx skills init`
+1. 既存のskillが見つからなかったことを伝える
+2. 一般的な能力でタスクを直接手伝うことを提案する
+3. `npx skills init`で自分のskillを作れることを提案する
 
-Example:
+例:
 
 ```
-I searched for skills related to "xyz" but didn't find any matches.
-I can still help you with this task directly! Would you like me to proceed?
+「xyz」に関連するskillを探しましたが、見つかりませんでした。
+このタスクは一般的な能力のまま直接お手伝いできます。このまま進めますか？
 
-If this is something you do often, you could create your own skill:
+よくやる作業なら、自分のskillを作ることもできます:
 npx skills init my-xyz-skill
 ```

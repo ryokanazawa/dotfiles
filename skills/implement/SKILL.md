@@ -1,15 +1,15 @@
 ---
 name: implement
-description: "Implement a piece of work based on a spec or set of tickets."
+description: "仕様またはチケット一式に基づいて作業の一片を実装する。"
 disable-model-invocation: true
 ---
 
-Implement the work described by the user in the spec or tickets.
+仕様やチケットに書かれた作業を、ユーザーの説明どおりに実装する。
 
-Use /tdd where possible, at pre-agreed seams.
+可能なら事前に取り決めたseamで /tdd を使う。
 
-Run typechecking regularly, single test files regularly, and the full test suite once at the end.
+型チェックと単体テストファイルはこまめに実行し、全テストスイートは最後に1回だけ回す。
 
-Once done, use /code-review to review the work.
+完了したら /code-review で成果をレビューする。
 
-Commit your work to the current branch.
+成果は現在のブランチへコミットする。

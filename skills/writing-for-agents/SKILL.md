@@ -1,81 +1,81 @@
 ---
 name: writing-for-agents
-description: Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md or CLAUDE.md.
+description: エージェントが消費する文書を書く。skillの作成・編集、またはAGENTS.mdやCLAUDE.mdを変更するときに使う。
 ---
 
-Reference for writing any document an agent consumes — a skill, an `AGENTS.md` / `CLAUDE.md`, a doc reached by a pointer. The packaging differs; the writing does not: the same levers make each one predictable — the agent taking the same _process_ every run, not producing the same output.
+エージェントが消費するあらゆる文書を書くためのリファレンス。skillも、`AGENTS.md` / `CLAUDE.md`も、ポインタから到達する文書も同じである。パッケージは違うが、書き方は同じ。同じレバーがそれぞれを予測可能にする。エージェントが毎回同じ _process_ を踏むという意味であり、同じ出力を出すという意味ではない。
 
-When the document you're writing is a skill, read [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md) for frontmatter, invocation choice, and router skills.
+書く文書がskillのときは、[`SKILL-MECHANICS.md`](SKILL-MECHANICS.md)でfrontmatter、呼び出し方法の選択、router skillを読む。
 
 ## Context pointers
 
-A **context pointer** is a reference held in the agent's context that names some out-of-context material and encodes the condition for reaching it. A skill's description is one; a line in `AGENTS.md` naming a doc is the same object. The pointer's _wording_, not its target, decides when the agent reaches the material — and how reliably. A must-have target behind a weakly worded pointer is a variance bug: sharpen the wording first, and inline the material only if sharpening fails.
+**context pointer**（コンテキストポインタ）とは、エージェントのコンテキスト内に置かれた参照のことである。コンテキストの外にある資料を名指しし、そこへ到達するための条件を記述する。skillのdescriptionがその一例であり、`AGENTS.md`の中で文書を名指す1行も同じオブジェクトである。いつエージェントがその資料を辿るか、そしてどれだけ確実に辿るかは、ポインタの _wording_（言い回し）が決める。対象そのものではない。欠かせない資料が言い回しの弱いポインタの裏にあるのは、バリアンスのバグである。まず言い回しを研ぐ。研いでも足りないときだけ、資料をインライン化する。
 
-A pointer does two jobs — state what the material is, and list the **branches** that should trigger reaching it (a branch is a distinct case the document handles, so different runs take different paths through it). Every word of an always-loaded pointer costs on every turn, so it earns even harder pruning than the body:
+ポインタには二つの仕事がある。資料が何かを述べることと、それを辿る引き金になる **branch**（分岐）を列挙することである。branchとはその文書が扱う独立したケースのことで、実行ごとに異なるパスを辿らせる。常に読み込まれるポインタは、その一語一語が毎ターンコストになるため、本文以上に厳しく刈り込む価値がある。
 
-- **Front-load the leading word** — the pointer is where it does its triggering work.
-- **One trigger per branch.** Synonyms that rename a single branch are one branch written twice; collapse them and keep only genuinely distinct branches.
-- **Cut identity the body already carries.**
+- **先頭にleading wordを置く** — ポインタこそ、引き金の役目を果たす場所である。
+- **1つのbranchに1つのtrigger。** 同じbranchを言い換えるだけの同義語は、同じbranchを二回書いているだけである。統合して、本当に異なるbranchだけを残す。
+- **本文がすでに担っている身元情報は削る。**
 
-## The two loads
+## 二つの負荷
 
-Every document and pointer you add spends one of two budgets:
+追加する文書とポインタはすべて、二つの予算のうちどちらかを消費する。
 
-- **Context load** — the cost of always-loaded material on the agent's window: an `AGENTS.md` line, a skill description, anything sitting in context every turn, spending tokens and attention whether or not it fires.
-- **Cognitive load** — the cost on the human: which documents exist and when to reach for each. The human is the index. Not a cost to minimise — it is the price of human agency; spend it where human judgement matters, remove it where it does not.
+- **context load**（コンテキスト負荷）— 常に読み込まれる資料が、エージェントのウィンドウにかけるコスト。`AGENTS.md`の1行、skillのdescription、毎ターンコンテキストに居座るものすべてが、発火しようがしまいがトークンと注意を消費する。
+- **cognitive load**（認知負荷）— 人間にかかるコスト。どの文書が存在し、いつどれを辿るか。人間が索引になる。最小化すべきコストではない。人間の主体性の代価である。人間の判断が効くところには使い、効かないところからは取り除く。
 
-Material reached only through a pointer escapes context load at the price of the pointer's own line; material with no pointer at all rides entirely on cognitive load.
+ポインタ越しにしか到達できない資料は、ポインタ自身の1行のコストと引き換えにcontext loadを免れる。ポインタを持たない資料は、すべてcognitive loadに載る。
 
 ## Information hierarchy
 
-A document is built from two content types — **steps** (the ordered actions the agent performs) and **reference** (definitions, rules, facts consulted on demand) — that mix freely: all steps (a recipe), all reference (a review's rules, this skill), or both. The core decision is where each piece sits on the **information hierarchy**, a ladder ranked by how immediately the agent needs the material:
+文書は二つの内容タイプから成る。**steps**（エージェントが順番に実行する行動）と **reference**（定義・ルール・必要に応じて引かれる事実）である。これらは自由に混ざる。すべてsteps（レシピ）、すべてreference（レビュールールやこのskillなど）、あるいはその両方。中核の判断は、各部分を **information hierarchy**（情報階層）のどこに置くかである。これは、エージェントがどれだけ即座にその資料を必要とするかで順位付けられた梯子である。
 
-1. **In-file step** — the primary tier: what the agent does, in order.
-2. **In-file reference** — consulted on demand. Often a legitimately flat peer-set (every rule of a review on one rung) — a fine arrangement, not a smell.
-3. **Disclosed reference** — pushed out into a separate file, reached by a context pointer, loaded only when the pointer fires. Spans a sibling file in the same folder through fully external reference that lives anywhere and any document can point at.
+1. **ファイル内のstep** — 主役の層。エージェントがすることを、順番に書く。
+2. **ファイル内のreference** — 必要に応じて引かれる。正当にフラットな同格の集まりであることも多い（レビューの全ルールを一つの段に置くなど）。これは問題のない配置であり、臭いではない。
+3. **開示されるreference** — 別のファイルへ押し出され、context pointerから到達し、ポインタが発火したときだけ読み込まれる。同じフォルダの兄弟ファイルから、どこにでも置けてどんな文書からも指せる完全な外部referenceまでを含む。
 
-Push too little down and the top bloats; push too much and you hide material the agent actually needs. That tension is the whole decision.
+下に押し出すのが足りなければ上が肥大し、押し出しすぎればエージェントが実際に必要とする資料を隠してしまう。この緊張関係こそが判断のすべてである。
 
-**Progressive disclosure** is the move down the ladder — out of the main file and behind a pointer — so the top stays legible. Not primarily a token optimisation: it is how the hierarchy is protected. Branching is the cleanest disclosure test: inline what every branch needs, and push behind a pointer what only some branches reach. When a document has steps, in-file reference that should be disclosed buries them and turns attending to them into a coin-flip — a variance lever, not just a legibility one.
+**progressive disclosure**（段階的開示）は、梯子を下へ降りる動きである。主ファイルの外へ、ポインタの裏へ移すことで、上を読みやすく保つ。主にトークンの最適化ではない。階層を守る方法である。branchingは、開示のもっとも綺麗な判定基準である。すべてのbranchが必要とするものはインライン化し、一部のbranchしか辿らないものはポインタの裏へ押し出す。文書にstepsがある場合、本来開示すべきファイル内referenceがstepsを埋もれさせ、それらに注意を向けることをコイン投げにしてしまう。これは可読性だけでなく、バリアンスのレバーでもある。
 
-**Co-location** is the within-file companion: where the ladder decides _how far down_ a piece sits, co-location decides _what sits beside it_ once there. Keep a concept's definition, rules, and caveats under one heading rather than scattered, so reading one part brings its neighbours with it. The test: the document should read like documentation written for the agent — grouped material reads that way; scattered material does not. (Distinct from duplication: that repeats one meaning in two places; scattering fragments one meaning across many.)
+**co-location**（同居配置）は、ファイル内の対になる概念である。梯子がある部分を _どれだけ下_ に置くかを決めるのに対し、co-locationはそこに置いた後で _何を隣に置くか_ を決める。ある概念の定義・ルール・注意点は、ばらけさせず一つの見出しの下にまとめる。一箇所を読めば隣の内容も一緒に読めるようにする。判定基準は、その文書がエージェントのために書かれた文書として読めることである。まとまった資料はそう読め、ばらけた資料はそうは読めない。（重複とは別物である。重複は同じ意味を二箇所で繰り返す。散在は、一つの意味をいくつもの断片に割く。）
 
-**Sprawl** is the failure mode here: a document simply too long, even when every line is live and unique. Attention thins across the excess, and every extra line is one more to keep relevant. The cure is the ladder: disclose reference behind pointers, and split by branch or sequence so each path carries only what it needs.
+**sprawl**（肥大化）は、ここでの失敗の型である。すべての行が生きていても独自でも、ただ文書が長すぎることである。余剰にわたって注意が薄まり、余分な1行は1行分、関連性を保つ負担を増やす。特効薬は梯子である。referenceはポインタの裏へ開示し、branchかsequenceで分割して、各パスが自分が必要とするものだけを運ぶようにする。
 
-## Steps and completion criteria
+## Stepsとcompletion criterion
 
-Every step ends on a **completion criterion** — the condition that tells the agent the work is done. Two properties make it a lever:
+すべてのstepは **completion criterion**（完了条件）で終わる。作業が完了したことをエージェントに知らせる条件である。二つの性質が、これをレバーにする。
 
-- **Clarity** — can the agent tell done from not-done? A vague bound ("understanding reached") invites **premature completion**: ending the step before it is genuinely done, attention slipping to _being done_. The visible steps still ahead — the **post-completion steps** — supply the pull; the criterion's clarity is the resistance. Defend in order: **sharpen the bound first** (local and cheap); only if it is irreducibly fuzzy _and_ you observe the rush, hide the later steps by splitting the sequence — and hiding only works across a real context boundary (a hand-off or a subagent dispatch; an inline call leaves the later steps in context and clears nothing).
-- **Demand** — how much it requires. "Every modified model accounted for" forces thorough work where "produce a change list" does not. Demand drives **legwork** — the digging the agent does within the work, latent in the wording rather than written as its own step — and it is not step-bound: "every rule applied" binds a body of flat reference just as "every step done" binds a sequence, which is how an all-reference document still carries an exhaustiveness bar.
+- **明快さ** — 完了と未完了をエージェントが見分けられるか。曖昧な境界（「理解に至った」）は **premature completion**（早すぎる完了）を招く。本当に終わる前にstepを打ち切り、注意が _being done_（終わらせること）へ流れることである。まだ先に見えるsteps、すなわち **post-completion steps** が引っ張りを生み、criterionの明快さが抵抗になる。順番に守る。**まず境界を研ぐ**（局所的で安い）。どうしても曖昧さが消えず、しかも急ぎ込みを観察したときだけ、sequenceを分割して後のstepsを隠す。隠すのは本物のコンテキスト境界をまたぐときだけ効く（引き継ぎやサブエージェントの派遣。インライン呼び出しでは後のstepsがコンテキストに残り、何も消えない）。
+- **要求度** — どれだけのことを求めるか。「変更したモデルをすべて説明する」は徹底した作業を強いるが、「変更リストを作る」は強いない。要求度は **legwork**（下調べ）を駆動する。legworkとは作業の中でエージェントが行う掘り下げで、独立したstepとして書かれるのではなく、言い回しの中に潜む。そしてstepに縛られない。「すべてのルールを適用する」はフラットなreferenceの集まりを拘束する。ちょうど「すべてのstepを完了する」がsequenceを拘束するように。だからこそ、すべてreferenceの文書でも網羅性の基準を持てる。
 
-The strongest criteria are both checkable and exhaustive.
+最強のcriterionは、検証可能であり、かつ網羅的である。
 
-## When to split
+## いつ分割するか
 
-Splitting one document into two spends one of the two loads, so split only when the cut earns it:
+文書を二つに割るのは、二つの負荷のうちどちらかを消費する。だから、分割に見合うときだけ割る。
 
-- **By sequence** — split a run of steps where the post-completion steps tempt the agent to rush the one in front of it. Keeping them out of view drives more legwork on the current task. Beware the reverse: merging sequences exposes each step's later steps to what follows, inviting premature completion.
-- **By invocation** — skill-specific: see [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md).
+- **sequenceで割る** — 後のstepsが、手前のstepを急がせるような一連のstepsを割る。後のstepsを見せないことで、今のタスクにより多くのlegworkを向けさせる。逆にも注意する。sequenceを統合すると、各stepの後のstepsが後続にさらされ、premature completionを招く。
+- **呼び出しで割る** — skillに特有の話。[`SKILL-MECHANICS.md`](SKILL-MECHANICS.md)を参照。
 
 ## Leading words
 
-A **leading word** is a compact concept already living in the model's pretraining that the agent thinks with while running the document (_lesson_, _fog of war_, _tracer bullets_). Repeated as a token, never as a sentence, it accumulates a distributed definition and anchors a whole region of behaviour in the fewest tokens, by recruiting priors the model already holds. Coining your own works if you define it clearly, but a made-up word recruits no priors — you pay in definition tokens what a pretrained word gives free; reach for an existing word first.
+**leading word**（先行語）とは、モデルの事前学習の中にすでにあるコンパクトな概念で、エージェントが文書を実行するときに考える道具として使うものである（_lesson_、_fog of war_、_tracer bullets_）。文ではなくトークンとして繰り返すことで、分散した定義が蓄積し、モデルがすでに持つ事前知識を呼び出すことで、行動の広い領域をもっとも少ないトークンで固定する。自分で作語しても、明確に定義すれば機能する。ただし作り物の単語は事前知識を呼び出さない。事前学習済みの単語がただで与えるものを、定義のトークンを払って買うことになる。まず既存の単語に手を伸ばす。
 
-It anchors twice. In the body, _execution_: the agent reaches for the same behaviour every time the word appears, and inside flat reference it focuses attention on a class of thing to look for. In a pointer, _invocation_: when the same word lives in your prompts, your docs, and your codebase, the agent links that shared language to the material and reaches it more reliably.
+固定は二箇所で効く。本文では _execution_（実行）。その単語が現れるたび、エージェントは同じ行動に手を伸ばす。フラットなreferenceの中では、探す対象の一団へ注意を集中させる。ポインタでは _invocation_（呼び出し）。同じ単語がプロンプトと文書とコードベースに生きていると、エージェントはその共有語と資料を結びつけ、より確実に辿り着く。
 
-Hunt for opportunities to refactor with leading words. A triad spelled out at three sites, a pointer spending a sentence to gesture at one idea — each is a passage begging to collapse into a single token:
+leading wordでリファクタリングする機会を探す。三箇所でつづられる三つ組も、一つの考えを指すために一文を費やすポインタも、いずれも一つのトークンへの圧縮を求めている箇所である。
 
-- "fast, deterministic, low-overhead" → _tight_ (a _tight_ loop).
-- "a loop you believe in" → _red_ — a fuzzy gate becomes a binary observable state (the loop goes _red_ on the bug, or it doesn't).
+- 「速い、決定的、低オーバーヘッド」→ _tight_（_tight_ なloop）。
+- 「信頼できるloop」→ _red_。曖昧なゲートが二値の観測可能な状態になる（loopがバグに対して _red_ になるか、ならないか）。
 
-You win twice: fewer tokens, and a sharper hook for the agent to hang its thinking on. Assume every document is carrying restatements that leading words retire — go find them.
+二重に得をする。トークンが減り、エージェントが考えを引っかける鉤が鋭くなる。あらゆる文書が、leading wordで置き換えられる言い換えを抱えていると考える。探しに行くこと。
 
-**Negation** is the failure mode beside this lever: steering by prohibition drags the forbidden behaviour into context and makes it _more_ available, not less. _Don't think of an elephant_, and the elephant is all there is; the negation is a weak modifier the strongly-activated concept overruns, so the ban half-reads as an instruction to do the thing. Prompt the **positive** — state the target behaviour ("write one-line comments") so the banned one is never spoken. A prohibition earns its place only as a hard guardrail you cannot phrase positively; even then, pair it with the positive target so attention lands on what to do.
+**否定**は、このレバーのそばにある失敗の型である。禁止による誘導は、禁じた行動をコンテキストに引きずり込み、それを _より_ 手に入りやすくする。減らすのではない。「象のことを考えるな」と言えば、そこは象でいっぱいになる。否定は弱い修飾子で、強く活性化された概念がそれを追い越す。だから禁止は半分、それをやれという指示として読まれる。**肯定**で促す。禁じる行動を決して口にせず、目標の行動を述べる（「一行コメントを書く」）。禁止が居場所を得るのは、肯定では言い換えられない堅いガードレールとしてだけである。その場合でも、肯定の目標と対にし、注意がやるべきことに向くようにする。
 
-## Pruning
+## 刈り込み
 
-- Keep each meaning in a **single source of truth**: one authoritative place, so changing the behaviour is a one-place edit. **Duplication** — the same meaning in more than one place — costs maintenance and tokens, and inflates a meaning's prominence on the ladder past its real rank. (The accidental inverse of a leading word, which repeats a token on purpose, never the meaning.)
-- The **environment** is a source of truth too — `package.json` scripts, config files, the directory layout, `--help` output — and a document that restates it is a **cache**: a copy of a lookup, earning its load only when the lookup is expensive. Cache what the agent cannot find by looking: the unwritten convention, the reason behind a choice, the gotcha no config confesses. Leave the one-file, one-command lookups to the environment, where they cannot go stale.
-- Check every line for **relevance**: does it still bear on what the document does? A line loses relevance by never bearing on the task (mere exposition, or a branch that should be disclosed) or by going stale as the behaviour or world it describes changes. Shorter documents are easier to keep relevant. Without a pruning discipline the default fate is **sediment**: stale layers that settle because adding feels safe and removing feels risky, until you must core down through them to find what is still live.
-- Hunt **no-ops** sentence by sentence: an instruction the model already obeys by default pays load to say nothing. The test — does it change behaviour versus the default? — is model-relative, not reader-relative: two people disagreeing about a no-op disagree about the default, and settle it by running the document, not by debate. When a sentence fails, delete the whole sentence rather than trim words from it. The test also grades leading words: a word too weak to beat the default (_be thorough_ when the agent is already thorough-ish) is a no-op, and the fix is a stronger word (_relentless_), not a different technique.
+- 各意味は **single source of truth**（単一の真実の源）に置く。権威ある一箇所だけにして、行動の変更が一箇所の編集で済むようにする。**重複** — 同じ意味が複数箇所にあること — はメンテナンスとトークンのコストになり、梯子の上でのその意味の見かけの重要度を、実際の順位以上に膨らませる。（leading wordの偶然の逆である。leading wordは意味ではなく、トークンを意図的に繰り返す。）
+- **環境** もまたsource of truthである。`package.json`のスクリプト、configファイル、ディレクトリ構成、`--help`の出力など。それを言い直す文書は **cache** である。参照のコピーであり、参照が高いときだけ、その負荷に見合う。見て見つけられないものだけをキャッシュする。書き残されていない慣習、ある選択の背後にある理由、どのconfigも告白しない落とし穴。一ファイル一コマンドの参照は環境に任せる。そこでは古くならない。
+- すべての行を **関連性** で点検する。その文書がすることに対して、まだ効いているか。タスクにまったく効かない行（単なる説明や、本来開示すべきbranch）や、記述する行動や世界が変わって古びた行は、関連性を失う。短い文書のほうが関連性を保ちやすい。刈り込みの規律がなければ、既定の行き先は **sediment**（堆積）である。追加は安全、削除は危険に感じるため、古い層が積み重なって沈殿する。生きているものを見つけるために、そこまで掘り下げねばならなくなる。
+- **no-op**（無効な指示）を一文単位で探す。モデルが既定で従う指示は、負荷を払って何も言っていないことになる。判定基準は、既定と比べて行動を変えるか、である。読者基準ではなくモデル基準である。あるno-opについて二人が食い違うなら、それは既定について食い違っている。決着は議論ではなく、文書を実行してつける。ある文が不合格なら、単語を削るのではなく、その文をまるごと消す。この基準はleading wordの採点にもなる。既定に勝てないほど弱い単語（エージェントがすでにそこそこ徹底しているときの _be thorough_）はno-opであり、直す方法は別の技法ではなく、より強い単語（_relentless_）である。

@@ -1,3 +1,3 @@
 interface:
-  display_name: "Research"
-  short_description: "Research from high-trust sources"
+  display_name: "調査"
+  short_description: "信頼できる一次ソースで調査する"

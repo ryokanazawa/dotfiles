@@ -1,12 +1,12 @@
 ---
 name: research
-description: Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the user wants a topic researched, docs or API facts gathered, or reading legwork delegated to a background agent.
+description: 信頼できる一次ソースを当たって問いを調査し、結果をリポジトリ内のMarkdownファイルとしてまとめる。トピックの調査、ドキュメントやAPIの事実の収集、読み込み作業をバックグラウンドエージェントに任せたいときに使う。
 ---
 
-Spin up a **background agent** to do the research, so you keep working while it reads.
+調査用に**バックグラウンドエージェント**を起動し、読み込みを任せて自分はその間に作業を続ける。
 
-Its job:
+エージェントの仕事:
 
-1. Investigate the question against **primary sources** — official docs, source code, specs, first-party APIs — not a secondary write-up of them. Follow every claim back to the source that owns it.
-2. Write the findings to a single Markdown file, citing each claim's source.
-3. Save it where the repo already keeps such notes; match the existing convention, and if there is none, put it somewhere sensible and say where.
+1. 問いを**一次ソース**で調査する。公式ドキュメント・ソースコード・仕様・first-party APIであり、それらの二次的なまとめ記事は使わない。すべての主張を出典であるソースまで遡って確認する。
+2. 結果を1つのMarkdownファイルに書き、主張ごとにソースを明記する。
+3. リポジトリがすでにこの種のノートを置いている場所に保存する。既存の慣習に合わせ、慣習がなければ妥当な場所に置いてその場所を伝える。

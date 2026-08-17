@@ -1,45 +1,45 @@
 ---
 name: worktree
-description: Create a git worktree for the task and rename it to a short name once the implementation content is clear. Use when the user asks to cut a worktree, work in a worktree, or start a task in a worktree.
+description: タスク用のgit worktreeを切り、実装内容が固まった時点で内容を表す短い名前に改名する。worktreeを切る、worktreeで作業する、タスクをworktreeで始めると依頼されたときに使う。
 ---
 
-# worktree — cut a working worktree and give it a short name matching the implementation
+# worktree — 作業用worktreeを切り、実装内容に合わせた短い名前を付ける
 
-Cut a worktree when starting a task, and once the implementation content is settled, align the worktree name and branch name to a short name that represents the content.
+タスク開始時にworktreeを切り、実装内容が固まった時点でworktree名とブランチ名を内容を表す短い名前に揃える。
 
-## Naming rules
+## 命名ルール
 
-- kebab-case, 1–2 words, within 64 characters. Use a name that represents the implementation content (e.g. `fix-login`, `csv-export`, `dark-mode`).
-- Do not include ticket numbers, dates, or model names.
-- Use a name that does not collide with existing branches (check with `git branch --list <name>`).
+- kebab-case、1〜2語、64字以内。実装内容を表す名前にする（例: `fix-login`、`csv-export`、`dark-mode`）。
+- チケット番号・日付・モデル名は入れない。
+- 既存ブランチと衝突しない名前にする（`git branch --list <名前>` で確認）。
 
-## Procedure
+## 手順
 
-### 1. Cut the worktree
+### 1. worktreeを切る
 
-- If the implementation content is already known: call `EnterWorktree` with a `name` following the naming rules. The host may append a random suffix or a `claude/` prefix, so if the created directory name / branch name does not match the desired short name, rename it in step 2. If it matches, you are done.
-- If not yet known: call `EnterWorktree` with no arguments (start with a random name).
-- In environments without the `EnterWorktree` tool, run `git worktree add "$(git rev-parse --show-toplevel)/.claude/worktrees/<name>" -b <name>` and `cd` into it. If the implementation content is not yet known, create it with a provisional name such as `wip` and rename it in step 2. In repositories where `.claude/` is not ignored, add `.claude/` to `"$(git rev-parse --git-common-dir)/info/exclude"`.
+- 実装内容がすでに分かっている場合: 命名ルールに従った名前で `EnterWorktree` を `name` 付きで呼ぶ。ホストがランダム接尾辞や `claude/` 接頭辞を付けることがあるため、作成されたディレクトリ名・ブランチ名が望む短い名前と一致しなければ手順2で改名する。一致していれば完了。
+- まだ分からない場合: `EnterWorktree` を引数なしで呼ぶ（ランダム名で開始）。
+- `EnterWorktree` ツールが無い環境では `git worktree add "$(git rev-parse --show-toplevel)/.claude/worktrees/<名前>" -b <名前>` して `cd` する。実装内容がまだ分からない場合は `wip` などの仮名で作り、手順2で改名する。`.claude/` がignoreされていないリポジトリでは `"$(git rev-parse --git-common-dir)/info/exclude"` に `.claude/` を足す。
 
-### 2. Rename once the implementation content is settled
+### 2. 実装内容が固まったら改名する
 
-Once you have started and grasped the implementation content (aim for before the first commit), decide a new name following the naming rules and run the following **in a single Bash invocation**. Do not split it up, because move removes the original cwd path:
+着手して実装内容を把握した時点（目安は最初のコミットより前）で、命名ルールに従い新しい名前を決め、次を**1回のBash呼び出しで**実行する。moveすると元のcwdパスが消えるため、分割しない:
 
 ```sh
 MAIN=$(git worktree list --porcelain | head -1 | sed 's/^worktree //')
 ROOT=$(git rev-parse --show-toplevel)
 OLD=$(git branch --show-current)
-DST="$(dirname "$ROOT")/<new-name>"
+DST="$(dirname "$ROOT")/<新名前>"
 git -C "$MAIN" worktree move "$ROOT" "$DST" && echo "moved: $DST" \
-  && { [ -z "$OLD" ] || git -C "$MAIN" branch -m "$OLD" "<new-name>"; }
+  && { [ -z "$OLD" ] || git -C "$MAIN" branch -m "$OLD" "<新名前>"; }
 ```
 
-- On a detached HEAD (`OLD` is empty), renaming the directory alone completes the step. Do not rename a branch.
+- detached HEAD（`OLD` が空）ならディレクトリ改名のみで完了。ブランチ改名はしない。
 
-Immediately afterward, call `EnterWorktree`, passing the absolute path of `$DST` printed above **as a literal** to `path` to switch the session to the new path (do not use variable references across Bash invocations). In environments without `EnterWorktree`, move with `cd`. Do not make any other Bash calls between the successful move and re-entering (the original cwd is gone and they would fail).
+直後に `EnterWorktree` を呼び、上で出力された `$DST` の絶対パスを**リテラルで** `path` に渡してセッションを新しいパスへ切り替える（Bash呼び出しをまたぐ変数参照は使わない）。`EnterWorktree` が無い環境では `cd` で移動する。move成功から入り直しまでの間に他のBash呼び出しをしない（元のcwdが消えていて失敗する）。
 
-- If only `branch -m` failed (name collision, etc.), the move is already complete. Re-enter `$DST` as above first, then run `git branch -m <old-name> <other-name>` with a non-colliding name.
+- `branch -m` だけが失敗した場合（名前衝突など）、moveは完了済み。先に上記のとおり `$DST` へ入り直してから、衝突しない名前で `git branch -m <旧名> <別名>` を実行する。
 
-## Notes
+## 補足
 
-- A worktree re-entered via `path` after renaming will not be removed by `ExitWorktree`'s remove. It stays on disk, so if asked after merging into main, remove it with `git worktree remove`.
+- 改名後に `path` で入り直したworktreeは `ExitWorktree` の remove では消えない。ディスクに残るので、mainへ統合後に依頼があれば `git worktree remove` で消す。

@@ -1,5 +1,5 @@
 interface:
-  display_name: "Teach"
-  short_description: "Learn a concept in a guided workspace"
+  display_name: "教える"
+  short_description: "ガイド付きワークスペースで概念を学ぶ"
 policy:
   allow_implicit_invocation: false

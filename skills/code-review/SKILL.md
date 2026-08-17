@@ -1,89 +1,89 @@
 ---
 name: code-review
-description: Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes — Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match what the originating issue/PRD asked for?). Runs both reviews in parallel sub-agents and reports them side by side. Use when the user wants to review a branch, a PR, work-in-progress changes, or asks to "review since X".
+description: 固定時点（commit、branch、tag、merge-base）からの変更を2軸でレビューする — Standards（このリポジトリの文書化されたコーディング規約に従っているか）とSpec（元のissue/PRDの要求と一致しているか）。両レビューを並行サブエージェントで実行し、結果を並べて報告する。ブランチ、PR、進行中の変更のレビューを求められたときや「X以来のレビュー」と言われたときに使う。
 ---
 
-Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
+ユーザーが指定する固定時点と`HEAD`の間の差分を、2軸でレビューする:
 
-- **Standards** — does the code conform to this repo's documented coding standards?
-- **Spec** — does the code faithfully implement the originating issue / PRD / spec?
+- **Standards** — コードはこのリポジトリの文書化されたコーディング規約に従っているか？
+- **Spec** — コードは元のissue / PRD / 仕様を忠実に実装しているか？
 
-Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings.
+両軸は**並行サブエージェント**として実行し、互いのコンテキストを汚さないようにする。その後このskillが双方の指摘を集約する。
 
-The issue tracker should have been provided to you — run `/setup-matt-pocock-skills` if `docs/agents/issue-tracker.md` is missing.
+issueトラッカーはあらかじめ渡されているはずである — `docs/agents/issue-tracker.md`がなければ`/setup-matt-pocock-skills`を実行する。
 
-## Process
+## 手順
 
-### 1. Pin the fixed point
+### 1. 固定時点を確定する
 
-Whatever the user said is the fixed point — a commit SHA, branch name, tag, `main`, `HEAD~5`, etc. If they didn't specify one, ask for it.
+ユーザーが言ったものがそのまま固定時点になる — commit SHA、ブランチ名、tag、`main`、`HEAD~5`など。指定がなければ尋ねる。
 
-Capture the diff command once: `git diff <fixed-point>...HEAD` (three-dot, so the comparison is against the merge-base). Also note the list of commits via `git log <fixed-point>..HEAD --oneline`.
+差分コマンドを1回で確定する: `git diff <fixed-point>...HEAD`（three-dotなので比較対象はmerge-baseになる）。`git log <fixed-point>..HEAD --oneline`でコミット一覧も控える。
 
-Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`) and the diff is non-empty. A bad ref or empty diff should fail here — not inside two parallel sub-agents.
+先に進む前に、固定時点が解決できること（`git rev-parse <fixed-point>`）と差分が空でないことを確認する。不正なrefや空の差分はここで失敗させる — 並行サブエージェントの内部で失敗させてはならない。
 
-### 2. Identify the spec source
+### 2. 仕様の出どころを特定する
 
-Look for the originating spec, in this order:
+元の仕様を次の順番で探す:
 
-1. Issue references in the commit messages (`#123`, `Closes #45`, GitLab `!67`, etc.) — fetch via the workflow in `docs/agents/issue-tracker.md`.
-2. A path the user passed as an argument.
-3. A PRD/spec file under `docs/`, `specs/`, or `.scratch/` matching the branch name or feature.
-4. If nothing is found, ask the user where the spec is. If they say there isn't one, the **Spec** sub-agent will skip and report "no spec available".
+1. commitメッセージ内のissue参照（`#123`、`Closes #45`、GitLabの`!67`など）— `docs/agents/issue-tracker.md`のワークフローで取得する。
+2. ユーザーが引数として渡したパス。
+3. `docs/`、`specs/`、`.scratch/`配下で、ブランチ名や機能名に一致するPRD/仕様ファイル。
+4. 何も見つからなければ、ユーザーに仕様の場所を尋ねる。仕様は存在しないと言われた場合は、**Spec**サブエージェントはスキップして「no spec available」と報告する。
 
-### 3. Identify the standards sources
+### 3. 規約のソースを特定する
 
-Anything in the repo that documents how code should be written, such as `CODING_STANDARDS.md` or `CONTRIBUTING.md`.
+リポジトリ内でコードの書き方を定めた文書なら何でも対象にする。`CODING_STANDARDS.md`や`CONTRIBUTING.md`など。
 
-On top of whatever the repo documents, the Standards axis always carries the **smell baseline** below — a fixed set of Fowler code smells (_Refactoring_, ch.3) that applies even when a repo documents nothing. Two rules bind it:
+リポジトリの文書に加えて、Standards軸は常に以下の**smell baseline**を携える — Fowlerのcode smell（_Refactoring_ 第3章）の固定セットで、リポジトリが何も定めていない場合でも適用される。これには2つのルールがある:
 
-- **The repo overrides.** A documented repo standard always wins; where it endorses something the baseline would flag, suppress the smell.
-- **Always a judgement call.** Each smell is a labelled heuristic ("possible Feature Envy"), never a hard violation — and, like any standard here, skip anything tooling already enforces.
+- **リポジトリが優先する。** 文書化されたリポジトリ規約が常に勝つ。規約が認めているものをbaselineが指摘する場合は、そのsmellを抑止する。
+- **常に判断事項。** 各smellはラベル付きのヒューリスティック（「Feature Envyの可能性」）であり、ハードな違反ではない — また、ここでの他の基準と同様、ツールがすでに強制しているものはスキップする。
 
-Each smell reads *what it is* → *how to fix*; match it against the diff:
+各smellは*それが何か* → *どう直すか*の形式で読む。差分と突き合わせる:
 
-- **Mysterious Name** — a function, variable, or type whose name doesn't reveal what it does or holds. → rename it; if no honest name comes, the design's murky.
-- **Duplicated Code** — the same logic shape appears in more than one hunk or file in the change. → extract the shared shape, call it from both.
-- **Feature Envy** — a method that reaches into another object's data more than its own. → move the method onto the data it envies.
-- **Data Clumps** — the same few fields or params keep travelling together (a type wanting to be born). → bundle them into one type, pass that.
-- **Primitive Obsession** — a primitive or string standing in for a domain concept that deserves its own type. → give the concept its own small type.
-- **Repeated Switches** — the same `switch`/`if`-cascade on the same type recurs across the change. → replace with polymorphism, or one map both sites share.
-- **Shotgun Surgery** — one logical change forces scattered edits across many files in the diff. → gather what changes together into one module.
-- **Divergent Change** — one file or module is edited for several unrelated reasons. → split so each module changes for one reason.
-- **Speculative Generality** — abstraction, parameters, or hooks added for needs the spec doesn't have. → delete it; inline back until a real need shows.
-- **Message Chains** — long `a.b().c().d()` navigation the caller shouldn't depend on. → hide the walk behind one method on the first object.
-- **Middle Man** — a class or function that mostly just delegates onward. → cut it, call the real target direct.
-- **Refused Bequest** — a subclass or implementer that ignores or overrides most of what it inherits. → drop the inheritance, use composition.
+- **Mysterious Name** — 関数・変数・型の名前から、何をするのか何を保持するのかが読み取れない。→ リネームする。誠実な名前が浮かばないなら、設計が濁っている。
+- **Duplicated Code** — 同じロジックの形が変更内の複数のhunkやファイルに現れている。→ 共通の形を抽出し、両側から呼ぶ。
+- **Feature Envy** — メソッドが自分のものより他オブジェクトのデータをより多く参照している。→ メソッドを、それが羨望するデータ側へ移す。
+- **Data Clumps** — 同じ数個のフィールドやパラメータがいつも一緒に持ち運ばれている（生まれるべき型がある）。→ 1つの型にまとめて、それを渡す。
+- **Primitive Obsession** — プリミティブや文字列が、専用の型を持つべきドメイン概念の代わりを務めている。→ その概念に独自の小さな型を与える。
+- **Repeated Switches** — 同じ型に対する同じ`switch`/`if`カスケードが変更全体で繰り返される。→ ポリモーフィズム、または両側で共有する1つのmapに置き換える。
+- **Shotgun Surgery** — 1つの論理的な変更のために、diff内の多くのファイルへ散らばった編集を強いられる。→ まとめて変わっているものを1つのモジュールへ集める。
+- **Divergent Change** — 1つのファイルやモジュールが無関係な複数の理由で編集される。→ 各モジュールが1つの理由だけで変わるように分割する。
+- **Speculative Generality** — 仕様にない必要のために抽象化・パラメータ・フックが追加されている。→ 削除する。本当に必要になるまでinlineに戻す。
+- **Message Chains** — 呼び出し側が依存すべきでない長い`a.b().c().d()`のナビゲーション。→ 最初のオブジェクトの1つのメソッドの裏に隠す。
+- **Middle Man** — ほぼ委譲するだけのクラスや関数。→ 取り除き、本当の対象を直接呼ぶ。
+- **Refused Bequest** — サブクラスや実装側が、継承したものの大半を無視・上書きしている。→ 継承をやめてコンポジションを使う。
 
-### 4. Spawn both sub-agents in parallel
+### 4. 両サブエージェントを並行で起動する
 
-Send a single message with two `Agent` tool calls. Use the `general-purpose` subagent for both.
+`Agent`ツール呼び出し2つを1つのメッセージで送る。両方に`general-purpose`サブエージェントを使う。
 
-**Standards sub-agent prompt** — include:
+**Standardsサブエージェントへのprompt** — 含めるもの:
 
-- The full diff command and commit list.
-- The list of standards-source files you found in step 3, **plus the smell baseline from step 3** pasted in full — the sub-agent has no other access to it.
-- The brief: "Report — per file/hunk where relevant — (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls — documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. Under 400 words."
+- 差分コマンド全体とコミット一覧。
+- ステップ3で見つけた規約ソースのファイル一覧。さらに**ステップ3のsmell baselineを全文貼り付けたもの** — サブエージェントはそれへアクセスする他の手段を持たない。
+- ブリーフ: 「関連するファイル/hunkごとに報告すること — (a) 差分が文書化された規約に違反する箇所をすべて: 規約（ファイル + ルール）を引用する。(b) 見つけたbaseline smell: 名前を挙げ、hunkを引用する。ハードな違反と判断事項を区別すること — 文書化された規約への違反はハードな場合もあるが、baseline smellは常に判断事項であり、文書化されたリポジトリ規約はbaselineに優先する。ツールが強制しているものはスキップする。400語以内。」
 
-**Spec sub-agent prompt** — include:
+**Specサブエージェントへのprompt** — 含めるもの:
 
-- The diff command and commit list.
-- The path or fetched contents of the spec.
-- The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep); (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Under 400 words."
+- 差分コマンドとコミット一覧。
+- 仕様のパス、または取得した仕様の中身。
+- ブリーフ: 「次の観点で報告すること: (a) 仕様が求めた要件のうち欠けているもの・部分的なもの。(b) 差分の中で求められていない挙動（スコープの膨張）。(c) 実装されたように見えるが実装が誤っていそうな要件。各指摘について仕様の該当行を引用する。400語以内。」
 
-If the spec is missing, skip the Spec sub-agent and note this in the final report.
+仕様が存在しない場合はSpecサブエージェントをスキップし、その旨を最終報告に記す。
 
-### 5. Aggregate
+### 5. 集約する
 
-Present the two reports under `## Standards` and `## Spec` headings, verbatim or lightly cleaned. Do **not** merge or rerank findings — the two axes are deliberately separate (see _Why two axes_).
+2つの報告を`## Standards`と`## Spec`の見出しの下に並べる。原文のまま、または軽く整える程度にとどめる。指摘を統合したり再順位付けしたり**しない** — 2軸は意図的に分離している（_なぜ2軸なのか_参照）。
 
-End with a one-line summary: total findings per axis, and the worst issue _within each axis_ (if any). Don't pick a single winner across axes — that's the reranking the separation exists to prevent.
+末尾に1行のサマリを置く: 軸ごとの指摘総数と、_各軸の中で_最悪の問題（あれば）。軸をまたぐ単一の勝者を選ばない — それは、分離することで防ごうとしている再順位付けそのものである。
 
-## Why two axes
+## なぜ2軸なのか
 
-A change can pass one axis and fail the other:
+変更は片方の軸に合格し、もう片方に不合格になりうる:
 
-- Code that follows every standard but implements the wrong thing → **Standards pass, Spec fail.**
-- Code that does exactly what the issue asked but breaks the project's conventions → **Spec pass, Standards fail.**
+- すべての規約に従っているが、間違ったものを実装しているコード → **Standards合格、Spec不合格。**
+- issueの要求どおりだが、プロジェクトの慣習を壊すコード → **Spec合格、Standards不合格。**
 
-Reporting them separately stops one axis from masking the other.
+分けて報告することで、一方の軸が他方を覆い隠すのを防ぐ。

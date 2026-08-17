@@ -1,36 +1,36 @@
 ---
 name: tdd
-description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests.
+description: テスト駆動開発。ユーザーがテストファーストでの機能構築やバグ修正を求めた時、「red-green-refactor」に言及した時、またはintegration testを求めた時に使う。
 ---
 
-# Test-Driven Development
+# テスト駆動開発
 
-TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle — consult them before and during the loop, not after.
+TDDとはred → greenのループのことである。このskillは、そのループで残す価値のあるテストを生み出すためのリファレンスである。良いテストとは何か、テストの置き場所、アンチパターン、ループのルールを扱う。すべての節がすべてのサイクルに適用される。ループの後ではなく、前と最中に参照すること。
 
-When exploring the codebase, read `CONTEXT.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+コードベースを調べる時は、テスト名やインターフェースの語彙をプロジェクトのドメイン言語に合わせるため`CONTEXT.md`（あれば）を読み、触る領域のADRに従う。
 
-## What a good test is
+## 良いテストとは
 
-Tests verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't. A good test reads like a specification — "user can checkout with valid cart" tells you exactly what capability exists — and survives refactors because it doesn't care about internal structure.
+テストは実装の詳細ではなく、公開されたインターフェースを通じて振る舞いを検証する。コードは完全に変わりうるが、テストはそうであってはならない。良いテストは仕様書のように読める。「user can checkout with valid cart」はどんな機能があるかを正確に伝え、内部構造に関知しないためリファクタリングにも耐える。
 
-See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
+例は[tests.md](tests.md)、mockの方針は[mocking.md](mocking.md)を参照。
 
-## Seams — where tests go
+## seam — テストの置き場所
 
-A **seam** is the public boundary you test at: the interface where you observe behavior without reaching inside. Tests live at seams, never against internals.
+**seam**とはテストの対象となる公開された境界のことである。中に手を伸ばさず振る舞いを観測できるインターフェースである。テストはseamに置き、内部には置かない。
 
-**Test only at pre-agreed seams.** Before writing any test, write down the seams under test and confirm them with the user. No test is written at an unconfirmed seam. You can't test everything — agreeing the seams up front is how testing effort lands on the critical paths and complex logic instead of every edge case.
+**テストは事前に合意したseamにだけ書く。** テストを書く前に、対象のseamを書き出し、ユーザーと確認する。未確認のseamにはテストを書かない。すべてをテストすることはできない。先にseamを合意することで、テストの労力がエッジケースの網羅ではなく重要なパスと複雑なロジックに向かう。
 
-Ask: "What's the public interface, and which seams should we test?"
+確認する。「公開されているインターフェースは何か、どのseamをテストすべきか」
 
-## Anti-patterns
+## アンチパターン
 
-- **Implementation-coupled** — mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior hasn't changed.
-- **Tautological** — the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth — a known-good literal, a worked example, the spec.
-- **Horizontal slicing** — writing all tests first, then all implementation. Bulk tests verify _imagined_ behavior: you test the _shape_ of things rather than user-facing behavior, the tests go insensitive to real changes, and you commit to test structure before understanding the implementation. Work in **vertical slices** instead — one test → one implementation → repeat, each test a **tracer bullet** that responds to what the last cycle taught you.
+- **実装への結合** — 内部のcollaboratorをmockする、privateメソッドをテストする、side channelで検証する（インターフェースを使わずデータベースをqueryする）。見分け方: リファクタリングで振る舞いは変わっていないのにテストが壊れる。
+- **同語反復** — assertionがコードと同じやり方で期待値を再計算する（`expect(add(a, b)).toBe(a + b)`、同じ手順で手動導出したsnapshot、定数とそれ自身の等価性を検証するなど）。構造的に必ず通り、コードと食い違うことがない。期待値は独立した正解のソース、つまり正しいことが分かっているリテラル、実際に解いた例、仕様書から得る。
+- **水平スライス** — テストを全部書いてから実装を全部書くやり方。まとめて書いたテストは_想像上の_振る舞いを検証する。ユーザー向けの振る舞いではなくモノの_形_をテストするため、実際の変更に鈍感になり、実装を理解する前にテスト構造を固定してしまう。代わりに**vertical slice**で進める。テスト1つ→実装1つ→繰り返し。各テストは前のサイクルで学んだことに応答する**tracer bullet**である。
 
-## Rules of the loop
+## ループのルール
 
-- **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
-- **One slice at a time.** One seam, one test, one minimal implementation per cycle.
-- **Refactoring is not part of the loop.** It belongs to the review stage (see the `code-review` skill), not the red → green implementation cycle.
+- **Red before green.** まず失敗テストを書き、次は通すのに最低限のコードだけを書く。将来のテストを先回りしない。推測で機能を足さない。
+- **1回1スライス。** 1サイクルにつきseam1つ、テスト1つ、最小実装1つ。
+- **リファクタリングはループの一部ではない。** red → greenの実装サイクルではなくレビュー段階の仕事である（`code-review` skillを参照）。

@@ -1,13 +1,13 @@
 ---
 name: grilling
-description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
+description: プラン・決定・アイデアについてユーザーを容赦なく問い詰める。ユーザーが考えをストレステストしたいときや、「grill」系のトリガーフレーズを使ったときに使う。
 ---
 
-Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
+共通理解に達するまでユーザーを容赦なくインタビューする。全体を**design tree**として捉える。すべての決定は、それにぶら下がる決定へと枝分かれする。
 
-Work the tree in **rounds**. The **frontier** is every decision whose prerequisites are already settled — the questions you can ask _now_ without guessing at answers you haven't heard yet. Ask the whole frontier in one round: number each question and give your recommended answer. Then wait for the user's answers before the next round.
+treeは**ラウンド**で進める。**frontier**とは、前提がすでに確定している決定すべてのことである。まだ聞いていない回答を推測せずに、_今_できる質問である。1ラウンドでfrontier全体を質問する。各質問に番号を振り、推奨回答を添える。その後、次のラウンドの前にユーザーの回答を待つ。
 
-Each question should be formatted like so:
+各質問は次の形式にする:
 
 ```
 ❓ **Q1** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
@@ -15,8 +15,8 @@ Each question should be formatted like so:
 ➡️ <your recommended answer>
 ```
 
-Each round the user answers reshapes the tree — settled decisions push the frontier outward and unblock questions that depended on them. Recompute the frontier and ask the next round. A question whose answer depends on another question still open in this round belongs to a _later_ round, not this one.
+ユーザーが回答するたびにtreeは形を変える。確定した決定がfrontierを外へ広げ、そこに依存していた質問が聞けるようになる。frontierを再計算して次のラウンドを質問する。同じラウンドでまだopenな別質問の回答に依存する質問は、今のラウンドではなく_後_のラウンドに属する。
 
-Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (filesystem, tools, etc.), dispatch a sub-agent to find it — don't ask the user for anything you could look up yourself. Don't block on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait for the sub-agent to report — ask the rest of the frontier now. The _decisions_ are the user's — put each to them and wait.
+_事実_を探すのは自分の仕事であり、ユーザーの仕事ではない。frontierの質問に環境（ファイルシステムやツールなど）の事実が必要なときは、サブエージェントを送り出して調べさせる。自分で調べられることをユーザーに聞かない。これで止まらないこと。実行中の探索は未確定の前提なので、その下流にある質問だけがサブエージェントの報告を待つ。frontierの残りは今すぐ質問する。_決定_はユーザーのものである。1つずつ提示して待つ。
 
-The session is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.
+frontierが空になったらセッション完了である。design treeのすべての枝を回り、暗黙のままの仮定が何も残っていない状態である。共通理解に達したとユーザーが確認するまで、それに基づいて行動しない。

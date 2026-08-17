@@ -1,44 +1,44 @@
 # Design It Twice
 
-When the user wants to explore alternative interfaces for a chosen deepening candidate, use this parallel sub-agent pattern. Based on "Design It Twice" (Ousterhout) — your first idea is unlikely to be the best.
+ユーザーが、選んだ deepening 候補の代替 interface を検討したいときは、この並列サブエージェントのパターンを使う。Ousterhout の「Design It Twice」に基づく — 最初のアイデアが最善であることはまずない。
 
-Uses the vocabulary in [SKILL.md](SKILL.md) — **module**, **interface**, **seam**, **adapter**, **leverage**.
+[SKILL.md](SKILL.md) の語彙を使う — **module**、**interface**、**seam**、**adapter**、**leverage**。
 
-## Process
+## 手順
 
-### 1. Frame the problem space
+### 1. 問題空間を枠付けする
 
-Before spawning sub-agents, write a user-facing explanation of the problem space for the chosen candidate:
+サブエージェントを起動する前に、選んだ候補について、ユーザー向けの問題空間の説明を書く:
 
-- The constraints any new interface would need to satisfy
-- The dependencies it would rely on, and which category they fall into (see [DEEPENING.md](DEEPENING.md))
-- A rough illustrative code sketch to ground the constraints — not a proposal, just a way to make the constraints concrete
+- 新しい interface が満たす必要のある制約
+- それが頼る依存と、それぞれがどの分類に入るか（[DEEPENING.md](DEEPENING.md) 参照）
+- 制約を具体化するための大まかなコードスケッチ — 提案ではなく、制約を具体的にするためのもの
 
-Show this to the user, then immediately proceed to Step 2. The user reads and thinks while the sub-agents work in parallel.
+これをユーザーに見せ、すぐにステップ2へ進む。サブエージェントが並列で作業しているあいだに、ユーザーが読んで考える。
 
-### 2. Spawn sub-agents
+### 2. サブエージェントを起動する
 
-Spawn 3+ sub-agents in parallel using the Agent tool. Each must produce a **radically different** interface for the deepened module.
+Agent tool で3つ以上のサブエージェントを並列に起動する。それぞれが、deepening した module に対して**根本的に異なる** interface を出すこと。
 
-Prompt each sub-agent with a separate technical brief (file paths, coupling details, dependency category from [DEEPENING.md](DEEPENING.md), what sits behind the seam). The brief is independent of the user-facing problem-space explanation in Step 1. Give each agent a different design constraint:
+各サブエージェントには個別の技術ブリーフ（ファイルパス、結合の詳細、[DEEPENING.md](DEEPENING.md) の依存分類、seam の背後にあるもの）をプロンプトとして渡す。ブリーフはステップ1のユーザー向け問題空間の説明とは独立したものである。各エージェントに異なる設計制約を与える:
 
-- Agent 1: "Minimize the interface — aim for 1–3 entry points max. Maximise leverage per entry point."
-- Agent 2: "Maximise flexibility — support many use cases and extension."
-- Agent 3: "Optimise for the most common caller — make the default case trivial."
-- Agent 4 (if applicable): "Design around ports & adapters for cross-seam dependencies."
+- エージェント1: 「interface を最小化する — エントリポイントは最大1〜3個を目指す。エントリポイントあたりの leverage を最大化する。」
+- エージェント2: 「柔軟性を最大化する — 多くのユースケースと拡張をサポートする。」
+- エージェント3: 「最も一般的な呼び出し側に最適化する — デフォルトケースを自明にする。」
+- エージェント4（該当する場合）: 「seam を越える依存に対しては ports & adapters を軸に設計する。」
 
-Include both [SKILL.md](SKILL.md) vocabulary and CONTEXT.md vocabulary in the brief so each sub-agent names things consistently with the architecture language and the project's domain language.
+ブリーフには [SKILL.md](SKILL.md) の語彙と CONTEXT.md の語彙の両方を含め、各サブエージェントがアーキテクチャの言葉とプロジェクトのドメイン言語に一貫した名前付けをするようにする。
 
-Each sub-agent outputs:
+各サブエージェントの出力:
 
-1. Interface (types, methods, params — plus invariants, ordering, error modes)
-2. Usage example showing how callers use it
-3. What the implementation hides behind the seam
-4. Dependency strategy and adapters (see [DEEPENING.md](DEEPENING.md))
-5. Trade-offs — where leverage is high, where it's thin
+1. interface（型、メソッド、parameter — 加えて不変条件、順序、エラーの形態）
+2. 呼び出し側がどう使うかを示す使用例
+3. implementation が seam の背後に隠すもの
+4. 依存戦略と adapter（[DEEPENING.md](DEEPENING.md) 参照）
+5. trade-off — leverage が高いところ、薄いところ
 
-### 3. Present and compare
+### 3. 提示して比較する
 
-Present designs sequentially so the user can absorb each one, then compare them in prose. Contrast by **depth** (leverage at the interface), **locality** (where change concentrates), and **seam placement**.
+ユーザーがそれぞれを吸収できるよう、design を順番に提示し、その後、文章で比較する。**depth**（interface における leverage）、**locality**（変更が集中する場所）、**seam の配置**で対比する。
 
-After comparing, give your own recommendation: which design you think is strongest and why. If elements from different designs would combine well, propose a hybrid. Be opinionated — the user wants a strong read, not a menu.
+比較のあとで、自分の推奨を出す: どの design が最有力か、その理由は何か。異なる design の要素をうまく組み合わせられるなら、ハイブリッドを提案する。意見を持つこと — ユーザーが求めているのは強い見立てであって、メニューではない。
