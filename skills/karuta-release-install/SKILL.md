@@ -213,8 +213,12 @@ diff -q "$OUT/head1.txt" "$OUT/head3.txt" >/dev/null \
   || fail "HEAD が手順1と違う"
 
 if [ -d "$OLD" ]; then
-  backup=$(mktemp -d /private/tmp/Karuta-Backup.XXXXXX) \
-    || { echo "旧版の保持先を作れない: $OLD"; exit 1; }
+  # /private/tmp は OS が定期清理するため、「承認まで保持」する旧版は
+  # Application Support 配下の恒久的な置き場所へ退避する。
+  backup_root="$HOME/Library/Application Support/Karuta/backups"
+  mkdir -p "$backup_root" || { echo "旧版の保持先を作れない: $backup_root"; exit 1; }
+  backup=$(mktemp -d "$backup_root/Karuta-Backup.XXXXXX") \
+    || { echo "旧版の保持先を作れない: $backup_root"; exit 1; }
   mv "$OLD" "$backup/Karuta.app" \
     || { rmdir "$backup" 2>/dev/null || true; echo "旧版を保持先へ移せない: $OLD"; exit 1; }
   echo "旧版退避先: $backup/Karuta.app（明示承認までは削除しない）"
@@ -229,7 +233,7 @@ echo "完了"
 
 完了条件: `完了` が出る。起動 PID の実行ファイルが `/Applications/Karuta.app/Contents/MacOS/Karuta`、インストール版も同じ Bundle ID・Apple Development Authority・Team ID で署名検証成功、両バイナリの SHA-256 が一致、`HEAD` と `git status -sb` が手順1と同じ。いずれかを落とすとスクリプトはそこで `exit 1` し、旧版と検証材料は残る。
 
-完了条件をすべて満たしたときだけ、スクリプトがアーカイブ・書き出し・ログを含む `$OUT` と `/private/tmp/Karuta-Export.latest` を消す。旧版がある場合は先に `/private/tmp/Karuta-Backup.*/Karuta.app` へ移し、パスを報告する。旧版はユーザーが削除を明示承認するまで残す。失敗した場合は `$OUT` を消さず、旧版の復元とログ確認に使える状態を保つ。`残骸:` の行が出たら、それは他の実行が残したもの。
+完了条件をすべて満たしたときだけ、スクリプトがアーカイブ・書き出し・ログを含む `$OUT` と `/private/tmp/Karuta-Export.latest` を消す。旧版がある場合は先に `~/Library/Application Support/Karuta/backups/Karuta-Backup.*/Karuta.app` へ移し、パスを報告する。旧版はユーザーが削除を明示承認するまで残す（`/private/tmp` は OS が定期清理するため使わない）。失敗した場合は `$OUT` を消さず、旧版の復元とログ確認に使える状態を保つ。`残骸:` の行が出たら、それは他の実行が残したもの。
 
 終了は AppleScript の quit → `TERM` → `KILL` の順に上げ、各段階で最大12秒待つ。TERM に数秒かかることがあるので、待ちを詰めない。`KILL` は最終手段だが省略しない。省略すると置換前に止まり、`/Applications` 版だけ quit された状態が残る。
 
