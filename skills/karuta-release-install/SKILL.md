@@ -21,9 +21,7 @@ set -uo pipefail
 ROOT=/Users/ryo/Developer/Karuta
 OUT="$HOME/Desktop/Karuta-Export"
 if [ -d "$OUT/旧版" ]; then
-  echo "前回の旧版が保持されたまま: $OUT/旧版/Karuta.app"
-  echo "削除の明示承認（または別場所への退避）を得てから手順1を再開する"
-  exit 1
+  echo "前回の旧版を削除して手順1を再開する: $OUT/旧版/Karuta.app"
 fi
 rm -rf "$OUT" || { echo "書き出し先を消せない: $OUT"; exit 1; }
 mkdir -p "$OUT" || { echo "書き出し先を作れない: $OUT"; exit 1; }
@@ -69,6 +67,8 @@ EXPECTED_BUNDLE_ID=jp.co.rigato.karuta
 EXPECTED_TEAM=5SF8ZY3PT8
 test -d "$APP" || { echo "書き出しが無い: $APP"; exit 1; }
 
+xattr -d com.apple.FinderInfo "$APP" 2>/dev/null || true
+xattr -d 'com.apple.fileprovider.fpfs#P' "$APP" 2>/dev/null || true
 codesign --verify --deep --strict --verbose=2 "$APP" 2>&1 \
   || { echo "書き出し版の署名検証に失敗"; exit 1; }
 codesign -d --verbose=2 "$APP" 2>&1 \
@@ -95,6 +95,8 @@ echo "検証終了"
 完了条件: 終了コード 0 と `検証終了`、`valid on disk`、`satisfies its Designated Requirement`、`Identifier=jp.co.rigato.karuta`、`Authority=Apple Development: ...`、`TeamIdentifier=5SF8ZY3PT8`、`archs` に `x86_64` と `arm64` の両方。
 
 `codesign` は結果を stderr に出すので `2>&1` を外さない。アーキテクチャが `arm64` だけなら完了条件未達。取り繕わずに報告し、`-destination` の arch 指定を外すか `ARCHS="arm64 x86_64"` で再アーカイブする。
+
+`$OUT` は iCloud Drive の Desktop 同期対象で、バンドル直下に `com.apple.FinderInfo` / `com.apple.fileprovider.fpfs#P` が非同期に自動付与され、`codesign --verify --strict` を弾く。`xattr -d` で消してから間を置かず即座に検証する（削除とcodesignの間に他コマンドを挟むと同期デーモンが再付与し得る）。
 
 `pgrep` の行は手順3 で終了させる対象の下見。`/Applications` 版が動いていなくても、DerivedData の Debug ビルドが同じ Bundle ID で動いていることがある。
 
@@ -165,6 +167,8 @@ if ! ditto "$NEW" /Applications/Karuta.app; then
   echo "配置失敗・旧版を復元した"; exit 1
 fi
 
+xattr -d com.apple.FinderInfo /Applications/Karuta.app 2>/dev/null || true
+xattr -d 'com.apple.fileprovider.fpfs#P' /Applications/Karuta.app 2>/dev/null || true
 codesign --verify --deep --strict --verbose=2 /Applications/Karuta.app 2>&1 \
   || fail "インストール版の署名検証に失敗"
 codesign -d --verbose=2 /Applications/Karuta.app 2>&1 \
@@ -214,7 +218,7 @@ diff -q "$OUT/head1.txt" "$OUT/head3.txt" >/dev/null \
   || fail "HEAD が手順1と違う"
 
 if [ -d "$OLD" ]; then
-  echo "旧版の保持先: $OLD（明示承認までは削除しない）"
+  echo "旧版の保持先: $OLD（次の手順1実行時に自動削除される）"
 fi
 echo "書き出し先: $NEW"
 echo "完了"
@@ -222,7 +226,7 @@ echo "完了"
 
 完了条件: `完了` が出る。起動 PID の実行ファイルが `/Applications/Karuta.app/Contents/MacOS/Karuta`、インストール版も同じ Bundle ID・Apple Development Authority・Team ID で署名検証成功、両バイナリの SHA-256 が一致、`HEAD` と `git status -sb` が手順1と同じ。いずれかを落とすとスクリプトはそこで `exit 1` し、旧版と検証材料は残る。
 
-スクリプトは成功時も `$OUT` を消さない。書き出しは `$OUT/書き出し/Karuta.app`、旧版は `$OUT/旧版/Karuta.app` として Desktop に残り、パスが報告される。旧版はユーザーが削除を明示承認するまで残す。失敗した場合も `$OUT` はそのまま残り、旧版の復元とログ確認に使える状態を保つ。
+スクリプトは成功時も `$OUT` を消さない。書き出しは `$OUT/書き出し/Karuta.app`、旧版は `$OUT/旧版/Karuta.app` として Desktop に残り、パスが報告される。旧版は次回の手順1実行時に確認なしで自動削除される。失敗した場合も `$OUT` はそのまま残り、旧版の復元とログ確認に使える状態を保つ。
 
 終了は AppleScript の quit → `TERM` → `KILL` の順に上げ、各段階で最大12秒待つ。TERM に数秒かかることがあるので、待ちを詰めない。`KILL` は最終手段だが省略しない。省略すると置換前に止まり、`/Applications` 版だけ quit された状態が残る。
 
@@ -232,7 +236,7 @@ echo "完了"
 
 - `Apple Development` 署名はローカル実機確認用。配布用 Developer ID 署名・公証・公開は別依頼。Gatekeeper や公証の確認は範囲外。
 - 現在の `HEAD` と同一の成果物を保証するため、作業ツリーが clean でない場合は手順1で停止する。未コミット変更をインストールしたい場合は、このスキルの対象外として別途依頼する。
-- 書き出し先は `~/Desktop/Karuta-Export` に固定で、成功時も失敗時も消さない。旧版は `~/Desktop/Karuta-Export/旧版/Karuta.app` に保持し、削除は明示承認後に行う。
+- 書き出し先は `~/Desktop/Karuta-Export` に固定で、成功時も失敗時も消さない。旧版は `~/Desktop/Karuta-Export/旧版/Karuta.app` に保持され、次回の手順1実行時に確認なしで自動削除される。
 - 署名、終了、置換、起動、ハッシュ確認のどれかが未達なら完了と報告しない。
 - `~/Desktop/Karuta-Export` は実行間で共有される固定パスである。このスキルを同時に2つ走らせない。
 - 失敗したあと手順3 だけを再実行しない。退避済みの旧版を壊すため、スクリプトは `旧版が既にある` で止まる。やり直すなら手順1 から。
