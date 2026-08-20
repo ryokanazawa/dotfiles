@@ -33,6 +33,9 @@ wait_gone() {
 signal_all() {
   local sig="$1" p
   local pids=($(pgrep -x Karuta))
+  # bash 3.2 は set -u 下で空配列の "${pids[@]}" を unbound variable にする。
+  # wait_gone の判定後にプロセスが自力で消えた場合が該当するので、成功で抜ける。
+  [ ${#pids[@]} -eq 0 ] && return 0
   for p in "${pids[@]}"; do
     ps -p "$p" -o comm= | grep -q '/Karuta\.app/Contents/MacOS/Karuta$' \
       || { echo "想定外のプロセス pid=$p"; return 1; }

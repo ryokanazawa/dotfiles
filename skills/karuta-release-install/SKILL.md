@@ -24,7 +24,9 @@ disable-model-invocation: true
 
 完了条件: 終了コード 0 と `検証終了`、`valid on disk`、`satisfies its Designated Requirement`、`Identifier=jp.co.rigato.karuta`、`Authority=Apple Development: ...`、`TeamIdentifier=5SF8ZY3PT8`、`archs` に `x86_64` と `arm64` の両方。
 
-`arm64` だけなら完了条件未達。取り繕わず報告し、`ARCHS_OVERRIDE='arm64 x86_64'` を付けて手順1を再実行し、手順2 からやり直す。
+手順1 は既定でユニバーサル (`arm64 x86_64`) を作る。それでも `arm64` だけなら完了条件未達。同じ手順を繰り返しても変わらないので、取り繕わずそこで報告して止める。
+
+`ARCHS_OVERRIDE` は意図して別の arch 構成を作りたいときだけ手順1へ渡す（例: `ARCHS_OVERRIDE=arm64`）。`2-verify.sh` の archs 判定は両 arch 固定なのでその場合は終了コード 1 で止まる。想定どおりであることを報告し、手順3 へ進めてよいかをユーザーに確認する。
 
 ## 手順3: 置換と起動
 
