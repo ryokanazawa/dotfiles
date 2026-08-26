@@ -1,0 +1,3 @@
+interface:
+  display_name: "Xcode Open"
+  short_description: "Open the current worktree's Xcode project in Xcode.app"
