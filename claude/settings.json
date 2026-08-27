@@ -9,7 +9,15 @@
       "Bash(git commit *)",
       "Bash(git stash *)",
       "Bash(xcodebuild *)",
-      "mcp__pencil"
+      "mcp__pencil",
+      "Bash(chmod +x skills/xcode-open/scripts/open-project.sh)",
+      "Bash(./dotfilesLink.sh)",
+      "Read(//Users/ryo/.claude/skills/**)",
+      "Bash(~/.claude/skills/xcode-open/scripts/open-project.sh)",
+      "Bash(echo \"exit=$?\")",
+      "Read(//Users/ryo/Developer/Karuta/**)",
+      "Bash(sed 's|^open .*|echo \"DRYRUN: open ${APP[@]} $CONTAINER\"|' ~/.claude/skills/xcode-open/scripts/open-project.sh)",
+      "Bash(bash)"
     ],
     "deny": [
       "EnterPlanMode",
@@ -154,7 +162,17 @@
     "type": "command",
     "command": "$HOME/.claude/statusline-command.sh"
   },
-  "enabledPlugins": {},
+  "enabledPlugins": {
+    "firebase@firebase": true
+  },
+  "extraKnownMarketplaces": {
+    "firebase": {
+      "source": {
+        "source": "github",
+        "repo": "firebase/agent-skills"
+      }
+    }
+  },
   "language": "Japanese",
   "effortLevel": "high",
   "advisorModel": "fable",
