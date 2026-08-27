@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -uo pipefail
 ROOT=/Users/ryo/Developer/Karuta
-OUT="$HOME/Desktop/Karuta-Export"
+OUT="${TMPDIR:-/tmp}"
+OUT="${OUT%/}/Karuta-Export"
 EXPECTED_BUNDLE_ID=jp.co.rigato.karuta
 EXPECTED_TEAM=5SF8ZY3PT8
 NEW="$OUT/書き出し/Karuta.app"
@@ -68,8 +69,6 @@ if ! ditto "$NEW" /Applications/Karuta.app; then
   echo "配置失敗・旧版を復元した"; exit 1
 fi
 
-# iCloud 属性の付与と xattr の注意は 2-verify.sh と同じ（xattr -cr で一括消去）。
-xattr -cr /Applications/Karuta.app 2>/dev/null || true
 codesign --verify --deep --strict --verbose=2 /Applications/Karuta.app 2>&1 \
   || fail "インストール版の署名検証に失敗"
 codesign -d --verbose=2 /Applications/Karuta.app 2>&1 \

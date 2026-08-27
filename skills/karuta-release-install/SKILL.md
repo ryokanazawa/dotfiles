@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 `/Users/ryo/Developer/Karuta` の現在の `HEAD` を Release でアーカイブし、署名を検証して `/Applications/Karuta.app` に置き換え、起動する。ソース・Git 履歴・作業ツリーは変更しない。
 
-スクリプトはこのスキルのベースディレクトリ直下の `scripts/` にある。`bash` で絶対パス実行し、3 本を順に実行して、途中で完了条件を落としたらそこで止める。advisor は呼ばない。スクリプトの終了コードと出力で判断は足りる。書き出し先は `~/Desktop/Karuta-Export`（`$OUT`）に固定で、成功時も失敗時も消さない。旧版は `$OUT/旧版/Karuta.app` に保持され、次回の手順1で確認なしに自動削除される。同時に2つ走らせない。
+スクリプトはこのスキルのベースディレクトリ直下の `scripts/` にある。`bash` で絶対パス実行し、3 本を順に実行して、途中で完了条件を落としたらそこで止める。advisor は呼ばない。スクリプトの終了コードと出力で判断は足りる。書き出し先は OS の一時ディレクトリ配下 `${TMPDIR%/}/Karuta-Export`（`$OUT`）に固定で、作業ツリーやデスクトップには置かない。スクリプトは成功時も失敗時も消さないが、OS の一時領域なので再起動や OS の定期クリーンアップで消えうる。旧版は `$OUT/旧版/Karuta.app` に保持され、次回の手順1で確認なしに自動削除される。同時に2つ走らせない。
 
 ## 手順1: アーカイブ
 
@@ -34,7 +34,7 @@ disable-model-invocation: true
 
 完了条件: `完了` が出る。起動 PID の実行ファイルが `/Applications/Karuta.app/Contents/MacOS/Karuta`、インストール版が書き出し版と同じ Bundle ID・Apple Development Authority・Team ID で署名検証成功、両バイナリの SHA-256 が一致、`HEAD` と `git status -sb` が手順1と同じ。
 
-自動復元は `ditto` による配置失敗のときだけ。それ以降の失敗は旧版を `$OUT/旧版/Karuta.app` に残して停止し、復元は手動（`fail` がパスを出す。新規インストールで旧版が無い場合は「旧版なし」）。`/Applications` 版以外（DerivedData の Debug ビルドなど）を終了させた場合は、開発中インスタンスを落としたことを報告に明記する。
+自動復元は `ditto` による配置失敗のときだけ。それ以降の失敗は旧版を `$OUT/旧版/Karuta.app` に残して停止し、復元は手動（`fail` がパスを出す。新規インストールで旧版が無い場合は「旧版なし」）。この旧版は一時領域にあるので、手動復元は失敗を報告したその場で済ませる。`/Applications` 版以外（DerivedData の Debug ビルドなど）を終了させた場合は、開発中インスタンスを落としたことを報告に明記する。
 
 ## 境界
 

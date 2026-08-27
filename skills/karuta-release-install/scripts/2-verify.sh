@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
 set -uo pipefail
-OUT="$HOME/Desktop/Karuta-Export"
+OUT="${TMPDIR:-/tmp}"
+OUT="${OUT%/}/Karuta-Export"
 APP="$OUT/書き出し/Karuta.app"
 EXPECTED_BUNDLE_ID=jp.co.rigato.karuta
 EXPECTED_TEAM=5SF8ZY3PT8
 test -d "$APP" || { echo "書き出しが無い: $APP"; exit 1; }
 
-# $OUT は iCloud の Desktop 同期対象で、バンドル直下に com.apple.FinderInfo /
-# com.apple.fileprovider.fpfs#P が自動付与され、codesign --strict が弾く。
-# 個別の xattr -d は無効なことがあるため xattr -cr で一括消去し、間を置かず検証する。
-# com.apple.provenance は消えないが codesign は問題にしない。
-xattr -cr "$APP" 2>/dev/null || true
 # codesign は結果を stderr に出すので 2>&1 が必須。
 codesign --verify --deep --strict --verbose=2 "$APP" 2>&1 \
   || { echo "書き出し版の署名検証に失敗"; exit 1; }

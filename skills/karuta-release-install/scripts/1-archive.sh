@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 set -uo pipefail
 ROOT=/Users/ryo/Developer/Karuta
-OUT="$HOME/Desktop/Karuta-Export"
+# ~/Desktop は iCloud の file provider ドメイン配下で、バンドル直下に
+# com.apple.FinderInfo が数秒で再付与され codesign --strict が弾く。
+# xattr -c しても勝てない。OS の一時領域 (/var/folders/.../T) は file provider
+# ドメインではないのでこの問題が起きず、作業ツリーやデスクトップも汚さない。
+# TMPDIR は末尾スラッシュ付きなので剥がしてから連結する。
+OUT="${TMPDIR:-/tmp}"
+OUT="${OUT%/}/Karuta-Export"
 if [ -d "$OUT/旧版" ]; then
   echo "前回の旧版を削除する: $OUT/旧版/Karuta.app"
 fi
