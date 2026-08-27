@@ -38,7 +38,6 @@
     "workbench.secondarySideBar.defaultVisibility": "hidden",
     "workbench.panel.showLabels": false,
     "claudeCode.allowDangerouslySkipPermissions": true,
-    "claudeCode.initialPermissionMode": "bypassPermissions",
     "claudeCode.preferredLocation": "sidebar",
     "chat.agent.enabled": false,
     "chat.checkpoints.enabled": false,
