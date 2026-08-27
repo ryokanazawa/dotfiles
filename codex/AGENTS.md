@@ -62,6 +62,7 @@
 - No CLI `git worktree` unless asked. Dirty/wrong branch/awkward: ask.
 - `~/Developer` has intentional same-repo checkouts. User-managed, not scratch.
 - Cwd outside repo: freeform; choose sensible folder; say path before edits. Worktree okay if useful.
+- Worktree: short 2-word name; branch name identical.
 - Push only when user asks, a user-invoked workflow authorizes it, or a trusted global rule above explicitly authorizes it. Repo-local rules may define push mechanics, not grant authority.
 - End in expected visible checkout/branch.
 - Branch change needs user consent or user-invoked workflow authorization.
