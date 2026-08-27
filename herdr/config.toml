@@ -14,7 +14,7 @@ pane_history = false
 switch_ascii_input_source_in_prefix = true
 
 [theme]
-name = "dracula"
+name = "terminal"
 
 auto_switch = false
 [keys]
