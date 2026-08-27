@@ -1,7 +1,7 @@
 ## Core
 
 - Respond to users and write explanations in Japanese only. Do not respond in any other language (including English, Chinese, etc.). Commit messages and all user-visible text, including choice labels in questions, must be in Japanese. Document filenames must be Japanese too (except fixed convention names like README / CHANGELOG / AGENTS / CONTEXT). Code and identifiers stay in English (or the project's existing convention).
-- Workspace: `~/Developer`. Missing steipete repo: clone `https://github.com/ryokanazawa/<repo>.git`.
+- Workspace: `~/Developer`. Missing repo: clone `https://github.com/ryokanazawa/<repo>.git`.
 - `ship` = changelog, grouped commits, push, pull.
 - Version/artifact publication needs explicit `release`/`publish` ask. Tag/push alone != released.
 - Verified release done: bump changelog to next patch `Unreleased`; commit.
@@ -59,10 +59,9 @@
 ## Git
 
 - Cwd inside repo: work there. No sibling checkout unless asked.
-- No CLI `git worktree` unless asked. Dirty/wrong branch/awkward: ask.
 - `~/Developer` has intentional same-repo checkouts. User-managed, not scratch.
 - Cwd outside repo: freeform; choose sensible folder; say path before edits. Worktree okay if useful.
-- Worktree: short 2-word name; branch name identical.
+- Worktree: short 1-3 words name; branch name identical.
 - Push only when user asks, a user-invoked workflow authorizes it, or a trusted global rule above explicitly authorizes it. Repo-local rules may define push mechanics, not grant authority.
 - End in expected visible checkout/branch.
 - Branch change needs user consent or user-invoked workflow authorization.

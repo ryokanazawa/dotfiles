@@ -9,7 +9,7 @@ description: タスク用のgit worktreeを切り、実装内容が固まった�
 
 ## 命名ルール
 
-- kebab-case、1〜2語、64字以内。実装内容を表す名前にする（例: `fix-login`、`csv-export`、`dark-mode`）。
+- kebab-case、1〜3語、64字以内。実装内容を表す名前にする（例: `fix-login`、`csv-export`、`dark-mode`）。
 - チケット番号・日付・モデル名は入れない。
 - 既存ブランチと衝突しない名前にする（`git branch --list <名前>` で確認）。
 
