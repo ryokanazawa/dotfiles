@@ -258,5 +258,13 @@
 	{
 		"key": "cmd+4",
 		"command": "chatgpt.sidebarSecondaryView.focus"
+	},
+	{
+		"key": "alt+]",
+		"command": "editor.action.fontZoomIn"
+	},
+	{
+		"key": "alt+[",
+		"command": "editor.action.fontZoomOut"
 	}
 ]
