@@ -40,7 +40,7 @@ if [ "${1:-}" = "--logs" ]; then
   if [ "${2:-}" = "all" ]; then N="${3:-50}"
   else N="${2:-50}"; PRED="$PRED AND subsystem CONTAINS \".\" AND NOT subsystem BEGINSWITH \"com.apple\""; fi
   echo "=== stdout/stderr: $APPLOG ==="
-  [ -s "$APPLOG" ] && tail -n "$N" "$APPLOG" || echo "(空 — print() を使っていないなら os_log 側を見る)"
+  if [ -s "$APPLOG" ]; then tail -n "$N" "$APPLOG"; else echo "(空 — print() を使っていないなら os_log 側を見る)"; fi
   echo "=== os_log 直近5分 ($DEVNAME) ==="
   xcrun simctl spawn "$UDID" log show --style compact --last 5m --predicate "$PRED" 2>/dev/null \
     | tail -n "$N"
@@ -78,6 +78,12 @@ build() {  # $@ = 追加の xcodebuild 引数
     exit $rc
   fi
   SETTINGS=$(xcodebuild -showBuildSettings "$FLAG" "$CONTAINER" -scheme "$SCHEME" "$@" 2>/dev/null)
+  # ここで落ちると APP="/" が組み立って simctl install / open へ進むため、
+  # 成果物パスを解決できない時点で止める
+  if [ -z "$SETTINGS" ]; then
+    echo "error: -showBuildSettings の取得に失敗した（成果物パスを解決できない）" >&2
+    exit 1
+  fi
 }
 
 report() {
@@ -134,6 +140,21 @@ case "$PLATFORMS" in
     build
     APP="$(setting BUILT_PRODUCTS_DIR)/$(setting WRAPPER_NAME)"
     report
+    # APP="/" の穴は build() 内の SETTINGS 空チェックで塞がり済み。ここでは
+    # バンドル (.app) 以外の成果物 (CLI ツール等) も正当なので -e で確認する
+    [ -e "$APP" ] || { echo "error: 成果物が見つからない: $APP" >&2; exit 1; }
+    # 起動対象の署名を可視化する。できたてのビルドはふつう ad-hoc 署名で、
+    # 同じ bundle id で保存済み Keychain 項目があるアプリを起動すると
+    # 認証ダイアログや信頼状態の混乱を招きうるため、Authority=（証明書
+    # 署名）が無ければ警告して判断を呼び手に残す
+    SIGN=$(codesign -dv "$APP" 2>&1)
+    echo "codesign:"
+    grep -E 'Signature|Authority|TeamIdentifier|Identifier=' <<<"$SIGN" | sed 's/^/  /' \
+      || echo "  (署名情報なし: $SIGN)"
+    if ! grep -q 'Authority=' <<<"$SIGN"; then
+      echo "warning:   証明書による署名がない (ad-hoc または未署名)。"
+      echo "           同じ bundle id の保存済み Keychain 項目がある場合は起動影響を確認すること。"
+    fi
     open "$APP" && echo "launch:    $APP"
     ;;
   *)
