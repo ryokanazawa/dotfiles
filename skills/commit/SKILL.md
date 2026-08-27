@@ -116,14 +116,23 @@ EOF
 
 1. mainチェックアウトで`git status --short --branch`を確認する。remoteがありmainが遅れていれば`git pull --ff-only`でローカルmainを最新化する（remoteが無い、または失敗した場合はローカルmainのままで進める）。
 2. worktreeブランチ上で`git rebase main`を実行し、mainに追いつかせる。コンフリクトしたら解消して`git rebase --continue`する。rebaseすると先端SHAが変わる点に注意する。
-3. mainの未コミット変更パスと今回のコミット群の変更パスを比較する。
+3. mainの未コミット変更パスと今回のコミット群の変更パスを比較する。重なる場合は5bへ。
 4. パスが重ならなければ、mainチェックアウト側で`git merge --ff-only <rebase後の先端コミットSHA>`を実行する。mainの未コミット変更は保持したまま行う。
-5. `--ff-only`が失敗する場合はrebaseが不足しているので、ステップ2へ戻って`git rebase main`からやり直す。`--no-ff`や通常の`git merge`は絶対に使わない。
+5. `--ff-only`が失敗したらまずrebase不足を疑い、ステップ2へ戻って`git rebase main`からやり直す。それでも拒否されるならmainのdirtyが原因なので5bへ。`--no-ff`や通常の`git merge`は絶対に使わない。
 6. `git merge-base --is-ancestor <rebase後の各コミットSHA> main`で反映を確認する。
 
-mainがdirtyという理由だけでは停止しない。変更パスが重なる、未追跡ファイルを上書きする場合だけ停止し、mainの変更をstash・破棄・同梱しない。rebaseのコンフリクトを解消できない場合は`git rebase --abort`で元に戻してから停止する。
+mainがdirtyという理由だけでは停止しない。rebaseのコンフリクトを解消できない場合は`git rebase --abort`で元に戻してから停止する。
 
 mainチェックアウトが存在しない場合は、新しいworktreeやブランチを作らず、rebase後のコミットSHAを報告して停止する。
+
+### 5b. mainのdirtyでffできないとき（黙って停止しない）
+
+変更パスが重なる、未追跡ファイルを上書きする、`--ff-only`が拒否される場合は、報告して終わらず`AskUserQuestion`で選ばせる（question: 「mainに未コミット変更があります。どうしますか」、header: 「mainの退避」）。
+
+- 「退避して統合」（既定・推奨）: mainチェックアウトで`git stash push -u -m "commit skill: 退避 <日時>"` → ff統合 → 手順6のpush・同期 → 最後に`git stash pop`。popがコンフリクトしたらstashは残るので、その旨とstash名を報告する。**stashを`drop`・`clear`しない。**
+- 「統合せず停止」: 現状のまま停止し、rebase後のコミットSHAを報告する。
+
+選択前に、mainの未コミット変更のパス一覧を1行で示す。stashしてよいか自体が承認事項なので、質問を飛ばして勝手にstashしない。ボタンを出せない環境ではテキストで同じ二択を尋ねて待つ。
 
 ### 6. mainをpushし、pullで確認する
 
@@ -140,7 +149,7 @@ push失敗時はforceせず、pullやrebaseが必要ならユーザーへ確認�
 
 - autoreviewがcleanにならない: changelog・コミット・pushをせず、残件と停止理由を報告する。
 - pre-commit hook失敗: 原因を直し、再ステージして新しいコミットを作る。amendしない。
-- mainとのパス重複: worktreeのrebase後コミットSHAを報告して停止する。
+- mainとのパス重複・ff拒否: 5bの`AskUserQuestion`で退避か停止かを選ばせる。
 - rebaseのコンフリクトを解消できない: `git rebase --abort`で元に戻し、状況とコミットSHAを報告して停止する。
 - secret検出: ステージせず、ユーザーへ報告する。
 - 無関係な差分: 含めず、最終報告で列挙する。
@@ -161,3 +170,4 @@ push失敗時はforceせず、pullやrebaseが必要ならユーザーへ確認�
 - コミットSHAとタイトル
 - changelog: 追記内容、またはスキップ理由
 - push / main 同期の結果
+- mainをstashした場合: pop済みか、残っているstash名
