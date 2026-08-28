@@ -149,8 +149,14 @@ case "$PLATFORMS" in
     # 署名）が無ければ警告して判断を呼び手に残す
     SIGN=$(codesign -dv "$APP" 2>&1)
     echo "codesign:"
-    grep -E 'Signature|Authority|TeamIdentifier|Identifier=' <<<"$SIGN" | sed 's/^/  /' \
-      || echo "  (署名情報なし: $SIGN)"
+    # パイプの終了状態は sed のもの (常に 0) なので、grep の空振りは
+    # `|| echo` では拾えない。一度だけ grep して中身の有無で分ける
+    SIGNLINES=$(grep -E 'Signature|Authority|TeamIdentifier|Identifier=' <<<"$SIGN")
+    if [ -n "$SIGNLINES" ]; then
+      sed 's/^/  /' <<<"$SIGNLINES"
+    else
+      echo "  (署名情報なし: $SIGN)"
+    fi
     if ! grep -q 'Authority=' <<<"$SIGN"; then
       echo "warning:   証明書による署名がない (ad-hoc または未署名)。"
       echo "           同じ bundle id の保存済み Keychain 項目がある場合は起動影響を確認すること。"
