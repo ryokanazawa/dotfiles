@@ -159,13 +159,20 @@
     "command": "$HOME/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "firebase@firebase": true
+    "firebase@firebase": true,
+    "eli5@claude-community": false
   },
   "extraKnownMarketplaces": {
     "firebase": {
       "source": {
         "source": "github",
         "repo": "firebase/agent-skills"
+      }
+    },
+    "claude-community": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-community"
       }
     }
   },
