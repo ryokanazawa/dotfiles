@@ -29,5 +29,5 @@ case " $archs " in *' x86_64 '*) ;; *) echo "x86_64 が無い"; exit 1;; esac
 ls -ld /Applications/Karuta.app 2>&1 || true
 # 手順3 で終了させる対象の下見。/Applications 版が動いていなくても、
 # DerivedData の Debug ビルドが同じ Bundle ID で動いていることがある。
-pgrep -x Karuta | while read -r p; do echo "running pid=$p $(ps -p "$p" -o comm=)"; done
+ps -axo pid=,comm= | grep '/Karuta\.app/Contents/MacOS/Karuta$' | while read -r p c; do echo "running pid=$p $c"; done
 echo "検証終了"

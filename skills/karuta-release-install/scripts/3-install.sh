@@ -23,9 +23,16 @@ fail() {
   exit 1
 }
 
+# npm 等がプロセスタイトルを書き換えると、macOS の pgrep -x Karuta が
+# `npm exec ... --dir /Users/ryo/Developer/Karuta` の末尾を Karuta と誤認して拾う。
+# 実行ファイルのパスで数えれば Karuta.app 以外を掴まない。
+karuta_pids() {
+  ps -axo pid=,comm= | grep '/Karuta\.app/Contents/MacOS/Karuta$' | awk '{print $1}'
+}
+
 wait_gone() {
   local n=0
-  while pgrep -x Karuta >/dev/null; do
+  while [ -n "$(karuta_pids)" ]; do
     n=$((n + 1)); [ "$n" -ge 24 ] && return 1
     sleep 0.5
   done
@@ -33,7 +40,7 @@ wait_gone() {
 }
 signal_all() {
   local sig="$1" p
-  local pids=($(pgrep -x Karuta))
+  local pids=($(karuta_pids))
   # bash 3.2 は set -u 下で空配列の "${pids[@]}" を unbound variable にする。
   # wait_gone の判定後にプロセスが自力で消えた場合が該当するので、成功で抜ける。
   [ ${#pids[@]} -eq 0 ] && return 0
@@ -53,7 +60,7 @@ if ! wait_gone; then
   signal_all TERM || exit 1
   if ! wait_gone; then
     signal_all KILL || exit 1
-    wait_gone || { echo "終了できない: $(pgrep -x Karuta)"; exit 1; }
+    wait_gone || { echo "終了できない: $(karuta_pids | tr '\n' ' ')"; exit 1; }
   fi
 fi
 echo "プロセス終了確認"
@@ -89,11 +96,11 @@ diff -q "$OUT/signature2.txt" "$OUT/signature3.txt" >/dev/null \
 open /Applications/Karuta.app || fail "open に失敗"
 
 n=0
-until pgrep -x Karuta >/dev/null; do
+until [ -n "$(karuta_pids)" ]; do
   n=$((n + 1)); [ "$n" -ge 24 ] && fail "起動しない"
   sleep 0.5
 done
-pid=$(pgrep -x Karuta | head -1)
+pid=$(karuta_pids | head -1)
 [ -n "$pid" ] || fail "起動直後に終了"
 echo "起動 pid=$pid ($(ps -p "$pid" -o comm=))"
 ps -p "$pid" -o comm= | grep -q '/Applications/Karuta\.app/Contents/MacOS/Karuta$' \
