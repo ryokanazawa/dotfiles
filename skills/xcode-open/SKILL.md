@@ -5,21 +5,23 @@ description: 今いるgit worktreeのXcodeプロジェクトをXcode.appで開�
 
 # xcode-open — 今いる worktree のプロジェクトを Xcode で開く
 
-`scripts/open-project.sh`（このスキルの基準ディレクトリ配下）が、コンテナ判定から起動までを1コマンドでやる。エージェントは実行して出力を報告するだけ。
+`scripts/open-project.sh`（このスキルの基準ディレクトリ配下）が、コンテナ判定から起動までを1コマンドでやる。エージェントは下記の事前確認後に実行し、出力を報告する。
 
 - **cwd の worktree を開く。** `git rev-parse --show-toplevel` が現在の worktree のルートを返すので、worktree 判定の特別扱いは要らない。書き足さないこと。
 - **開くだけ。** ビルドも実行もしない。ビルドしてシミュレータで動かすなら `xcode-build` スキル（あちらは逆に Xcode.app を起動しない）。
 
 ## 手順
 
-1. 実行する。
+1. 作業用worktreeがdetached HEADまたは仮名ブランチなら、[`worktree`](../worktree/SKILL.md)に従ってタスク内容を表すブランチ名を付ける。特定コミットの閲覧・検証だけの依頼では状態を保持する。
+
+2. 実行する。
 
 ```sh
 # 先頭は展開時に提示される「Base directory for this skill」の値
 /Users/ryo/.claude/skills/xcode-open/scripts/open-project.sh
 ```
 
-2. 出力の4行（`worktree:` / `branch:` / `opened:` / `xcode:`）を**そのまま報告する**。Xcode は複数 worktree の同名プロジェクトを同時に開けてしまい、ウィンドウを見ても見分けがつかない。どのコピーをどの Xcode で開いたかは、この出力でしか確認できない。
+3. 出力の4行（`worktree:` / `branch:` / `opened:` / `xcode:`）を**そのまま報告する**。Xcode は複数 worktree の同名プロジェクトを同時に開けてしまい、ウィンドウを見ても見分けがつかない。どのコピーをどの Xcode で開いたかは、この出力でしか確認できない。
 
 ## 選び方
 
