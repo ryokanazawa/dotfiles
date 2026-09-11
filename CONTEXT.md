@@ -23,3 +23,7 @@ _Avoid_: copy, sync（コピー運用ではない）
 **Agent proxy**:
 Claude Code と Anthropic API のあいだに置き、リクエストを監査用 Markdown に落とすローカル HTTP プロキシ（`proxy.mjs`）。
 _Avoid_: logger, middleware
+
+**Orphan DerivedData（孤児 DerivedData）**:
+`info.plist` の `WorkspacePath` の親ディレクトリが存在しない DerivedData。worktree 削除の残骸で、worktree 運用では際限なく溜まる。判定は `shell/derived-data.sh`、削除は `shell/prune-derived-data.sh`。
+_Avoid_: stale cache, 古いビルド（「孤児」は参照先が消えたことを指し、古さではない）

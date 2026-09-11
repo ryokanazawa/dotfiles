@@ -11,8 +11,11 @@ description: 開発・クリエイティブ系のキャッシュを棚卸しし�
 
 `df -k /System/Volumes/Data` を最初に記録する。これが実解放量の基準値になる。
 
+**基準値は削除の直前に取り直す。** 計測に数分かかる間も、並行するエージェントセッションやビルドは書き込み続ける。古い基準値と比べると、削除したのに空き容量が減ったように見えて原因を誤る。以後は削除ごとに `df` を同じコマンドブロックの前後で取る。
+
 `du -sk` で候補を測り、サイズ降順に並べる。定番の候補:
 
+- 孤児 DerivedData: `~/.shell/prune-derived-data.sh`（引数なしで一覧。worktree 運用では最初に見る）
 - Xcode: `~/Library/Developer/Xcode/DerivedData`、`~/Library/Developer/XCTestDevices`、`~/Library/Developer/XCPGDevices`、`~/Library/Developer/Xcode/iOS DeviceSupport`（OS別に内訳）、`~/Library/Developer/CoreSimulator/Devices`、`~/Library/Caches/com.apple.dt.Xcode`
 - シミュレータランタイム: `/Library/Developer/CoreSimulator/Volumes`（`xcrun simctl list runtimes` と `list devices` を突き合わせ、割り当てデバイス0台のランタイムを未使用として挙げる）
 - CLI: `~/.codex/log`、`~/Library/Caches/Codex`、`~/Library/Caches/claude-cli-nodejs`、`~/.claude/shell-snapshots`、`~/Library/Caches/org.swift.swiftpm`、`~/Library/Caches/Homebrew`
@@ -66,6 +69,8 @@ xcrun simctl --set ~/Library/Developer/XCPGDevices delete all
 **ランタイムは `xcrun simctl runtime delete <ID>` で消す。** `/Library/Developer/CoreSimulator/Volumes` 配下は sealed かつ read-only のマウントで、`sudo` を付けても `rm` は通らない。
 
 **ローカルスナップショットは `tmutil deletelocalsnapshots <日付>` で消す。** du に現れないのに空き容量を押し止めるので、削除しても df が増えないときはこれを疑う。
+
+**孤児 DerivedData は `~/.shell/prune-derived-data.sh` で消す。** worktree を消しても DerivedData は残るため、Xcode プロジェクトを worktree で運用していると際限なく溜まる（Giga2 が 26 個・約 50 GiB に分裂した実績）。`info.plist` の `WorkspacePath` の親ディレクトリが無いものが孤児で、これは【安全】枠。引数なしで一覧、`--delete` で削除。Xcode 起動中は自分で止まる。プロジェクトが生きている DerivedData は消さないので、DerivedData 全体を消すより先にこれを掛ける。
 
 **zsh の glob は1つでもマッチしないとコマンド全体が失敗する。** 中身が隠しディレクトリだけのキャッシュ（Adobe の `typequest` など）で `rm -rf dir/*` が空振りし、同じ行の他の対象まで消し損ねる。キャッシュディレクトリは `dir/*` ではなくディレクトリごと消し、アプリに作り直させる。
 

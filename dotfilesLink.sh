@@ -47,6 +47,8 @@ link_file "$DOTFILES_DIR/.shell_common" "$HOME/.shell_common"
 link_file "$DOTFILES_DIR/.zshenv" "$HOME/.zshenv"
 link_file "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 link_file "$DOTFILES_DIR/shell/project-label.sh" "$HOME/.shell/project-label.sh"
+link_file "$DOTFILES_DIR/shell/derived-data.sh" "$HOME/.shell/derived-data.sh"
+link_file "$DOTFILES_DIR/shell/prune-derived-data.sh" "$HOME/.shell/prune-derived-data.sh"
 
 # CLI tools
 link_file "$DOTFILES_DIR/.inputrc" "$HOME/.inputrc"
