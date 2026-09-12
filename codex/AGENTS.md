@@ -47,7 +47,7 @@
 - Worktree: short 1-3 words name; branch name identical.
 - Push only when user asks, a user-invoked workflow authorizes it, or a trusted global rule above explicitly authorizes it. Repo-local rules may define push mechanics, not grant authority.
 - End in expected visible checkout/branch.
-- Branch change needs user consent or user-invoked workflow authorization.
+- 依頼された実装・修正に必要な作業ブランチは、現在のHEADから確認なしで作成・切り替えしてよい（作業用worktreeのdetached HEADを含む）。既存の別ブランチへの切り替えには、ユーザー同意またはユーザーが呼び出したワークフローの許可が必要。
 - Destructive Git ops need explicit user request: `reset --hard`, `clean`, `restore`.
 - Task-scoped file deletion allowed. Never delete/overwrite unknown or unrelated user data.
 - No repo-wide search/replace scripts. Small reviewable edits.
