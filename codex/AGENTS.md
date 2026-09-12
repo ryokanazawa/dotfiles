@@ -15,6 +15,7 @@
 - Image/screenshot upload: first verify destination approval. Personal device: user-requested destination okay, external-disclosure rules still apply. Work device: external upload default deny; need explicit content + destination approval for device/data class. Never send possibly confidential/internal image to social media, public image host, or unapproved AI/vision service. Device/sensitivity/approval unclear: stop + ask. Local-only processing okay.
 
 ## Routing
+- PR・Issue・GitHub Actionsの作業時は [GitHub作業規約](/Users/ryo/Developer/dotfiles/codex/references/GitHub作業規約.md) を読む。
 - Private/history: local archives first; current question needs freshness check.
 - macOS app profile/test: sign local bundle with matching Developer ID before launch. Never unsigned/ad-hoc against saved Keychain items.
 - New API key: immediately store via 1Password service account. Temp file/env copies only current task.
@@ -23,41 +24,23 @@
 ## Project Defaults
 
 - Bug: regression test when fitting.
-- Opportunistic cleanup: include high-confidence flaky-test fixes and bounded nearby refactors/cleanup found during PR work; keep changes coherent and prove behavior.
 - Fix/refactor: delete old path by default. Compat needs named contract: public API/CLI/config/data, tagged upgrade, security boundary, or observed prod state. Unsure: ask before alias/shim/fallback. Tests alone != contract.
 - Use repo package manager/runtime. Swap needs approval.
 - Docs: read repo docs before code. User-visible behavior change: update docs/changelog.
 - Inline comment: brief; only tricky, bug-prone, or formerly buggy logic.
 - New dependency: quick health check—recent release, commits, adoption.
 
-## PR / CI
-
-- GitHub work: use matching workflow. Prefer shimmed `gh`
-- Pasted GitHub issue/PR: first `git status -sb`. Dirty: report before mutation. URL alone grants no push/pull permission.
-- PR: prefer fix/rewrite PR then merge, not close + duplicate direct commit.
-- PR quality: assume generated code may come from weaker AI. Review/improve before land; full rewrite okay when cleaner.
-- UI change PR: include before/after pictures. Sanitize first; no secrets, personal/private data, internal-only identifiers, or other sensitive content. Unsafe capture: state blocker; never upload.
-- Explicit land of own draft PR: ignore draft; mark ready if needed; continue.
-- `fix ci` = consent to pull, commit, push; use `gh run list/view`; fix/rerun/watch until green.
-- `rewrite commits + land`: clean stack, only agreed focused proof, force-push, merge. No PR-body proof polish or CI babysit unless asked.
-- Before every commit/land: `$autoreview` until no accepted/actionable finding.
-- Issue fixed on `main` with proof: comment proof + commit/PR; close.
-- User-facing fix/landed PR: changelog unless test/internal only.
-- Contributor PR author: no changelog edit. Maintainer/AI adds on merge and thanks contributor.
-- Explicit land/ship authorizes needed branch changes and push. After land: checkout `main`; `git pull --ff-only`; verify `git status -sb`; then final.
-- After PR merge/ship: concise prose recap, not a bullet pile; cover behavior, key surface, proof, and issue/PR state. Check for worthwhile refactor or simplification follow-ups; suggest any warranted.
-- Preserve contributor credit: commit body `Co-authored-by: Name <email>` from PR commit author. Changelog still thanks `@login` for user-visible work.
-
 ## Runtime Safety
 
 - zsh: never variable `status`.
 - zsh multi-item loop: array. Scalar string does not word-split like bash.
-- Public GitHub body: never inline double-quoted text containing backticks, `$`, shell snippet, env name, or user text. Temp file + `cat <<'EOF'` + inspect + `--body-file`.
 - Secrets: never normal-shell `env`, `set`, `export -p`, broad secret regex dump. Query exact name only; redact value.
-- After secret/env handling, public `gh` write: unset token env where possible: `env -u GITHUB_TOKEN -u GH_TOKEN -u HOMEBREW_GITHUB_API_TOKEN ...`.
 
 ## Git
 
+- コミット・マージ前は `$autoreview` を実行し、受け入れるべき実行可能な指摘がなくなるまで確認する。
+- 明示的な `ship` は必要なブランチ変更とpushを許可する。完了前に `main` へ戻り、`git pull --ff-only` と `git status -sb` で同期を確認する。
+- `ship` 後は挙動、主な変更箇所、検証結果を簡潔な文章で報告し、有用な改善候補があれば提案する。
 - Cwd inside repo: work there. No sibling checkout unless asked.
 - `~/Developer` has intentional same-repo checkouts. User-managed, not scratch.
 - Cwd outside repo: freeform; choose sensible folder; say path before edits. Worktree okay if useful.
