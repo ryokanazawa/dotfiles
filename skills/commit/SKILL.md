@@ -5,12 +5,12 @@ description: コミットを依頼されたときに使う。変更履歴とレ�
 
 # コミット
 
-今セッションの変更を論理単位でコミットし、mainへ反映してpush・同期確認まで完了する。単純な「commitして」もこの範囲を許可する。明示的なローカル完結の依頼では、現在のチェックアウトでコミットして終了する。
+今セッションの変更を論理単位でコミットし、mainへ反映してpush・同期確認まで完了する。単純な「commitして」も、必要なmainへの切り替え・統合・pushを許可する依頼として扱い、追加確認なしで続ける。明示的な「コミットだけ」「pushしない」などの範囲指定を優先する。スキル自体の編集依頼はコミット実行の依頼に含めない。
 
 ## 守る条件
 
 - 対象変更だけを名指しでステージする。同じファイルに無関係な変更があれば対象ハンクだけを含める。`git add -A`・`git add .` は使わない。秘密や認証情報を含めない。
-- 新しいブランチを作らず、amend・force-push・検証や署名の迂回（`--no-verify`・`--no-gpg-sign`）を行わない。
+- 新しい作業ブランチを作らない。ローカルmainがない場合の`origin/main`からの追跡ブランチ作成は許可する。amend・force-push・検証や署名の迂回（`--no-verify`・`--no-gpg-sign`）を行わない。
 - タイトル・本文は日本語。issue参照になる `#N` は使わず、必要なら「todo 147」のように書く。
 - 各コミット末尾に `Co-authored-by: NAME <EMAIL>` を付ける。実行中モデルの正確な名前と、環境の指示・設定で確認できるエージェント用メールを使う。Cursorでは `cursoragent@cursor.com`。他モデルの表記の流用や値の捏造、プレースホルダは不可。不明なら確認する。本文とtrailerの前には空行を置く。
 
@@ -42,7 +42,7 @@ hookが失敗したら、範囲内の原因を直して関連検証・autoreview
 
 現在地がmainでなければ [worktree統合](references/worktree統合.md) に従い、detached HEADも含めてmainへfast-forwardで統合する。作業側からpushして終えない。
 
-mainのチェックアウトから `git push` する。upstream未設定なら `git push -u origin main`。続いて `git pull --ff-only` と `git status --short --branch` で同期を確認する。
+mainのチェックアウトから `git push` する。upstream未設定なら `git push -u origin main`。続いて `git pull --ff-only` と `git status -sb` で同期を確認する。最後はmainのチェックアウトを作業場所とする。
 
 pushが失敗したらforceせず原因を確認する。追加のpull・rebaseが必要なら確認を求める。未コミット変更の退避が必要な場合だけ [未コミット変更の退避](references/未コミット変更の退避.md) を読む。
 
