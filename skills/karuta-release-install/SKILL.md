@@ -20,7 +20,7 @@ disable-model-invocation: true
 
 ## 手順2: 検証
 
-`scripts/2-verify.sh` を通常実行する。
+`scripts/2-verify.sh` を最初から権限付き（サンドボックス外）で実行する。`exec_command` では `sandbox_permissions="require_escalated"` を指定する。サンドボックス内では正常な署名でも `CSSMERR_TP_NOT_TRUSTED` が発生することがある。権限付き実行で検証に失敗した場合は、手順3へ進まず停止する。
 
 完了条件: 終了コード 0 と `検証終了`、`valid on disk`、`satisfies its Designated Requirement`、`Identifier=jp.co.rigato.karuta`、`Authority=Apple Development: ...`、`TeamIdentifier=5SF8ZY3PT8`、`archs` に `x86_64` と `arm64` の両方。
 
