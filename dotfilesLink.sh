@@ -28,6 +28,8 @@ link_skill() {
   link_file "$src" "$HOME/.claude/skills/$skill_name"
   link_file "$src" "$HOME/.codex/skills/$skill_name"
   link_file "$src" "$HOME/.agents/skills/$skill_name"
+  link_file "$src" "$HOME/.cursor/skills/$skill_name"
+  link_file "$src" "$HOME/.grok/skills/$skill_name"
 }
 
 install_vim_plug() {
@@ -69,7 +71,7 @@ link_file "$DOTFILES_DIR/codex/rules/default.rules" "$HOME/.codex/rules/default.
 # API キーは追跡外の ~/.qwen/.env で提供する
 link_file "$DOTFILES_DIR/qwen/settings.json" "$HOME/.qwen/settings.json"
 
-# Skills (shared between Claude, Codex, and agents)
+# Skills (shared between Claude, Codex, agents, Cursor, and Grok)
 for skill_dir in "$DOTFILES_DIR"/skills/*/; do
   [ -d "$skill_dir" ] || continue
   link_skill "$(basename "$skill_dir")"
